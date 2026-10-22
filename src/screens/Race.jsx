@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { checkInputAnswer, shuffle, sleep, uid } from '../lib/util.js';
+import { checkInputAnswer, filledItems, filledPairs, shuffle, sleep, uid } from '../lib/util.js';
 import { play } from '../lib/sound.js';
 import CodeBlock from '../components/CodeBlock.jsx';
+import OrderAnswer from '../components/OrderAnswer.jsx';
+import MatchAnswer from '../components/MatchAnswer.jsx';
 
 const GEMS = ['◆', '●', '▲', '■'];
 const STEP_MS = 550;
@@ -34,6 +36,17 @@ function buildSpecials(n) {
 }
 
 function prepare(q) {
+  if (q.type === 'order') {
+    const items = filledItems(q);
+    let order = shuffle(items.map((_, i) => i));
+    // Aralashtirilgan tartib tasodifan to'g'ri javobning o'zi bo'lib qolmasin.
+    for (let t = 0; t < 10 && order.every((v, i) => v === i); t++) order = shuffle(order);
+    return { q, items, order };
+  }
+  if (q.type === 'match') {
+    const pairs = filledPairs(q);
+    return { q, pairs, rightOrder: shuffle(pairs.map((_, i) => i)) };
+  }
   let options = null;
   if (q.type === 'choice') {
     options = shuffle(q.options.map((text, i) => ({ text, correct: i === q.correct })).filter((o) => o.text.trim()));
@@ -403,6 +416,10 @@ function QuestionCard({ item, team, time, paused, phase, result, onAnswer, onCon
               </button>
             ))}
           </div>
+        ) : q.type === 'order' ? (
+          <OrderAnswer items={item.items} order={item.order} answered={answered} result={result} onAnswer={onAnswer} />
+        ) : q.type === 'match' ? (
+          <MatchAnswer pairs={item.pairs} rightOrder={item.rightOrder} answered={answered} result={result} onAnswer={onAnswer} />
         ) : (
           <div className="input-answer">
             <div className="input-left">

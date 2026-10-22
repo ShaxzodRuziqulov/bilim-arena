@@ -125,6 +125,37 @@ export const SAMPLE_SETS = () => [
         correct: 0,
       }),
       q({
+        type: 'order',
+        text: 'Kompyuterni to‘g‘ri o‘chirish qadamlarini tartib bilan bosing.',
+        items: ['Ishni saqlash', 'Dasturlarni yopish', 'Start (Pusk) → O‘chirish', 'Monitorni o‘chirish'],
+        explanation: 'Avval maʼlumotni saqlaymiz, keyin dasturlarni yopib, tizimni o‘chiramiz.',
+      }),
+      q({
+        type: 'order',
+        text: 'Xotira birliklarini kichigidan kattasiga qarab tartiblang.',
+        items: ['Bit', 'Bayt', 'Kilobayt', 'Megabayt', 'Gigabayt'],
+      }),
+      q({
+        type: 'match',
+        text: 'Qurilmani uning vazifasi bilan moslang.',
+        pairs: [
+          { left: 'Klaviatura', right: 'Matn kiritish' },
+          { left: 'Monitor', right: 'Tasvirni ko‘rsatish' },
+          { left: 'Printer', right: 'Qog‘ozga chiqarish' },
+          { left: 'Mikrofon', right: 'Ovoz yozish' },
+        ],
+      }),
+      q({
+        type: 'match',
+        text: 'Fayl kengaytmasini dastur bilan moslang.',
+        pairs: [
+          { left: '.docx', right: 'Word' },
+          { left: '.xlsx', right: 'Excel' },
+          { left: '.pptx', right: 'PowerPoint' },
+          { left: '.py', right: 'Python' },
+        ],
+      }),
+      q({
         type: 'input',
         text: '111₂ + 1₂ = ? (javobni ikkilik sanoq sistemasida yozing)',
         answer: '1000',

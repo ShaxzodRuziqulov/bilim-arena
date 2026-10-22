@@ -28,7 +28,12 @@ export const QUESTION_TYPES = {
   choice: { label: 'Variantli', icon: '🔠' },
   tf: { label: 'To‘g‘ri / Noto‘g‘ri', icon: '⚖️' },
   input: { label: 'Javob yozish', icon: '🔢' },
+  order: { label: 'Tartiblash', icon: '↕️' },
+  match: { label: 'Moslashtirish', icon: '🔗' },
 };
+
+export const ORDER_MAX = 6;
+export const MATCH_MAX = 5;
 
 export const CODE_LANGS = { '': 'Kod yo‘q', python: 'Python', pascal: 'Pascal', cpp: 'C++' };
 
@@ -44,9 +49,19 @@ export function newQuestion(type = 'choice') {
     correct: 0,
     answer: '',
     keypad: 'number',
+    // order: to'g'ri tartibdagi qadamlar; match: [{left, right}] juftliklar
+    items: type === 'order' ? ['', '', ''] : [],
+    pairs: type === 'match' ? [0, 1, 2].map(() => ({ left: '', right: '' })) : [],
     explanation: '',
   };
 }
+
+// Eski versiyada yoki fayldan kelgan savolda yangi maydonlar bo'lmasligi mumkin.
+export const normalizeQuestion = (q) => ({ ...newQuestion(q.type), ...q });
+
+export const filledItems = (q) => q.items.map((s) => s.trim()).filter(Boolean);
+export const filledPairs = (q) =>
+  q.pairs.map((p) => ({ left: p.left.trim(), right: p.right.trim() })).filter((p) => p.left && p.right);
 
 export function newSet(name = 'Yangi to‘plam') {
   return { id: uid(), name, subject: 'Informatika', grade: '7', questions: [newQuestion()] };
@@ -61,6 +76,12 @@ export function questionProblem(q) {
     if (!q.options[q.correct]?.trim()) return 'To‘g‘ri javob belgilanmagan';
   }
   if (q.type === 'input' && !q.answer.trim()) return 'To‘g‘ri javob yozilmagan';
+  if (q.type === 'order' && filledItems(q).length < 3) return 'Kamida 3 ta qadam kerak';
+  if (q.type === 'match') {
+    const pairs = filledPairs(q);
+    if (pairs.length < 2) return 'Kamida 2 ta to‘liq juftlik kerak';
+    if (new Set(pairs.map((p) => p.right)).size < pairs.length) return 'O‘ng tomondagi qiymatlar takrorlanmasin';
+  }
   return null;
 }
 

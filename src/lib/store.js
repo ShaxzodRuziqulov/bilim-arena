@@ -1,4 +1,5 @@
 import { SAMPLE_SETS } from './sample-data.js';
+import { normalizeQuestion } from './util.js';
 
 // Electron ichida ma'lumot userData/data.json faylida saqlanadi.
 // Oddiy brauzerda (ishlab chiqish va sinov uchun) localStorage ishlatiladi.
@@ -13,7 +14,12 @@ function initialData() {
 
 function migrate(raw) {
   if (!raw || raw.version !== 1) return initialData();
-  return { ...initialData(), ...raw, settings: { ...DEFAULT_SETTINGS, ...raw.settings } };
+  return {
+    ...initialData(),
+    ...raw,
+    settings: { ...DEFAULT_SETTINGS, ...raw.settings },
+    sets: raw.sets.map((s) => ({ ...s, questions: s.questions.map(normalizeQuestion) })),
+  };
 }
 
 export async function loadData() {

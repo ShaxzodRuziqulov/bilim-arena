@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { CODE_LANGS, QUESTION_TYPES, newQuestion, questionProblem, resizeImage } from '../lib/util.js';
+import { CODE_LANGS, MATCH_MAX, ORDER_MAX, QUESTION_TYPES, newQuestion, questionProblem, resizeImage } from '../lib/util.js';
 import CodeBlock from '../components/CodeBlock.jsx';
 import ConfirmButton from '../components/ConfirmButton.jsx';
 
@@ -21,7 +21,7 @@ export default function SetEditor({ set, update, go }) {
   };
 
   const duplicate = () => {
-    const copy = { ...selected, id: newQuestion().id, options: [...selected.options] };
+    const copy = structuredClone({ ...selected, id: newQuestion().id });
     updateSet((s) => {
       const i = s.questions.findIndex((q) => q.id === selectedId);
       const questions = [...s.questions];
@@ -132,8 +132,20 @@ function QuestionForm({ q, index, onChange, onDuplicate, onRemove, onMove }) {
     const patch = { type };
     if (type === 'choice' && q.options.length < 4) patch.options = [...q.options, '', '', '', ''].slice(0, 4);
     if (type !== 'input') patch.correct = Math.min(q.correct, type === 'tf' ? 1 : 3);
+    if (type === 'order' && q.items.length === 0) patch.items = ['', '', ''];
+    if (type === 'match' && q.pairs.length === 0) patch.pairs = [0, 1, 2].map(() => ({ left: '', right: '' }));
     onChange(patch);
   };
+
+  const setItem = (i, value) => onChange({ items: q.items.map((s, j) => (j === i ? value : s)) });
+  const moveItem = (i, dir) => {
+    const j = i + dir;
+    if (j < 0 || j >= q.items.length) return;
+    const items = [...q.items];
+    [items[i], items[j]] = [items[j], items[i]];
+    onChange({ items });
+  };
+  const setPair = (i, side, value) => onChange({ pairs: q.pairs.map((p, j) => (j === i ? { ...p, [side]: value } : p)) });
 
   const pickImage = async (event) => {
     const file = event.target.files[0];
@@ -217,7 +229,10 @@ function QuestionForm({ q, index, onChange, onDuplicate, onRemove, onMove }) {
               </button>
             </div>
           ) : (
-            <input type="file" accept="image/*" onChange={pickImage} />
+            <label className="btn file-btn">
+              🖼 Rasm tanlash
+              <input type="file" accept="image/*" hidden onChange={pickImage} />
+            </label>
           )}
         </div>
       </div>
@@ -274,6 +289,66 @@ function QuestionForm({ q, index, onChange, onDuplicate, onRemove, onMove }) {
             </select>
           </div>
         </div>
+      )}
+
+      {q.type === 'order' && (
+        <>
+          <label>Qadamlarni TO‘G‘RI tartibda yozing (3–{ORDER_MAX} ta) — o‘yinda aralashtirib ko‘rsatiladi</label>
+          <div className="list-edit">
+            {q.items.map((item, i) => (
+              <div key={i} className="list-edit-row">
+                <span className="list-num">{i + 1}</span>
+                <input value={item} onChange={(e) => setItem(i, e.target.value)} placeholder={`${i + 1}-qadam`} />
+                <button className="btn small-btn" onClick={() => moveItem(i, -1)}>
+                  ↑
+                </button>
+                <button className="btn small-btn" onClick={() => moveItem(i, 1)}>
+                  ↓
+                </button>
+                <button
+                  className="btn small-btn danger"
+                  disabled={q.items.length <= 2}
+                  onClick={() => onChange({ items: q.items.filter((_, j) => j !== i) })}
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
+          </div>
+          {q.items.length < ORDER_MAX && (
+            <button className="btn small-btn" onClick={() => onChange({ items: [...q.items, ''] })}>
+              ＋ Qadam qo‘shish
+            </button>
+          )}
+        </>
+      )}
+
+      {q.type === 'match' && (
+        <>
+          <label>Juftliklar: chap ↔ o‘ng (2–{MATCH_MAX} ta) — o‘yinda o‘ng ustun aralashtiriladi</label>
+          <div className="list-edit">
+            {q.pairs.map((pair, i) => (
+              <div key={i} className="list-edit-row">
+                <span className="list-num">{i + 1}</span>
+                <input value={pair.left} onChange={(e) => setPair(i, 'left', e.target.value)} placeholder="Chap (masalan: Monitor)" />
+                <span className="pair-link">🔗</span>
+                <input value={pair.right} onChange={(e) => setPair(i, 'right', e.target.value)} placeholder="O‘ng (masalan: Chiqarish)" />
+                <button
+                  className="btn small-btn danger"
+                  disabled={q.pairs.length <= 2}
+                  onClick={() => onChange({ pairs: q.pairs.filter((_, j) => j !== i) })}
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
+          </div>
+          {q.pairs.length < MATCH_MAX && (
+            <button className="btn small-btn" onClick={() => onChange({ pairs: [...q.pairs, { left: '', right: '' }] })}>
+              ＋ Juftlik qo‘shish
+            </button>
+          )}
+        </>
       )}
 
       <label>Izoh / yechim (ixtiyoriy) — javobdan keyin ekranda ko‘rsatiladi</label>

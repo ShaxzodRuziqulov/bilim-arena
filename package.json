@@ -3,6 +3,7 @@
   "productName": "Bilim Arena",
   "version": "0.1.0",
   "description": "Sensorli elektron doska uchun jamoaviy ta'limiy o'yinlar",
+  "author": "Bilim Arena",
   "private": true,
   "type": "module",
   "main": "electron/main.cjs",
@@ -11,27 +12,50 @@
     "web": "vite",
     "build": "vite build",
     "start": "vite build && electron .",
-    "dist": "vite build && electron-builder --win"
+    "dist": "vite build && electron-builder --win --publish never",
+    "release": "vite build && electron-builder --win --publish always"
   },
   "dependencies": {
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "electron-updater": "^6.8.9"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^4.3.4",
+    "@vitejs/plugin-react": "^6.1.2",
     "concurrently": "^9.1.0",
     "cross-env": "^7.0.3",
-    "electron": "^33.2.1",
-    "electron-builder": "^25.1.8",
-    "vite": "^5.4.11",
-    "wait-on": "^8.0.1"
+    "electron": "^44.9.3",
+    "electron-builder": "^26.15.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "read-excel-file": "^9.3.12",
+    "vite": "^8.3.5",
+    "wait-on": "^8.0.1",
+    "write-excel-file": "^4.1.1"
   },
   "build": {
     "appId": "uz.bilimarena.app",
     "productName": "Bilim Arena",
-    "directories": { "output": "release" },
-    "files": ["dist/**", "electron/**"],
-    "win": { "target": "nsis" },
-    "nsis": { "oneClick": false, "allowToChangeInstallationDirectory": true }
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**",
+      "electron/**"
+    ],
+    "win": {
+      "target": "nsis"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "ShaxzodRuziqulov",
+        "repo": "bilim-arena",
+        "releaseType": "release"
+      }
+    ],
+    "electronDist": "node_modules/electron/dist"
   }
 }

@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { isDesktop, quitApp } from '../lib/store.js';
-import { downloadJson, formatDate, newSet, playableQuestions, uid } from '../lib/util.js';
+import { downloadJson, formatDate, newSet, normalizeQuestion, playableQuestions, uid } from '../lib/util.js';
+import { downloadExcelTemplate, exportSetToExcel, importSetFromExcel } from '../lib/excel.js';
+import { checkUpdate, installUpdate, useUpdateStatus } from '../lib/updates.js';
 import ConfirmButton from '../components/ConfirmButton.jsx';
 import PinModal from '../components/PinModal.jsx';
 
@@ -12,6 +14,7 @@ const TABS = [
 
 export default function Admin({ data, update, go, askPin, tab: initialTab = 'sets' }) {
   const [tab, setTab] = useState(initialTab);
+  const updateStatus = useUpdateStatus();
 
   return (
     <div className="screen admin">
@@ -25,6 +28,11 @@ export default function Admin({ data, update, go, askPin, tab: initialTab = 'set
             </button>
           ))}
         </nav>
+        {updateStatus.status === 'ready' && (
+          <button className="btn update-badge" onClick={() => setTab('settings')}>
+            ⬆ Yangi versiya tayyor
+          </button>
+        )}
         <button className="btn gold" onClick={() => go({ name: 'home' })}>
           🔒 Qulflash
         </button>
@@ -32,7 +40,7 @@ export default function Admin({ data, update, go, askPin, tab: initialTab = 'set
       <main className="admin-main">
         {tab === 'sets' && <SetsTab data={data} update={update} go={go} />}
         {tab === 'history' && <HistoryTab data={data} update={update} />}
-        {tab === 'settings' && <SettingsTab data={data} update={update} askPin={askPin} />}
+        {tab === 'settings' && <SettingsTab data={data} update={update} askPin={askPin} updateStatus={updateStatus} />}
       </main>
     </div>
   );
@@ -40,7 +48,30 @@ export default function Admin({ data, update, go, askPin, tab: initialTab = 'set
 
 function SetsTab({ data, update, go }) {
   const fileRef = useRef(null);
+  const excelRef = useRef(null);
   const [message, setMessage] = useState('');
+  const [importErrors, setImportErrors] = useState([]);
+
+  const importExcel = async (event) => {
+    const file = event.target.files[0];
+    event.target.value = '';
+    if (!file) return;
+    setImportErrors([]);
+    try {
+      const { set, errors } = await importSetFromExcel(file);
+      setImportErrors(errors);
+      if (set.questions.length === 0) {
+        setMessage('❌ Fayldan birorta ham savol o‘qilmadi');
+        return;
+      }
+      update((d) => ({ ...d, sets: [...d.sets, set] }));
+      setMessage(
+        `✅ “${set.name}” import qilindi: ${set.questions.length} ta savol` + (errors.length ? `, ${errors.length} ta qator o‘tkazib yuborildi` : ''),
+      );
+    } catch (error) {
+      setMessage('❌ ' + (error.message || 'Excel faylni o‘qib bo‘lmadi'));
+    }
+  };
 
   const addSet = () => {
     const set = newSet();
@@ -59,7 +90,7 @@ function SetsTab({ data, update, go }) {
         ...newSet(parsed.name || file.name.replace(/\.json$/i, '')),
         subject: parsed.subject || 'Informatika',
         grade: parsed.grade || '7',
-        questions: parsed.questions.map((q) => ({ ...q, id: uid() })),
+        questions: parsed.questions.map((q) => normalizeQuestion({ ...q, id: uid() })),
       };
       update((d) => ({ ...d, sets: [...d.sets, set] }));
       setMessage(`✅ “${set.name}” import qilindi (${set.questions.length} ta savol)`);
@@ -73,16 +104,33 @@ function SetsTab({ data, update, go }) {
       <div className="section-head">
         <h2>Savol to‘plamlari</h2>
         <div className="row-buttons">
+          <button className="btn" onClick={downloadExcelTemplate}>
+            📄 Excel shablon
+          </button>
+          <button className="btn" onClick={() => excelRef.current.click()}>
+            ⤒ Excel’dan import
+          </button>
           <button className="btn" onClick={() => fileRef.current.click()}>
-            ⤒ Import (.json)
+            ⤒ JSON import
           </button>
           <button className="btn primary" onClick={addSet}>
             ＋ Yangi to‘plam
           </button>
         </div>
         <input ref={fileRef} type="file" accept=".json,application/json" hidden onChange={importFile} />
+        <input ref={excelRef} type="file" accept=".xlsx" hidden onChange={importExcel} />
       </div>
       {message && <p className="note">{message}</p>}
+      {importErrors.length > 0 && (
+        <details className="import-errors">
+          <summary>O‘tkazib yuborilgan qatorlar ({importErrors.length})</summary>
+          <ul>
+            {importErrors.map((e, i) => (
+              <li key={i}>{e}</li>
+            ))}
+          </ul>
+        </details>
+      )}
       {data.sets.length === 0 && <p className="muted">Hali to‘plam yo‘q. “Yangi to‘plam” tugmasini bosing.</p>}
       <div className="set-grid">
         {data.sets.map((set) => {
@@ -105,11 +153,15 @@ function SetsTab({ data, update, go }) {
                 <button className="btn" onClick={() => go({ name: 'editor', setId: set.id })}>
                   ✎ Tahrirlash
                 </button>
+                <button className="btn" onClick={() => exportSetToExcel(set)} title="Excel faylga (rasmlarsiz)">
+                  ⤓ Excel
+                </button>
                 <button
                   className="btn"
+                  title="To‘liq nusxa (rasmlar bilan)"
                   onClick={() => downloadJson(`${set.name}.json`, { name: set.name, subject: set.subject, grade: set.grade, questions: set.questions })}
                 >
-                  ⤓ Eksport
+                  ⤓ JSON
                 </button>
                 <ConfirmButton onConfirm={() => update((d) => ({ ...d, sets: d.sets.filter((s) => s.id !== set.id) }))}>
                   🗑
@@ -167,7 +219,46 @@ function HistoryTab({ data, update }) {
   );
 }
 
-function SettingsTab({ data, update, askPin }) {
+function UpdatePanel({ state, version }) {
+  const { status } = state;
+  const text = {
+    web: 'Brauzer rejimida yangilanish yo‘q — bu faqat o‘rnatilgan dasturda ishlaydi.',
+    dev: 'Ishlab chiqish rejimida yangilanish tekshirilmaydi.',
+    idle: 'Hali tekshirilmadi.',
+    checking: 'Tekshirilmoqda…',
+    latest: '✅ Sizda eng so‘nggi versiya.',
+    downloading: `⬇ ${state.version} versiya yuklab olinmoqda…`,
+    ready: `✅ ${state.version} versiya yuklab olindi. Dastur yopilganda avtomatik o‘rnatiladi.`,
+    error: '⚠ Tekshirib bo‘lmadi (internet yo‘qmi?). O‘yin bunga bog‘liq emas.',
+  }[status];
+
+  return (
+    <div className="update-box">
+      <p className="note">
+        Joriy versiya: <b>{version || '—'}</b>
+        <br />
+        {text}
+      </p>
+      {status === 'downloading' && (
+        <div className="progress">
+          <i style={{ width: `${state.percent || 0}%` }} />
+        </div>
+      )}
+      {['idle', 'latest', 'error'].includes(status) && (
+        <button className="btn" onClick={checkUpdate}>
+          🔄 Yangilanishni tekshirish
+        </button>
+      )}
+      {status === 'ready' && (
+        <button className="btn primary" onClick={installUpdate}>
+          ⬆ Hozir o‘rnatish (dastur qayta ochiladi)
+        </button>
+      )}
+    </div>
+  );
+}
+
+function SettingsTab({ data, update, askPin, updateStatus }) {
   const [changingPin, setChangingPin] = useState(false);
   const [saved, setSaved] = useState(false);
   const [version, setVersion] = useState('');
@@ -214,12 +305,15 @@ function SettingsTab({ data, update, askPin }) {
           {isDesktop && (
             <>
               <h3 className="mt">Dastur</h3>
-              <p className="note">Versiya: {version}</p>
               <button className="btn danger" onClick={quitApp}>
                 ⏻ Dasturni yopish
               </button>
             </>
           )}
+        </div>
+        <div className="panel">
+          <h3>Yangilanishlar</h3>
+          <UpdatePanel state={updateStatus} version={version} />
         </div>
       </div>
       {changingPin && (
