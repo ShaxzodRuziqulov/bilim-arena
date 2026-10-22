@@ -1,7 +1,7 @@
 {
   "name": "bilim-arena",
   "productName": "Bilim Arena",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Sensorli elektron doska uchun jamoaviy ta'limiy o'yinlar",
   "author": "Bilim Arena",
   "private": true,
@@ -55,7 +55,7 @@
         "provider": "github",
         "owner": "ShaxzodRuziqulov",
         "repo": "bilim-arena",
-        "releaseType": "release"
+        "releaseType": "draft"
       }
     ],
     "electronDist": "node_modules/electron/dist"

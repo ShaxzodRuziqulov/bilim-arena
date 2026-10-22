@@ -12,6 +12,9 @@ permissions:
 jobs:
   windows:
     runs-on: windows-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      TAG: ${{ github.ref_name }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -19,6 +22,15 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+
+      # Release'ni oldindan qoralama sifatida yaratamiz. Aks holda electron-builder fayllarni
+      # parallel yuklayotganda bir teg uchun ikkita Release yaratib qo'yadi.
+      - name: Qoralama Release yaratish
+        shell: bash
+        run: gh release create "$TAG" --draft --title "${TAG#v}" --notes "Bilim Arena ${TAG#v}" --verify-tag
+
       - run: npm run release
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Release'ni e'lon qilish
+        shell: bash
+        run: gh release edit "$TAG" --draft=false --latest
