@@ -7,7 +7,7 @@ export default function Home({ onAdmin, onQuit }) {
         <span className="cloud c3">☁️</span>
       </div>
       <div className="home-center">
-        <div className="home-logo">🏝️</div>
+        <img className="home-logo" src="./icon.svg" alt="" />
         <h1 className="home-title">Bilim Arena</h1>
         <p className="home-sub">Bilim bilan xazinaga yet!</p>
         <div className="home-heroes">🧑‍🚀 🥷 🧙 🤖 🦊</div>

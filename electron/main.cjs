@@ -81,6 +81,8 @@ function createWindow() {
     kiosk: !isDev,
     autoHideMenuBar: true,
     backgroundColor: '#070d21',
+    // O'rnatilgan dasturda belgi .exe faylning o'zidan olinadi; bu faqat ishlab chiqish rejimi uchun.
+    icon: isDev ? path.join(__dirname, '..', 'build', 'icon.png') : undefined,
     webPreferences: {
       preload: path.join(__dirname, 'preload.cjs'),
       contextIsolation: true,

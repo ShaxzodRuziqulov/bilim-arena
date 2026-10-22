@@ -166,7 +166,7 @@ label.check input { width: auto; }
 .cloud.c3 { top: 6%; left: -50%; animation-duration: 70s; font-size: 90px; }
 @keyframes drift { to { transform: translateX(140vw); } }
 .home-center { text-align: center; z-index: 1; }
-.home-logo { font-size: clamp(70px, 10vw, 150px); animation: bob 2.4s ease-in-out infinite; }
+.home-logo { width: clamp(90px, 11vw, 170px); margin-bottom: 10px; animation: bob 2.4s ease-in-out infinite; filter: drop-shadow(0 12px 18px #0008); }
 .home-title {
   font-size: clamp(48px, 7vw, 110px);
   margin: 0;
