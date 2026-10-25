@@ -56,7 +56,10 @@ function parseRow(cells, rowNumber) {
     else throw new Error(`${rowNumber}-qator: to‘g‘ri javob “to‘g‘ri” yoki “noto‘g‘ri” bo‘lishi kerak`);
   } else if (type === 'input') {
     q.answer = answer;
-    if (/^[0-9a-f]+$/i.test(answer) && /[a-f]/i.test(answer)) q.keypad = 'hex';
+    const accepted = answer.split(';').map((value) => value.trim()).filter(Boolean);
+    if (accepted.every((value) => /^[0-9.,\s-]+$/.test(value))) q.keypad = 'number';
+    else if (accepted.every((value) => /^[0-9a-f]+$/i.test(value))) q.keypad = 'hex';
+    else q.keypad = 'text';
   } else if (type === 'order') {
     q.items = letters.filter(Boolean);
   } else if (type === 'match') {

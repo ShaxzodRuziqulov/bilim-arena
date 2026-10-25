@@ -5,6 +5,8 @@ import CodeBlock from '../components/CodeBlock.jsx';
 import OrderAnswer from '../components/OrderAnswer.jsx';
 import MatchAnswer from '../components/MatchAnswer.jsx';
 
+import { raceWinner, roundFinished } from '../lib/race-rules.js';
+
 const GEMS = ['◆', '●', '▲', '■'];
 const STEP_MS = 550;
 
@@ -35,7 +37,7 @@ function buildSpecials(n) {
   return specials;
 }
 
-function prepare(q) {
+export function prepare(q) {
   if (q.type === 'order') {
     const items = filledItems(q);
     let order = shuffle(items.map((_, i) => i));
@@ -84,6 +86,8 @@ export default function Race({ config, askPin, onFinish, onExit }) {
   const deck = useRef({ order: [], i: 0 });
   const mistakes = useRef(new Map());
   const finished = useRef(false);
+  const proceeding = useRef(false);
+  const questionNumber = useRef(0);
 
   const team = teams[turn];
 
@@ -99,6 +103,7 @@ export default function Race({ config, askPin, onFinish, onExit }) {
   const openQuestion = () => {
     if (phase !== 'ready') return;
     play('open');
+    questionNumber.current += 1;
     setCurrent(prepare(drawQuestion()));
     setResult(null);
     setPhase('question');
@@ -113,8 +118,9 @@ export default function Race({ config, askPin, onFinish, onExit }) {
       ts.map((t, i) => (i === turn ? { ...t, correct: t.correct + (correct ? 1 : 0), wrong: t.wrong + (correct ? 0 : 1) } : t)),
     );
     if (!correct) {
-      const key = current.q.text || current.q.code;
-      mistakes.current.set(key, (mistakes.current.get(key) || 0) + 1);
+      const key = current.q.id;
+      const previous = mistakes.current.get(key);
+      mistakes.current.set(key, { text: current.q.text || current.q.code || 'Rasmli savol', wrong: (previous?.wrong || 0) + 1, question: structuredClone(current.q) });
     }
   };
 
@@ -126,7 +132,8 @@ export default function Race({ config, askPin, onFinish, onExit }) {
   };
 
   const proceed = async () => {
-    if (phase !== 'feedback') return;
+    if (phase !== 'feedback' || proceeding.current) return;
+    proceeding.current = true;
     if (result.correct) {
       setPhase('moving');
       let pos = await step(turn, 1);
@@ -139,12 +146,14 @@ export default function Race({ config, askPin, onFinish, onExit }) {
         pos = await step(turn, special === 'bonus' ? 1 : -1);
         setToast(null);
       }
-      if (pos >= N) {
-        setPhase('won');
-        play('win');
-        return;
-      }
+
     }
+    if (roundFinished(teamsRef.current, turn, N)) {
+      setPhase('won');
+      play('win');
+      return;
+    }
+    proceeding.current = false;
     setTurn((t) => (t + 1) % teamsRef.current.length);
     setPhase('ready');
   };
@@ -152,10 +161,9 @@ export default function Race({ config, askPin, onFinish, onExit }) {
   const finish = (winnerName) => {
     if (finished.current) return;
     finished.current = true;
-    const hard = [...mistakes.current]
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 10)
-      .map(([text, wrong]) => ({ text, wrong }));
+    const hard = [...mistakes.current.values()]
+      .sort((a, b) => b.wrong - a.wrong)
+      .slice(0, 10);
     onFinish({
       id: uid(),
       date: new Date().toISOString(),
@@ -168,15 +176,12 @@ export default function Race({ config, askPin, onFinish, onExit }) {
   };
 
   const finishEarly = () => {
-    const ranked = [...teamsRef.current].sort((a, b) => b.pos - a.pos || b.correct - a.correct);
-    const leader = ranked[0];
-    const tie = ranked[1] && ranked[1].pos === leader.pos && ranked[1].correct === leader.correct;
-    finish(leader.pos > 0 && !tie ? leader.name : null);
+    finish(raceWinner(teamsRef.current));
   };
 
   const openMenu = () => {
     setPaused(true);
-    askPin('O‘yinni boshqarish', () => setMenu(true), () => setPaused(false));
+    setMenu(true);
   };
 
   const closeMenu = () => {
@@ -187,7 +192,7 @@ export default function Race({ config, askPin, onFinish, onExit }) {
   const spread = (i) => (i - (teams.length - 1) / 2) * 2.4;
 
   return (
-    <div className="race-wrap">
+    <div className={`race-wrap theme-${config.theme || 'adventure'}`}>
       <div className="stage">
         <svg className="board-svg" viewBox="0 0 160 90" preserveAspectRatio="none" aria-hidden="true">
           <defs>
@@ -270,7 +275,8 @@ export default function Race({ config, askPin, onFinish, onExit }) {
             </div>
           ))}
           <span className="spacer" />
-          <button className="hud-btn" onClick={openMenu} title="O‘yinni boshqarish (PIN)">
+          <button className="hud-btn" title="To‘liq ekran" aria-label="To‘liq ekran" onClick={() => { if (document.fullscreenElement) document.exitFullscreen().catch(() => {}); else document.documentElement.requestFullscreen?.().catch(() => {}); }}>⛶</button>
+          <button className="hud-btn" disabled={phase === 'moving'} onClick={openMenu} title="Pauza va o‘yinni boshqarish" aria-label="O‘yinni to‘xtatib turish">
             ⏸
           </button>
         </div>
@@ -280,7 +286,7 @@ export default function Race({ config, askPin, onFinish, onExit }) {
             <span className="turn-hero">{team.hero}</span>
             <div className="turn-text">
               <b>{team.name} navbati!</b>
-              <small>{phase === 'ready' ? 'Bitta o‘quvchi doskaga chiqsin' : 'Qahramon yo‘lda…'}</small>
+              <small>{phase === 'ready' ? 'Jamoaning keyingi o‘quvchisi doskaga chiqsin' : 'Qahramon yo‘lda…'}</small>
             </div>
             {phase === 'ready' && (
               <button className="btn primary huge" onClick={openQuestion}>
@@ -294,7 +300,7 @@ export default function Race({ config, askPin, onFinish, onExit }) {
 
         {(phase === 'question' || phase === 'feedback') && current && (
           <QuestionCard
-            key={current.q.id + turn}
+            key={questionNumber.current}
             item={current}
             team={team}
             time={config.time}
@@ -310,10 +316,10 @@ export default function Race({ config, askPin, onFinish, onExit }) {
           <div className="overlay win-overlay">
             <Confetti />
             <div className="win-card" style={{ '--team': team.color }}>
-              <div className="win-hero">{team.hero}</div>
-              <h1>{team.name} xazinani topdi!</h1>
-              <p>🏆 Tabriklaymiz, g‘oliblar!</p>
-              <button className="btn gold huge" onClick={() => finish(team.name)}>
+              <div className="win-hero">🏆</div>
+              <h1>{raceWinner(teams) ? `${raceWinner(teams)} g‘olib!` : 'Durang!'}</h1>
+              <p>Barcha jamoalar teng navbat o‘ynadi. Tabriklaymiz!</p>
+              <button className="btn gold huge" onClick={() => finish(raceWinner(teamsRef.current))}>
                 Natijalarni ko‘rish
               </button>
             </div>
@@ -327,11 +333,11 @@ export default function Race({ config, askPin, onFinish, onExit }) {
               <button className="btn primary big full" onClick={closeMenu}>
                 ▶ Davom etish
               </button>
-              <button className="btn gold big full" onClick={finishEarly}>
+              <button className="btn gold big full" onClick={() => askPin('O‘yinni yakunlash', finishEarly)}>
                 🏁 O‘yinni yakunlash va natijalar
               </button>
-              <button className="btn big full" onClick={onExit}>
-                ← O‘qituvchi paneliga chiqish (natija saqlanmaydi)
+              <button className="btn big full" onClick={() => askPin('Studiyaga qaytish', onExit)}>
+                ← Studiyaga qaytish (natija saqlanmaydi)
               </button>
             </div>
           </div>
@@ -341,7 +347,7 @@ export default function Race({ config, askPin, onFinish, onExit }) {
   );
 }
 
-function QuestionCard({ item, team, time, paused, phase, result, onAnswer, onContinue }) {
+export function QuestionCard({ item, team, time, paused, phase, result, onAnswer, onContinue, review = false }) {
   const { q, options } = item;
   const [left, setLeft] = useState(time);
   const [value, setValue] = useState('');
@@ -372,13 +378,13 @@ function QuestionCard({ item, team, time, paused, phase, result, onAnswer, onCon
 
   let feedback = null;
   if (answered) {
-    if (result.correct) feedback = '✅ To‘g‘ri! Jamoa 1 qadam oldinga yuradi';
+    if (result.correct) feedback = review ? '✅ To‘g‘ri! Bilimingiz mustahkamlandi.' : '✅ To‘g‘ri! Jamoa 1 qadam oldinga yuradi';
     else if (result.timeout) feedback = '⏰ Vaqt tugadi! Navbat keyingi jamoaga o‘tadi';
-    else feedback = '❌ Noto‘g‘ri. Navbat keyingi jamoaga o‘tadi';
+    else feedback = review ? '💡 Yechimni ko‘rib chiqing va keyingi savolga o‘ting.' : '❌ Noto‘g‘ri. Navbat keyingi jamoaga o‘tadi';
   }
 
   return (
-    <div className="overlay">
+    <div className="overlay question-overlay">
       <div className="question-card" style={{ '--team': team.color }}>
         <div className="q-top">
           <span className="q-team">
@@ -421,7 +427,7 @@ function QuestionCard({ item, team, time, paused, phase, result, onAnswer, onCon
         ) : q.type === 'match' ? (
           <MatchAnswer pairs={item.pairs} rightOrder={item.rightOrder} answered={answered} result={result} onAnswer={onAnswer} />
         ) : (
-          <div className="input-answer">
+          <div className={`input-answer ${q.keypad === 'text' ? 'text-answer' : ''}`}>
             <div className="input-left">
               <div className={`answer-display ${answered ? (result.correct ? 'right' : 'wrong') : ''}`}>
                 {value || <span className="placeholder">Javobingiz…</span>}
@@ -439,7 +445,7 @@ function QuestionCard({ item, team, time, paused, phase, result, onAnswer, onCon
                 </button>
               )}
             </div>
-            {!answered && <Keypad hex={q.keypad === 'hex'} value={value} onChange={setValue} />}
+            {!answered && (q.keypad === 'text' ? <TextKeypad value={value} onChange={setValue} /> : <Keypad hex={q.keypad === 'hex'} value={value} onChange={setValue} />)}
           </div>
         )}
 
@@ -507,4 +513,13 @@ function Confetti() {
       ))}
     </div>
   );
+}
+
+function TextKeypad({ value, onChange }) {
+  const keys = [...'QWERTYUIOPASDFGHJKLZXCVBNM', 'O‘', 'G‘', '’', '-', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+  return <div className="text-keypad-wrap">
+    <input aria-label="Matnli javob" placeholder="Javobni yozing yoki harflarni bosing" value={value} maxLength={100} onChange={(e) => onChange(e.target.value)} />
+    <div className="text-keypad">{keys.map((key) => <button className="key" key={key} onClick={() => { play('tap'); onChange((value + key).slice(0, 100)); }}>{key}</button>)}</div>
+    <div className="text-keypad-actions"><button className="key" onClick={() => onChange(value + ' ')}>Bo‘sh joy</button><button className="key" aria-label="Oxirgi harfni o‘chirish" onClick={() => onChange(value.endsWith('‘') ? value.slice(0, -2) : value.slice(0, -1))}>⌫</button><button className="key" onClick={() => onChange('')}>Tozalash</button></div>
+  </div>;
 }

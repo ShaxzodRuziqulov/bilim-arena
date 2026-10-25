@@ -1,6 +1,6 @@
 const MEDALS = ['🥇', '🥈', '🥉', '4'];
 
-export default function Results({ result, onReplay, onAdmin }) {
+export default function Results({ result, onReplay, onAdmin, onReview }) {
   const ranked = [...result.teams].sort((a, b) => b.pos - a.pos || b.correct - a.correct);
 
   return (
@@ -50,11 +50,12 @@ export default function Results({ result, onReplay, onAdmin }) {
         </div>
       )}
       <div className="row-buttons center">
+        {result.hard.some(item=>item.question) && <button className="btn primary big" onClick={onReview}>✦ Xato savollarni takrorlash</button>}
         <button className="btn primary big" onClick={onReplay}>
           🔁 Yana o‘ynash
         </button>
         <button className="btn big" onClick={onAdmin}>
-          🔒 O‘qituvchi paneli
+          ← Dars studiyasi
         </button>
       </div>
     </div>

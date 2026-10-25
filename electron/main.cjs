@@ -1,35 +1,25 @@
 const { app, BrowserWindow, ipcMain, Menu } = require('electron');
 const { autoUpdater } = require('electron-updater');
 const path = require('path');
-const fs = require('fs');
 
 const devUrl = process.env.VITE_DEV_SERVER_URL;
 const isDev = !!devUrl;
+// Paketni sinashda o‘qituvchining haqiqiy profiliga tegilmaydi.
+const testDataDir = process.env.BILIM_ARENA_TEST_DATA_DIR;
+if (testDataDir) app.setPath('userData', path.resolve(testDataDir));
 
 let win = null;
-// Bolalar doskada Alt+F4 yoki yopish tugmasini bosib qo'ymasligi uchun
-// chiqishga faqat PIN tasdiqlangandan keyin ruxsat beriladi.
+// Yopish so‘rovi renderer orqali o‘tadi: kerak bo‘lsa PIN tekshiriladi,
+// barcha kutilayotgan yozishlar tugagach chiqishga ruxsat beriladi.
 let allowQuit = false;
 
 const dataFile = () => path.join(app.getPath('userData'), 'data.json');
 
-ipcMain.handle('data:load', () => {
-  try {
-    return JSON.parse(fs.readFileSync(dataFile(), 'utf8'));
-  } catch {
-    return null;
-  }
-});
-
-ipcMain.handle('data:save', (_event, data) => {
-  const file = dataFile();
-  const tmp = file + '.tmp';
-  // Avval vaqtinchalik faylga yozib, keyin almashtiramiz — yozish paytida
-  // tok o'chib qolsa ham eski ma'lumot buzilmaydi.
-  fs.writeFileSync(tmp, JSON.stringify(data));
-  fs.renameSync(tmp, file);
-  return true;
-});
+const { createDataStore } = require('./data-store.cjs');
+const schema = import('../shared/data-schema.mjs');
+const storage = async () => createDataStore(dataFile(), (await schema).validateData);
+ipcMain.handle('data:load', async () => (await storage()).load());
+ipcMain.handle('data:save', async (_event, data) => (await storage()).save(data));
 
 ipcMain.handle('app:version', () => app.getVersion());
 
@@ -60,7 +50,7 @@ autoUpdater.on('update-downloaded', (info) => setUpdateState({ status: 'ready', 
 autoUpdater.on('error', (error) => setUpdateState({ status: 'error', message: String(error?.message || error).slice(0, 300) }));
 
 function checkForUpdates() {
-  if (!app.isPackaged) return;
+  if (!app.isPackaged || testDataDir) return;
   // Internet bo'lmasa xato holati ko'rsatiladi, o'yin esa odatdagidek ishlayveradi.
   autoUpdater.checkForUpdates().catch(() => {});
 }
@@ -75,10 +65,11 @@ ipcMain.handle('update:install', () => {
 
 function createWindow() {
   win = new BrowserWindow({
+    show: !testDataDir,
     width: 1600,
     height: 900,
-    fullscreen: !isDev,
-    kiosk: !isDev,
+    fullscreen: false,
+    kiosk: false,
     autoHideMenuBar: true,
     backgroundColor: '#070d21',
     // O'rnatilgan dasturda belgi .exe faylning o'zidan olinadi; bu faqat ishlab chiqish rejimi uchun.
@@ -89,6 +80,8 @@ function createWindow() {
       nodeIntegration: false,
     },
   });
+
+  if (!isDev) win.maximize();
 
   // Sensorli doskada barmoqlar bilan tasodifan kattalashtirib yuborilmasin.
   win.webContents.setVisualZoomLevelLimits(1, 1);

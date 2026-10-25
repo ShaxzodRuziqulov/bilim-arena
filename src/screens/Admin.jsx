@@ -5,6 +5,8 @@ import { downloadExcelTemplate, exportSetToExcel, importSetFromExcel } from '../
 import { checkUpdate, installUpdate, useUpdateStatus } from '../lib/updates.js';
 import ConfirmButton from '../components/ConfirmButton.jsx';
 import PinModal from '../components/PinModal.jsx';
+import BackupPanel from '../components/BackupPanel.jsx';
+import { validateQuestion } from '../../shared/data-schema.mjs';
 
 const TABS = [
   ['sets', '📚 Savol to‘plamlari'],
@@ -12,7 +14,7 @@ const TABS = [
   ['settings', '⚙️ Sozlamalar'],
 ];
 
-export default function Admin({ data, update, go, askPin, tab: initialTab = 'sets' }) {
+export default function Admin({ data, update, go, askPin, onRestore, tab: initialTab = 'sets' }) {
   const [tab, setTab] = useState(initialTab);
   const updateStatus = useUpdateStatus();
 
@@ -20,7 +22,7 @@ export default function Admin({ data, update, go, askPin, tab: initialTab = 'set
     <div className="screen admin">
       <header className="topbar">
         <strong>🏝️ Bilim Arena</strong>
-        <small>O‘qituvchi paneli</small>
+        <small>Dars studiyasi</small>
         <nav className="tabs">
           {TABS.map(([id, label]) => (
             <button key={id} className={`tab ${tab === id ? 'active' : ''}`} onClick={() => setTab(id)}>
@@ -33,14 +35,14 @@ export default function Admin({ data, update, go, askPin, tab: initialTab = 'set
             ⬆ Yangi versiya tayyor
           </button>
         )}
-        <button className="btn gold" onClick={() => go({ name: 'home' })}>
+        <button className="btn" disabled={!data.pinHash} title={data.pinHash ? 'Doskani bolalarga topshirish' : 'Qulflash uchun sozlamalarda PIN yarating'} onClick={() => go({ name: 'home' })}>
           🔒 Qulflash
         </button>
       </header>
       <main className="admin-main">
         {tab === 'sets' && <SetsTab data={data} update={update} go={go} />}
         {tab === 'history' && <HistoryTab data={data} update={update} />}
-        {tab === 'settings' && <SettingsTab data={data} update={update} askPin={askPin} updateStatus={updateStatus} />}
+        {tab === 'settings' && <SettingsTab data={data} update={update} askPin={askPin} onRestore={onRestore} updateStatus={updateStatus} />}
       </main>
     </div>
   );
@@ -51,6 +53,12 @@ function SetsTab({ data, update, go }) {
   const excelRef = useRef(null);
   const [message, setMessage] = useState('');
   const [importErrors, setImportErrors] = useState([]);
+  const [search, setSearch] = useState('');
+  const [subject, setSubject] = useState('');
+  const [grade, setGrade] = useState('');
+  const subjects = [...new Set(data.sets.map((set) => set.subject))];
+  const filtered = data.sets.filter((set) => (!subject || set.subject === subject) && (!grade || set.grade === grade) && (set.name + ' ' + set.subject).toLocaleLowerCase('uz').includes(search.toLocaleLowerCase('uz')));
+  const readySet = data.sets.find((set) => playableQuestions(set).length > 0);
 
   const importExcel = async (event) => {
     const file = event.target.files[0];
@@ -90,7 +98,7 @@ function SetsTab({ data, update, go }) {
         ...newSet(parsed.name || file.name.replace(/\.json$/i, '')),
         subject: parsed.subject || 'Informatika',
         grade: parsed.grade || '7',
-        questions: parsed.questions.map((q) => normalizeQuestion({ ...q, id: uid() })),
+        questions: parsed.questions.map((q) => validateQuestion(normalizeQuestion({ ...q, id: uid() }))),
       };
       update((d) => ({ ...d, sets: [...d.sets, set] }));
       setMessage(`✅ “${set.name}” import qilindi (${set.questions.length} ta savol)`);
@@ -101,8 +109,21 @@ function SetsTab({ data, update, go }) {
 
   return (
     <>
-      <div className="section-head">
-        <h2>Savol to‘plamlari</h2>
+      <section className="studio-hero">
+        <div className="studio-copy">
+          <span className="eyebrow">BILIM ARENA / DARS STUDIYASI</span>
+          <h1>Bugungi darsni<br /><em>sarguzashtga aylantiring.</em></h1>
+          <p>To‘plam tanlang, jamoalarni tuzing va butun sinfni bilim poygasiga qo‘shing.</p>
+          <div className="row-buttons">
+            <button className="btn primary big" disabled={!readySet} onClick={() => go({ name: 'setup', setId: readySet.id })}>Darsni boshlash ↗</button>
+            <button className="btn big" onClick={addSet}>＋ To‘plam yaratish</button>
+          </div>
+          <div className="studio-facts"><span><b>{data.sets.length}</b> to‘plam</span><span><b>{subjects.length}</b> fan</span><span><b>{data.history.length}</b> o‘yin</span></div>
+        </div>
+        <div className="quest-preview" aria-hidden="true"><span className="preview-label">01 / XAZINA POYGASI</span><div className="preview-orbit" /><div className="preview-island"><span>🌴</span></div><i className="preview-step p1">1</i><i className="preview-step p2">2</i><i className="preview-step p3">★</i><span className="preview-hero">🦊</span><span className="preview-treasure">💰</span><div className="preview-caption">Har javob — yangi qadam.<small>2–4 jamoa · 5 xil savol · Internet talab qilmaydi</small></div></div>
+      </section>
+      <div className="section-head library-heading">
+        <div><span className="eyebrow">SIZNING KUTUBXONANGIZ</span><h2>Savol to‘plamlari</h2></div>
         <div className="row-buttons">
           <button className="btn" onClick={downloadExcelTemplate}>
             📄 Excel shablon
@@ -132,8 +153,15 @@ function SetsTab({ data, update, go }) {
         </details>
       )}
       {data.sets.length === 0 && <p className="muted">Hali to‘plam yo‘q. “Yangi to‘plam” tugmasini bosing.</p>}
+      <div className="library-filters">
+        <label>Qidirish<input type="search" placeholder="To‘plam yoki fan nomi…" value={search} onChange={(e) => setSearch(e.target.value)} /></label>
+        <label>Fan<select value={subject} onChange={(e) => setSubject(e.target.value)}><option value="">Barcha fanlar</option>{subjects.map((item) => <option key={item}>{item}</option>)}</select></label>
+        <label>Sinf<select value={grade} onChange={(e) => setGrade(e.target.value)}><option value="">Barcha sinflar</option>{['5','6','7','8','9','10','11','Aralash'].map((item) => <option key={item} value={item}>{item === 'Aralash' ? item : item + '-sinf'}</option>)}</select></label>
+        <span className="muted">{filtered.length} ta to‘plam</span>
+      </div>
+      {data.sets.length > 0 && filtered.length === 0 && <div className="panel empty-state"><h3>To‘plam topilmadi</h3><p>Qidiruvni o‘zgartiring yoki filtrlarni tozalang.</p><button className="btn" onClick={() => { setSearch(''); setSubject(''); setGrade(''); }}>Filtrlarni tozalash</button></div>}
       <div className="set-grid">
-        {data.sets.map((set) => {
+        {filtered.map((set) => {
           const ready = playableQuestions(set).length;
           return (
             <div key={set.id} className="set-card">
@@ -258,7 +286,7 @@ function UpdatePanel({ state, version }) {
   );
 }
 
-function SettingsTab({ data, update, askPin, updateStatus }) {
+function SettingsTab({ data, update, askPin, onRestore, updateStatus }) {
   const [changingPin, setChangingPin] = useState(false);
   const [saved, setSaved] = useState(false);
   const [version, setVersion] = useState('');
@@ -297,9 +325,11 @@ function SettingsTab({ data, update, askPin, updateStatus }) {
         </div>
         <div className="panel">
           <h3>Xavfsizlik</h3>
-          <p className="note">PIN kod o‘qituvchi paneliga, o‘yinni to‘xtatishga va dasturdan chiqishga kerak.</p>
-          <button className="btn" onClick={() => askPin('Joriy PINni tasdiqlang', () => setChangingPin(true))}>
-            🔑 PINni almashtirish
+          <p className="note">Oddiy rejimda darsni parolsiz boshqaring. Sinf himoyasi yoqilsa, o‘yin boshlanganidan keyin boshqaruv uchun bir marta PIN so‘raladi. Pauza va davom etish erkin.</p>
+          <label className="check"><input type="checkbox" disabled={!data.pinHash} checked={!!s.classroomLock} onChange={(e) => set({ classroomLock: e.target.checked })} /> Sinf himoyasi</label>
+          {!data.pinHash && <p className="note">Himoyani yoqish uchun avval PIN yarating.</p>}
+          <button className="btn" onClick={() => askPin('Joriy PINni tasdiqlang', () => setChangingPin(true), undefined, true)}>
+            🔑 {data.pinHash ? 'PINni almashtirish' : 'PIN yaratish'}
           </button>
           {saved && <p className="note">✅ Yangi PIN saqlandi</p>}
           {isDesktop && (
@@ -316,6 +346,7 @@ function SettingsTab({ data, update, askPin, updateStatus }) {
           <UpdatePanel state={updateStatus} version={version} />
         </div>
       </div>
+      <BackupPanel data={data} onRestore={onRestore} askPin={askPin} />
       {changingPin && (
         <PinModal
           title="Yangi PIN"

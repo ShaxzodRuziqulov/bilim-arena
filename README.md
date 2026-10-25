@@ -4,11 +4,11 @@ Sensorli elektron doska uchun jamoaviy ta'limiy o'yin (birinchi fan — Informat
 
 ## Hozir nimalar bor (1–2-bosqich)
 
-- **O‘qituvchi (admin) paneli** — PIN kod bilan himoyalangan. O‘quvchilar doskada sozlamalar va savollarni o‘zgartira olmaydi.
+- **Dars studiyasi** — birinchi ochilishdan parolsiz ishlaydi. Ixtiyoriy “Sinf himoyasi” va qo‘lda qulflash bor. Himoya yoqilganda o‘yin boshqaruviga qaytish uchun PIN kerak; pauza va davom etish PINsiz.
 - **Savol muharriri** — besh xil savol turi:
   - variantli (2–4 ta javob),
   - to‘g‘ri / noto‘g‘ri,
-  - javob yozish (doskada raqamli klaviatura, o‘n oltilik uchun A–F),
+  - javob yozish (doskada raqamlar, A–F yoki matnli harf klaviaturasi),
   - tartiblash (kartochkalarni to‘g‘ri ketma-ketlikda bosish),
   - moslashtirish (chap va o‘ng ustunni juftlash).
   Har bir savolga rasm, rangli kod parchasi (Python / Pascal / C++) va izoh qo‘shish mumkin.
@@ -17,9 +17,11 @@ Sensorli elektron doska uchun jamoaviy ta'limiy o'yin (birinchi fan — Informat
 - **Avtomatik yangilanish** — o‘rnatilgan dastur GitHub Releases’dan yangi versiyani fonda yuklab oladi
   va dastur yopilganda o‘rnatadi (Sozlamalar → Yangilanishlar).
 - **Xazina poygasi** — 2–4 jamoa navbat bilan doskaga chiqib javob beradi. To‘g‘ri javob — 1 qadam oldinga,
-  ⭐ bonus katak (+1), 🌀 girdob (−1). Xazinaga birinchi yetgan jamoa g‘olib.
+  ⭐ bonus katak (+1), 🌀 girdob (−1). Bir jamoa xazinaga yetgach, davra oxirigacha navbatlar tenglashtiriladi. Qadamlar, keyin to‘g‘ri javoblar soni solishtiriladi; teng natija — durang.
 - **Natijalar** — reyting, aniqlik foizi, ko‘p xato qilingan savollar; o‘yinlar tarixi saqlanadi.
 - To‘plamlarni `.json` fayl sifatida eksport / import qilish.
+- **To‘liq zaxira va tiklash** — Sozlamalar → Zaxira va tiklash. Avtomatik oldingi nusxa va saqlash xatosidan keyin qayta urinish mavjud.
+- **Xato savollarni takrorlash** — yangi o‘yin natijasidagi eng ko‘p xato qilingan 10 tagacha savol, vaqt cheklovisiz va asosiy natijani o‘zgartirmasdan.
 
 ## Ishga tushirish
 
@@ -38,7 +40,7 @@ npm run dev
 `npm run web` — faqat brauzerda ochish (http://localhost:5173), tez sinash uchun.
 
 `npm run dist` — Windows o‘rnatuvchi (`release/` papkasida `.exe`) yig‘adi.
-O‘rnatilgan dastur to‘liq ekranda (kiosk) ochiladi; chiqish faqat PIN bilan.
+O‘rnatilgan dastur kattalashtirilgan oddiy oynada ochiladi. O‘yin ichidagi ⛶ tugmasi to‘liq ekranga o‘tkazadi. PIN faqat ixtiyoriy himoya yoki qo‘lda qulflashda so‘raladi.
 
 ## Yangi versiya chiqarish
 
@@ -65,7 +67,7 @@ ogohlantirishini ko‘rsatishi mumkin — “Подробнее / More info → 
 ## Ma'lumotlar qayerda saqlanadi
 
 Dastur: `%APPDATA%\Bilim Arena\data.json` (savollar, sozlamalar, natijalar).
-PIN unutilsa — shu faylni o‘chirsangiz dastur boshidan sozlanadi (savollarni oldindan eksport qilib qo‘ying).
+Avtomatik oldingi nusxa: data.json.bak. PIN unutilsa savollar faylini o‘chirmang; PINni alohida tiklash kerak. Sozlamalardagi to‘liq zaxira fayli savollar va tarixni saqlash uchun ishlatiladi.
 
 ## Tuzilishi
 
@@ -80,3 +82,11 @@ src/screens/     Bosh ekran, admin, muharrir, o‘yin sozlash, poyga, natijalar
 
 3. Duel rejimi, Boss jangi, yoshga mos mavzular, musiqa.
 4. Telefon / kompyuter orqali Wi-Fi multiplayer, boshqa aniq fanlar.
+
+## Ishlar va qoidalar
+
+Maqsad, amaldagi qoidalar va o‘zgarishlar: [ISHLAR_VA_QOIDALAR.md](ISHLAR_VA_QOIDALAR.md).
+
+Dizayn qarorlari, PIN tartibi va kelajakdagi pullik mahsulot rejasi: [MAHSULOT_QARORLARI.md](MAHSULOT_QARORLARI.md).
+
+Tekshiruvlar: npm test va npm run build. Haqiqiy dars ssenariysi: [SINF_SINOVI.md](SINF_SINOVI.md).

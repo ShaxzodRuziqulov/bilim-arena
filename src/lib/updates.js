@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { isDesktop } from './store.js';
+import { isDesktop, flushData } from './store.js';
 
 // Electron'dagi yangilanish holatini kuzatadi: idle | dev | checking | latest | downloading | ready | error
 export function useUpdateStatus() {
@@ -15,4 +15,4 @@ export function useUpdateStatus() {
 }
 
 export const checkUpdate = () => isDesktop && window.api.checkUpdate();
-export const installUpdate = () => isDesktop && window.api.installUpdate();
+export const installUpdate = async () => { if (isDesktop && await flushData()) window.api.installUpdate(); };

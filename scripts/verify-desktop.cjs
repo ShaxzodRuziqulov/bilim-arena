@@ -1,0 +1,21 @@
+const {_electron:electron}=require(process.env.PLAYWRIGHT_MODULE || 'playwright');
+const assert=require('node:assert/strict');const path=require('node:path');const fs=require('node:fs');
+(async()=>{
+const exe=process.argv[2];if(!exe)throw Error('Installed executable path required');
+const profile=path.resolve('release/desktop-validation');fs.mkdirSync(profile,{recursive:true});
+const env={...process.env,BILIM_ARENA_TEST_DATA_DIR:profile};delete env.ELECTRON_RUN_AS_NODE;
+const launch=()=>electron.launch({executablePath:exe,env,timeout:45000});
+let app=await launch();let page=await app.firstWindow();const errors=[];page.on('pageerror',e=>errors.push(e.message));
+assert.equal(path.resolve(await app.evaluate(({app})=>app.getPath('userData'))),profile);
+assert.equal(await app.evaluate(({app})=>app.getVersion()),'0.3.0');
+await page.getByRole('heading',{name:'Savol to‘plamlari',exact:true}).waitFor();
+await page.getByRole('button',{name:'⚙️ Sozlamalar'}).click();
+const checkbox=page.getByLabel('Tovush effektlari');const original=await checkbox.isChecked();await checkbox.setChecked(!original);
+await page.waitForTimeout(900);const loaded=await page.evaluate(()=>window.api.load());assert.equal(loaded.data.settings.sound,!original);
+assert.ok(fs.existsSync(path.join(profile,'data.json.bak')));
+await page.getByRole('button',{name:'📚 Savol to‘plamlari'}).click();await page.getByRole('button',{name:'Darsni boshlash ↗'}).click();await page.getByRole('button',{name:'▶ O‘yinni boshlash'}).click();await page.getByRole('button',{name:'Savolni ochish ▶'}).click();await page.locator('.question-card').waitFor();
+await page.screenshot({path:path.join(profile,'installed-desktop.png'),animations:'disabled'});
+assert.deepEqual(errors,[]);await app.evaluate(({app})=>app.exit(0));await app.close().catch(()=>{});
+app=await launch();page=await app.firstWindow();await page.getByRole('heading',{name:'Savol to‘plamlari',exact:true}).waitFor();const reopened=await page.evaluate(()=>window.api.load());assert.equal(reopened.data.settings.sound,!original);await app.evaluate(({app})=>app.exit(0));await app.close().catch(()=>{});
+console.log('PASS: installed 0.3.0 starts from file://, preload/IPC work, original profile isolated, settings and backup saved, game/question opens, restart retains data, no renderer exceptions.');
+})().catch(e=>{console.error(e);process.exit(1);});

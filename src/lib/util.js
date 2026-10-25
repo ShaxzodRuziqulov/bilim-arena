@@ -13,7 +13,7 @@ export function shuffle(list) {
 export const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export const normalizeAnswer = (value) =>
-  String(value ?? '').trim().toLowerCase().replace(/\s+/g, '').replace(/,/g, '.');
+  String(value ?? '').replace(/[‘’ʻʼ]/g, "'").trim().toLowerCase().replace(/\s+/g, '').replace(/,/g, '.');
 
 // Bir nechta to'g'ri javobni ";" bilan ajratib yozish mumkin: "11; 11.0"
 export function checkInputAnswer(question, value) {

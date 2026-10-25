@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { hashPin } from '../lib/pin.js';
 import { play } from '../lib/sound.js';
 
@@ -48,11 +48,22 @@ export default function PinModal({ title, mode = 'verify', pinHash, onSuccess, o
     onSuccess(await hashPin(pin));
   };
 
+  useEffect(() => {
+    const handleKey = (event) => {
+      if (/^[0-9]$/.test(event.key)) { event.preventDefault(); press(event.key); }
+      else if (event.key === 'Backspace') { event.preventDefault(); press('⌫'); }
+      else if (event.key === 'Enter') { event.preventDefault(); submit(); }
+      else if (event.key === 'Escape' && onCancel) { event.preventDefault(); onCancel(); }
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  });
+
   const hint =
     mode === 'set' ? (first === null ? 'Yangi PIN kiriting (4–6 raqam)' : 'PINni yana bir marta kiriting') : 'PIN kodni kiriting';
 
   return (
-    <div className="overlay pin-overlay">
+    <div className="overlay pin-overlay" role="dialog" aria-modal="true" aria-label={title}>
       <div className={`pin-card ${shake ? 'shake' : ''}`}>
         <div className="pin-lock">🔒</div>
         <h2>{title}</h2>
@@ -63,7 +74,7 @@ export default function PinModal({ title, mode = 'verify', pinHash, onSuccess, o
             <span key={i} className={i < pin.length ? 'on' : ''} />
           ))}
         </div>
-        <div className="pin-error">{error}</div>
+        <div className="pin-error" role="status">{error}</div>
         <div className="pin-grid">
           {KEYS.map((key) => (
             <button key={key} className="pin-key" onClick={() => press(key)}>

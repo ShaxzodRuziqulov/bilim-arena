@@ -16,6 +16,8 @@ export default function GameSetup({ data, setId, go }) {
   const [time, setTime] = useState(data.settings.time);
   const [trackLength, setTrackLength] = useState(data.settings.trackLength);
 
+  const [theme, setTheme] = useState('adventure');
+
   const set = data.sets.find((s) => s.id === currentSetId);
   const questions = set ? playableQuestions(set) : [];
 
@@ -28,6 +30,9 @@ export default function GameSetup({ data, setId, go }) {
       key: uid(),
       config: {
         setName: set.name,
+        subject: set.subject,
+        grade: set.grade,
+        theme,
         questions,
         teams: teams.slice(0, count).map((t, i) => ({ ...t, id: i, name: t.name.trim() || TEAM_PRESETS[i].name })),
         time,
@@ -82,10 +87,12 @@ export default function GameSetup({ data, setId, go }) {
               </select>
             </div>
           </div>
+          <label>O‘yin muhiti</label>
+          <div className="theme-picker"><button className={theme === 'adventure' ? 'selected' : ''} onClick={() => setTheme('adventure')}><span>🏝️</span><b>Sarguzasht</b><small>Rangli orol va xazina</small></button><button className={theme === 'arena' ? 'selected' : ''} onClick={() => setTheme('arena')}><span>◆</span><b>Bilim maydoni</b><small>Sokin ranglar va aniq yo‘l</small></button></div>
           <div className="rules note">
             <b>Qoidalar:</b> jamoalar navbat bilan doskaga chiqadi. To‘g‘ri javob — 1 qadam oldinga.
             ⭐ katakka tushsangiz +1 bonus qadam, 🌀 girdobga tushsangiz 1 qadam orqaga (har bir katak
-            jamoaga bir marta ta’sir qiladi). Xazinaga birinchi yetgan jamoa g‘olib!
+            jamoaga bir marta ta’sir qiladi). Bir jamoa xazinaga yetgach, davra oxirigacha qolgan jamoalar ham navbatini o‘ynaydi. Avval qadamlar, keyin to‘g‘ri javoblar soni solishtiriladi. Ikkalasi teng bo‘lsa — durang. Har navbatda boshqa o‘quvchi chiqsin.
           </div>
         </div>
 

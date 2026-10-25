@@ -60,7 +60,8 @@ export default function SetEditor({ set, update, go }) {
           onChange={(e) => updateSet((s) => ({ ...s, name: e.target.value }))}
           placeholder="To‘plam nomi"
         />
-        <select value={set.grade} onChange={(e) => updateSet((s) => ({ ...s, grade: e.target.value }))}>
+        <input className="subject-input" aria-label="Fan nomi" placeholder="Fan nomi" value={set.subject} onChange={(e) => updateSet((s) => ({ ...s, subject: e.target.value }))} />
+        <select aria-label="Sinf" value={set.grade} onChange={(e) => updateSet((s) => ({ ...s, grade: e.target.value }))}>
           {GRADES.map((g) => (
             <option key={g} value={g}>
               {g === 'Aralash' ? 'Aralash sinflar' : `${g}-sinf`}
@@ -68,7 +69,7 @@ export default function SetEditor({ set, update, go }) {
           ))}
         </select>
         <span className="spacer" />
-        <span className="muted small">Hammasi avtomatik saqlanadi</span>
+        <span className="muted small">O‘zgarishlar avtomatik saqlanadi</span>
         <button className="btn primary" onClick={() => go({ name: 'setup', setId: set.id })}>
           ▶ O‘ynash
         </button>
@@ -286,6 +287,7 @@ function QuestionForm({ q, index, onChange, onDuplicate, onRemove, onMove }) {
             <select value={q.keypad} onChange={(e) => onChange({ keypad: e.target.value })}>
               <option value="number">Raqamlar (0–9, nuqta, minus)</option>
               <option value="hex">Raqamlar + A–F (o‘n oltilik)</option>
+                <option value="text">Matn (harflar va bo‘sh joy)</option>
             </select>
           </div>
         </div>
