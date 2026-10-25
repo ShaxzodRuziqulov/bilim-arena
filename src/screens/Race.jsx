@@ -140,7 +140,7 @@ export default function Race({ config, askPin, onFinish, onExit }) {
       const special = specials[pos];
       if (pos < N && special && !teamsRef.current[turn].used.includes(pos)) {
         setTeams((ts) => ts.map((t, i) => (i === turn ? { ...t, used: [...t.used, pos] } : t)));
-        setToast(special === 'bonus' ? '⭐ Bonus! Yana +1 qadam' : '🌀 Girdob! 1 qadam orqaga');
+        setToast(special === 'bonus' ? { kind: 'bonus', text: '⭐ Bonus! Yana +1 qadam' } : { kind: 'trap', text: '🌀 Girdob! 1 qadam orqaga' });
         play(special);
         await sleep(1200);
         pos = await step(turn, special === 'bonus' ? 1 : -1);
@@ -156,6 +156,7 @@ export default function Race({ config, askPin, onFinish, onExit }) {
     proceeding.current = false;
     setTurn((t) => (t + 1) % teamsRef.current.length);
     setPhase('ready');
+    play('turn');
   };
 
   const finish = (winnerName) => {
@@ -255,9 +256,13 @@ export default function Race({ config, askPin, onFinish, onExit }) {
               className={`token ${i === turn && phase !== 'won' ? 'active' : ''}`}
               style={{ left: `${p.x + spread(i)}%`, top: `${p.y}%`, '--team': t.color }}
             >
-              <span>
-                <i>{t.hero}</i>
-              </span>
+              {/* key=pos: har qadamda element yangilanib, sakrash animatsiyasi qayta ishlaydi. */}
+              <div key={t.pos} className={`token-jump ${t.pos > 0 ? 'moved' : ''}`}>
+                <span>
+                  <i>{t.hero}</i>
+                </span>
+              </div>
+              {t.pos > 0 && <b key={'ring' + t.pos} className="land-ring" />}
             </div>
           );
         })}
@@ -266,11 +271,12 @@ export default function Race({ config, askPin, onFinish, onExit }) {
           {teams.map((t, i) => (
             <div key={t.id} className={`score ${i === turn ? 'current' : ''}`} style={{ '--team': t.color }}>
               <span className="score-hero">{t.hero}</span>
-              <div>
+              <div className="score-info">
                 <b>{t.name}</b>
-                <small>
+                <small key={t.pos + '-' + t.correct} className="score-num">
                   {t.pos}/{N} qadam · ✓{t.correct}
                 </small>
+                <span className="score-bar"><i style={{ width: `${(t.pos / N) * 100}%` }} /></span>
               </div>
             </div>
           ))}
@@ -280,6 +286,14 @@ export default function Race({ config, askPin, onFinish, onExit }) {
             ⏸
           </button>
         </div>
+
+        {phase === 'ready' && (
+          <div key={`banner-${turn}-${questionNumber.current}`} className="turn-banner" style={{ '--team': team.color }} aria-hidden="true">
+            <span>{team.hero}</span>
+            <b>{team.name}</b>
+            <small>navbati</small>
+          </div>
+        )}
 
         {(phase === 'ready' || phase === 'moving') && (
           <div className="turn-panel" style={{ '--team': team.color }}>
@@ -296,7 +310,7 @@ export default function Race({ config, askPin, onFinish, onExit }) {
           </div>
         )}
 
-        {toast && <div className="toast">{toast}</div>}
+        {toast && <div className={`toast ${toast.kind}`}>{toast.text}</div>}
 
         {(phase === 'question' || phase === 'feedback') && current && (
           <QuestionCard
@@ -314,6 +328,7 @@ export default function Race({ config, askPin, onFinish, onExit }) {
 
         {phase === 'won' && (
           <div className="overlay win-overlay">
+            <div className="win-rays" aria-hidden="true" />
             <Confetti />
             <div className="win-card" style={{ '--team': team.color }}>
               <div className="win-hero">🏆</div>
@@ -390,15 +405,8 @@ export function QuestionCard({ item, team, time, paused, phase, result, onAnswer
           <span className="q-team">
             {team.hero} {team.name} javob beryapti
           </span>
-          {time > 0 && (
-            <span className={`q-timer ${left <= 5 && !answered ? 'urgent' : ''}`}>⏱ {Math.max(0, left)} s</span>
-          )}
+          {time > 0 && <TimerRing left={Math.max(0, left)} total={time} urgent={left <= 5 && !answered} />}
         </div>
-        {time > 0 && (
-          <div className="time-track">
-            <i style={{ width: `${(Math.max(0, left) / time) * 100}%` }} />
-          </div>
-        )}
 
         <div className="q-body">
           <div className="q-main">
@@ -414,11 +422,13 @@ export function QuestionCard({ item, team, time, paused, phase, result, onAnswer
               <button
                 key={i}
                 className={`answer a${i} ${tileClass(opt, i)}`}
+                style={{ '--i': i }}
                 disabled={answered}
                 onClick={() => onAnswer(opt.correct, { chosen: i })}
               >
                 {q.type === 'choice' && <span className="gem">{GEMS[i]}</span>}
                 <span className="answer-text">{opt.text}</span>
+                {answered && opt.correct && <span className="answer-mark">✓</span>}
               </button>
             ))}
           </div>
@@ -449,6 +459,7 @@ export function QuestionCard({ item, team, time, paused, phase, result, onAnswer
           </div>
         )}
 
+        {answered && result.correct && <Sparkles />}
         {answered && (
           <div className={`feedback ${result.correct ? 'good' : 'bad'}`}>
             <div className="feedback-text">
@@ -500,14 +511,19 @@ function Confetti() {
         left: Math.random() * 100,
         delay: Math.random() * 2.5,
         duration: 2.5 + Math.random() * 2.5,
-        icon: ['🎉', '✨', '💰', '⭐', '🪙', '🎊'][i % 6],
+        icon: i % 3 === 0 ? ['🪙', '⭐', '✨'][i % 9 / 3] : null,
+        color: ['#ffcf4a', '#ff5c7a', '#4da3ff', '#3fe0a0', '#b98cff'][i % 5],
       })),
     [],
   );
   return (
     <div className="confetti" aria-hidden="true">
       {pieces.map((p) => (
-        <span key={p.id} style={{ left: `${p.left}%`, animationDelay: `${p.delay}s`, animationDuration: `${p.duration}s` }}>
+        <span
+          key={p.id}
+          className={p.icon ? '' : 'paper'}
+          style={{ left: `${p.left}%`, animationDelay: `${p.delay}s`, animationDuration: `${p.duration}s`, '--c': p.color }}
+        >
           {p.icon}
         </span>
       ))}
@@ -522,4 +538,30 @@ function TextKeypad({ value, onChange }) {
     <div className="text-keypad">{keys.map((key) => <button className="key" key={key} onClick={() => { play('tap'); onChange((value + key).slice(0, 100)); }}>{key}</button>)}</div>
     <div className="text-keypad-actions"><button className="key" onClick={() => onChange(value + ' ')}>Bo‘sh joy</button><button className="key" aria-label="Oxirgi harfni o‘chirish" onClick={() => onChange(value.endsWith('‘') ? value.slice(0, -2) : value.slice(0, -1))}>⌫</button><button className="key" onClick={() => onChange('')}>Tozalash</button></div>
   </div>;
+}
+
+function TimerRing({ left, total, urgent }) {
+  const r = 22;
+  const length = 2 * Math.PI * r;
+  return (
+    <span className={`timer-ring ${urgent ? 'urgent' : ''}`} role="timer" aria-label={`${left} soniya qoldi`}>
+      <svg viewBox="0 0 50 50" aria-hidden="true">
+        <circle className="timer-bg" cx="25" cy="25" r={r} />
+        <circle className="timer-fg" cx="25" cy="25" r={r} strokeDasharray={length} strokeDashoffset={length * (1 - left / total)} />
+      </svg>
+      <b>{left}</b>
+    </span>
+  );
+}
+
+// To'g'ri javobdan keyin kartaning markazidan uchqunlar sochiladi.
+function Sparkles() {
+  const dots = useMemo(() => Array.from({ length: 14 }, (_, i) => ({ id: i, angle: (360 / 14) * i + Math.random() * 12, dist: 18 + Math.random() * 14 })), []);
+  return (
+    <div className="sparkles" aria-hidden="true">
+      {dots.map((d) => (
+        <i key={d.id} style={{ '--a': `${d.angle}deg`, '--d': `${d.dist}cqw` }} />
+      ))}
+    </div>
+  );
 }

@@ -322,6 +322,10 @@ function SettingsTab({ data, update, askPin, onRestore, updateStatus }) {
           <label className="check">
             <input type="checkbox" checked={s.sound} onChange={(e) => set({ sound: e.target.checked })} /> Tovush effektlari
           </label>
+          <label className="check">
+            <input type="checkbox" checked={s.animations} onChange={(e) => set({ animations: e.target.checked })} /> Animatsiyalar
+          </label>
+          <p className="note">Kompyuter yoki doska sekin ishlasa, animatsiyalarni o‘chiring.</p>
         </div>
         <div className="panel">
           <h3>Xavfsizlik</h3>

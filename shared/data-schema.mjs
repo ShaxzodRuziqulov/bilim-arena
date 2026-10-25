@@ -1,4 +1,4 @@
-export const DEFAULT_SETTINGS = { time: 30, trackLength: 12, sound: true, classroomLock: false };
+export const DEFAULT_SETTINGS = { time: 30, trackLength: 12, sound: true, classroomLock: false, animations: true };
 const object = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);
 const fail = (message) => { throw new Error(message); };
 const text = (v, fallback = '') => v === undefined ? fallback : typeof v === 'string' ? v : fail('Matn maydoni noto‘g‘ri');
@@ -20,8 +20,8 @@ export function validateData(raw) {
   const s=raw.settings ?? {}; if (!object(s)) fail('Sozlamalar formati noto‘g‘ri');
   const time=s.time ?? 30, trackLength=s.trackLength ?? 12;
   if (![0,15,20,30,45,60,90].includes(time) || ![8,10,12,16,20].includes(trackLength)) fail('O‘yin sozlamalari noto‘g‘ri');
-  if ((s.sound !== undefined && typeof s.sound !== 'boolean') || (s.classroomLock !== undefined && typeof s.classroomLock !== 'boolean')) fail('Sozlamalar turi noto‘g‘ri');
-  return {version:1,pinHash:raw.pinHash ?? null,settings:{time,trackLength,sound:s.sound ?? true,classroomLock:!!raw.pinHash && !!s.classroomLock},sets:unique(raw.sets.map(set=>{
+  if ((s.sound !== undefined && typeof s.sound !== 'boolean') || (s.classroomLock !== undefined && typeof s.classroomLock !== 'boolean') || (s.animations !== undefined && typeof s.animations !== 'boolean')) fail('Sozlamalar turi noto‘g‘ri');
+  return {version:1,pinHash:raw.pinHash ?? null,settings:{time,trackLength,sound:s.sound ?? true,classroomLock:!!raw.pinHash && !!s.classroomLock,animations:s.animations ?? true},sets:unique(raw.sets.map(set=>{
     if (!object(set) || !set.id || typeof set.id !== 'string') fail('To‘plam formati noto‘g‘ri');
     return {id:set.id,name:text(set.name,'Nomsiz to‘plam'),subject:text(set.subject,'Umumiy'),grade:text(set.grade,'Aralash'),questions:unique(list(set.questions).map(validateQuestion))};
   })),history:raw.history.slice(0,300).map(h=>{

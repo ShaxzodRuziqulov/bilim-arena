@@ -29,6 +29,7 @@ const effects = {
   step: () => tone(880, 0, 0.09, 'square', 0.06),
   bonus: () => [784, 988, 1175, 1568].forEach((f, i) => tone(f, i * 0.06, 0.2, 'sine')),
   trap: () => [392, 311, 262].forEach((f, i) => tone(f, i * 0.12, 0.25, 'square', 0.08)),
+  turn: () => [587, 784].forEach((f, i) => tone(f, i * 0.08, 0.16, 'sine', 0.08)),
   tick: () => tone(1200, 0, 0.05, 'square', 0.05),
   win: () =>
     [523, 659, 784, 1047, 784, 1047, 1319].forEach((f, i) => tone(f, i * 0.12, 0.35, 'triangle', 0.2)),

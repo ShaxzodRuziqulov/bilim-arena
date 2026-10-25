@@ -108,3 +108,26 @@ Mahsulot qarorlari va takliflar: [MAHSULOT_QARORLARI.md](MAHSULOT_QARORLARI.md).
 - npm test: 17/17 o‘tdi. npm run dist: Windows paketi muvaffaqiyatli yig‘ildi.
 - GitHubga push yoki ommaviy release qilinmadi; kompyuterdagi dastur yangilandi. Foydalanuvchi avvalgi yorliqdan kirib sinaydi.
 - Haqiqiy doskada dars va avtomatik internet yangilanishi hali tekshirilmagan.
+
+## 2026-10-25 — zamonaviy ko‘rinish va animatsiyalar
+### Qarorlar (5–11-sinflar uchun)
+- Jonli, o‘yinga o‘xshash, lekin bolalarcha emas: aniq tipografiya, yorqin ranglar, ma’noli harakat. Animatsiya vaqtni cho‘zmaydi — har biri 0,3–1,6 soniya.
+- Proyektorda o‘qilishi birinchi o‘rinda: javob plitalarida to‘q rang va oq matn, savol matni kattaroq va qalinroq.
+- Rang bilan birga shakl (◆●▲■) va belgilar (✓ / ✗) ishlatiladi: rangni ajrata olmaydigan o‘quvchilar ham tushunadi.
+- Shrift: Nunito (OFL litsenziyasi) dastur ichiga qo‘shilgan, internet talab qilmaydi.
+- Sekin kompyuterlar uchun Sozlamalarda "Animatsiyalar" o‘chirgichi qo‘shildi; Windows’dagi "harakatni kamaytirish" ham hisobga olinadi.
+
+### Bajarilgan ishlar
+- Tuzatildi: To‘g‘ri/Noto‘g‘ri tugmalarida to‘q fonda to‘q matn edi; javobdan keyingi xabar xira edi; natijalar ekranida raqamlar oq fonda oq edi.
+- Tuzatildi: faol jamoa kartasi atrofidagi katta pushti dog‘; navbat panelida matnning ikki qatorga bo‘linishi.
+- Savol oynasi: kartaning sakrab chiqishi, javob plitalarining navbat bilan paydo bo‘lishi, aylana taymer, to‘g‘ri javobda belgi va uchqunlar, xatoda silkinish.
+- Taxta: har qadamda qahramon sakraydi va qo‘nish to‘lqini chiqadi; navbat almashganda ekran bo‘ylab jamoa banneri; hisob kartalarida yo‘l chizig‘i; bonus/girdob xabarlari alohida rangda.
+- G‘alaba: aylanuvchi nurlar, kubok tushishi, rangli konfetti.
+- Natijalar: shohsupa (g‘olib o‘rtada), ko‘rsatkichlar sanab chiqadi.
+- Sinf ekrani: harakatlanuvchi rangli fon va suzib yuruvchi qahramonlar. Ekranlar orasida yumshoq o‘tish.
+- Savol oynasidagi orqa fonni xiralashtirish (backdrop-filter) olib tashlandi: kuchsiz kompyuterlarni sekinlashtiradi va taxtada iz qoldirardi.
+
+### Tekshiruv
+- npm test — 18/18 o‘tdi (animatsiya sozlamasi testi qo‘shildi). npm run build — muvaffaqiyatli.
+- Brauzerda 1600×900 da ko‘rildi: taxta, navbat banneri, yozma va variantli savol, to‘g‘ri/xato javob, natijalar, sinf ekrani. Konsolda xato yo‘q.
+- G‘alaba oynasi skrinshotda alohida ko‘rilmadi. Haqiqiy doska va proyektorda ranglar hali tekshirilmagan.

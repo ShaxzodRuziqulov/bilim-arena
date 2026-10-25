@@ -63,3 +63,8 @@ test('ketma-ket yozish parallel ketmaydi, yangilanish yo‘qolmaydi',async()=>{
   let release;const saved=[];globalThis.window={api:{save:async value=>{saved.push(value.sets[0].name);if(saved.length===1)await new Promise(resolve=>release=resolve);}}};
   const store=await import('../src/lib/store.js?queue');store.saveData(data('A'));const flushed=store.flushData();store.saveData(data('B'));assert.deepEqual(saved,['A']);release();assert.equal(await flushed,true);assert.deepEqual(saved,['A','B']);delete globalThis.window;
 });
+test('animatsiya sozlamasi: eski ma’lumotda yoqilgan, noto‘g‘ri tur rad etiladi', () => {
+  assert.equal(validateData(data()).settings.animations, true);
+  assert.equal(validateData({...data(),settings:{...data().settings,animations:false}}).settings.animations, false);
+  assert.throws(() => validateData({...data(),settings:{...data().settings,animations:'ha'}}));
+});

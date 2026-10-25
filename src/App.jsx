@@ -36,6 +36,11 @@ export default function App() {
     if (data) setSoundEnabled(data.settings.sound);
   }, [data?.settings.sound]);
 
+  // Sekin doskalarda animatsiyalarni o'chirish uchun butun sahifaga sinf qo'yiladi.
+  useEffect(() => {
+    document.documentElement.classList.toggle('reduce-motion', data?.settings.animations === false);
+  }, [data?.settings.animations]);
+
   const update = useCallback((fn) => {
     const next = fn(dataRef.current);
     dataRef.current = next;
@@ -121,7 +126,7 @@ export default function App() {
 
   return (
     <>
-      {content ?? <Home onAdmin={toAdmin} />}
+      <div key={screen.name} className="screen-enter">{content ?? <Home onAdmin={toAdmin} />}</div>
       {saveStatus.kind === 'error' && <div className="save-banner" role="alert"><span>{saveStatus.message}</span><button className="btn" onClick={()=>flushData()}>Qayta saqlash</button><button className="btn" onClick={()=>exportBackup(data)}>Zaxira olish</button></div>}
       {saveStatus.kind === 'recovered' && <div className="save-banner recovered" role="status"><span>{saveStatus.message}</span><button className="btn" onClick={dismissRecovery}>Tushunarli</button></div>}
       {saveStatus.kind === 'pending' && <div className="saving-indicator" role="status">Saqlanmoqda…</div>}
