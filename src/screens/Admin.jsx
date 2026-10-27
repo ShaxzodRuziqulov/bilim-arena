@@ -7,9 +7,11 @@ import ConfirmButton from '../components/ConfirmButton.jsx';
 import PinModal from '../components/PinModal.jsx';
 import BackupPanel from '../components/BackupPanel.jsx';
 import { validateQuestion } from '../../shared/data-schema.mjs';
+import { ROBOT_GAMES } from '../lib/robot/games.js';
 
 const TABS = [
   ['sets', '📚 Savol to‘plamlari'],
+  ['robot', '🤖 Robot dasturlash'],
   ['history', '🏆 Natijalar tarixi'],
   ['settings', '⚙️ Sozlamalar'],
 ];
@@ -41,6 +43,7 @@ export default function Admin({ data, update, go, askPin, onRestore, tab: initia
       </header>
       <main className="admin-main">
         {tab === 'sets' && <SetsTab data={data} update={update} go={go} />}
+        {tab === 'robot' && <RobotTab data={data} update={update} go={go} />}
         {tab === 'history' && <HistoryTab data={data} update={update} />}
         {tab === 'settings' && <SettingsTab data={data} update={update} askPin={askPin} onRestore={onRestore} updateStatus={updateStatus} />}
       </main>
@@ -203,6 +206,52 @@ function SetsTab({ data, update, go }) {
   );
 }
 
+function RobotTab({ data, update, go }) {
+  return (
+    <>
+      <div className="section-head">
+        <h2>Robot dasturlash</h2>
+      </div>
+      <p className="note">
+        Savol to‘plami kerak emas — darajalar o‘yin ichida tayyor. <b>Jamoaviy o‘yin</b>da jamoalar navbat bilan doskaga chiqib bitta
+        darajani yechadi va yulduz yig‘adi. <b>Mashq rejimi</b>da darajani erkin tanlash mumkin (masalan, mavzuni tushuntirish uchun).
+      </p>
+      <div className="set-grid">
+        {Object.entries(ROBOT_GAMES).map(([id, g]) => {
+          const stars = data.robot?.[id]?.stars || {};
+          const solved = Object.keys(stars).length;
+          return (
+            <div key={id} className="set-card robot-card">
+              <div className="set-card-top">
+                <span className="chip">Informatika</span>
+                <span className="chip">{g.grades}</span>
+              </div>
+              <h3>
+                {g.icon} {g.title}
+              </h3>
+              <p className="muted">{g.about}</p>
+              <p className="muted small">
+                {g.levels.length} ta daraja · mashqda yechilgan: {solved}/{g.levels.length}
+              </p>
+              <div className="set-card-actions">
+                <button className="btn primary" onClick={() => go({ name: 'robotSetup', game: id })}>
+                  ▶ Jamoaviy o‘yin
+                </button>
+                <button className="btn" onClick={() => go({ name: 'robot', key: uid(), config: { game: id, mode: 'practice' } })}>
+                  🎯 Mashq rejimi
+                </button>
+                {solved > 0 && (
+                  <ConfirmButton onConfirm={() => update((d) => ({ ...d, robot: { ...d.robot, [id]: {} } }))}>↺ Mashqni tozalash</ConfirmButton>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </>
+  );
+}
+
 function HistoryTab({ data, update }) {
   return (
     <>
@@ -224,7 +273,8 @@ function HistoryTab({ data, update }) {
               {h.teams.map((t) => (
                 <span key={t.name} className="chip" style={{ borderColor: t.color }}>
                   {h.winner === t.name && '👑 '}
-                  {t.hero} {t.name}: {t.pos}/{h.trackLength} qadam · ✓{t.correct} ✗{t.wrong}
+                  {t.hero} {t.name}:{' '}
+                  {h.kind === 'robot' ? `★ ${t.score} · ${t.solved}/${h.rounds} daraja` : `${t.pos}/${h.trackLength} qadam · ✓${t.correct} ✗${t.wrong}`}
                 </span>
               ))}
             </div>

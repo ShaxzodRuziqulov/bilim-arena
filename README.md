@@ -18,6 +18,12 @@ Sensorli elektron doska uchun jamoaviy ta'limiy o'yin (birinchi fan — Informat
   va dastur yopilganda o‘rnatadi (Sozlamalar → Yangilanishlar).
 - **Xazina poygasi** — 2–4 jamoa navbat bilan doskaga chiqib javob beradi. To‘g‘ri javob — 1 qadam oldinga,
   ⭐ bonus katak (+1), 🌀 girdob (−1). Bir jamoa xazinaga yetgach, davra oxirigacha navbatlar tenglashtiriladi. Qadamlar, keyin to‘g‘ri javoblar soni solishtiriladi; teng natija — durang.
+- **Robot dasturlash** (O‘qituvchi paneli → 🤖) — savol to‘plami kerak emas:
+  - *Robo Kod* (5–7-sinf) — tugmalar bilan buyruqlar, P funksiyasi va rekursiya, 10 ta daraja;
+  - *Java Robot* (8–11-sinf) — haqiqiy Java kodi (metod, int, for, while, if), 6 ta dars,
+    xatolar o‘zbekcha va qator raqami bilan; doskada yozish uchun tayyor bo‘laklar va ekran tugmalari.
+  Jamoaviy rejimda har daraja — raund, jamoalar navbat bilan yechib yulduz yig‘adi; mashq rejimida daraja erkin tanlanadi.
+  Ikkalasida ham qadam-baqadam bajarish va tezlikni tanlash bor.
 - **Natijalar** — reyting, aniqlik foizi, ko‘p xato qilingan savollar; o‘yinlar tarixi saqlanadi.
 - To‘plamlarni `.json` fayl sifatida eksport / import qilish.
 - **To‘liq zaxira va tiklash** — Sozlamalar → Zaxira va tiklash. Avtomatik oldingi nusxa va saqlash xatosidan keyin qayta urinish mavjud.

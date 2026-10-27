@@ -1,18 +1,11 @@
 import { useState } from 'react';
 import { playableQuestions, uid } from '../lib/util.js';
-
-export const TEAM_PRESETS = [
-  { name: 'Qizillar', color: '#ff5c7a', hero: '🦊' },
-  { name: 'Ko‘klar', color: '#4da3ff', hero: '🧑‍🚀' },
-  { name: 'Yashillar', color: '#3fe0a0', hero: '🐢' },
-  { name: 'Sariqlar', color: '#ffc94d', hero: '🦁' },
-];
-const HEROES = ['🦊', '🧑‍🚀', '🐢', '🦁', '🥷', '🧙', '🤖', '🐼', '🐉', '🦉', '🐬', '🦄'];
+import TeamPicker, { freshTeams, pickTeams } from '../components/TeamPicker.jsx';
 
 export default function GameSetup({ data, setId, go }) {
   const [currentSetId, setCurrentSetId] = useState(setId ?? data.sets[0]?.id);
   const [count, setCount] = useState(2);
-  const [teams, setTeams] = useState(TEAM_PRESETS.map((t) => ({ ...t })));
+  const [teams, setTeams] = useState(freshTeams);
   const [time, setTime] = useState(data.settings.time);
   const [trackLength, setTrackLength] = useState(data.settings.trackLength);
 
@@ -20,9 +13,6 @@ export default function GameSetup({ data, setId, go }) {
 
   const set = data.sets.find((s) => s.id === currentSetId);
   const questions = set ? playableQuestions(set) : [];
-
-  const editTeam = (i, patch) => setTeams((ts) => ts.map((t, j) => (j === i ? { ...t, ...patch } : t)));
-  const nextHero = (i) => editTeam(i, { hero: HEROES[(HEROES.indexOf(teams[i].hero) + 1) % HEROES.length] });
 
   const start = () =>
     go({
@@ -34,7 +24,7 @@ export default function GameSetup({ data, setId, go }) {
         grade: set.grade,
         theme,
         questions,
-        teams: teams.slice(0, count).map((t, i) => ({ ...t, id: i, name: t.name.trim() || TEAM_PRESETS[i].name })),
+        teams: pickTeams(teams, count),
         time,
         trackLength,
       },
@@ -98,24 +88,7 @@ export default function GameSetup({ data, setId, go }) {
 
         <div className="panel">
           <h3>3. Jamoalar</h3>
-          <div className="segmented">
-            {[2, 3, 4].map((n) => (
-              <button key={n} className={count === n ? 'active' : ''} onClick={() => setCount(n)}>
-                {n} jamoa
-              </button>
-            ))}
-          </div>
-          <div className="team-edit-list">
-            {teams.slice(0, count).map((t, i) => (
-              <div key={i} className="team-edit" style={{ borderColor: t.color }}>
-                <button className="hero-pick" style={{ background: t.color + '33' }} onClick={() => nextHero(i)} title="Qahramonni almashtirish">
-                  {t.hero}
-                </button>
-                <input value={t.name} onChange={(e) => editTeam(i, { name: e.target.value })} />
-              </div>
-            ))}
-          </div>
-          <p className="note small">Qahramonni almashtirish uchun uning ustiga bosing.</p>
+          <TeamPicker count={count} setCount={setCount} teams={teams} setTeams={setTeams} />
           <button className="btn primary big full" disabled={questions.length === 0} onClick={start}>
             ▶ O‘yinni boshlash
           </button>

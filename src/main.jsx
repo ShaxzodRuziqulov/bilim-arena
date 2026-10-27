@@ -5,6 +5,7 @@ import App from './App.jsx';
 import '@fontsource-variable/nunito';
 import './styles.css';
 import './game.css';
+import './robot.css';
 
 // Sensorli doskada uzoq bosish kontekst menyusini ochmasin.
 window.addEventListener('contextmenu', (e) => e.preventDefault());

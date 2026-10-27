@@ -68,3 +68,12 @@ test('animatsiya sozlamasi: eski ma’lumotda yoqilgan, noto‘g‘ri tur rad et
   assert.equal(validateData({...data(),settings:{...data().settings,animations:false}}).settings.animations, false);
   assert.throws(() => validateData({...data(),settings:{...data().settings,animations:'ha'}}));
 });
+test('robot natijalari va mashq yulduzlari saqlanadi, noto‘g‘ri qiymat rad etiladi', () => {
+  const result = {id:'r',kind:'robot',game:'java',date:'2026-10-27',setName:'Java Robot',rounds:2,maxScore:6,winner:'Ko‘klar',teams:[{name:'Ko‘klar',color:'#4da3ff',hero:'🧑‍🚀',score:5,solved:2}]};
+  const valid = validateData({...data(),history:[result],robot:{kod:{stars:{0:3,4:1}}}});
+  assert.deepEqual(valid.history[0], result);
+  assert.deepEqual(valid.robot, {kod:{stars:{0:3,4:1}}});
+  assert.deepEqual(validateData(data()).robot, {});
+  assert.throws(() => validateData({...data(),robot:{kod:{stars:{0:5}}}}));
+  assert.throws(() => validateData({...data(),history:[{...result,game:'chess'}]}));
+});

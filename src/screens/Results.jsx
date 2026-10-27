@@ -24,7 +24,11 @@ function CountUp({ value, delay = 0 }) {
 }
 
 export default function Results({ result, onReplay, onAdmin, onReview }) {
-  const ranked = [...result.teams].sort((a, b) => b.pos - a.pos || b.correct - a.correct);
+  const robot = result.kind === 'robot';
+  // Robot o'yinlarida tartib yulduzlar bo'yicha, poygada — qadamlar bo'yicha.
+  const main = robot ? 'score' : 'pos';
+  const second = robot ? 'solved' : 'correct';
+  const ranked = [...result.teams].sort((a, b) => b[main] - a[main] || b[second] - a[second]);
   // Shohsupada g'olib o'rtada turadi: 2 — 1 — 3 — 4.
   const stage = ranked.length >= 3 ? [ranked[1], ranked[0], ...ranked.slice(2)] : ranked;
 
@@ -38,7 +42,7 @@ export default function Results({ result, onReplay, onAdmin, onReview }) {
         {stage.map((t) => {
           const total = t.correct + t.wrong;
           // Natijasi teng jamoalar bir xil o'rinni egallaydi.
-          const place = ranked.findIndex((o) => o.pos === t.pos && o.correct === t.correct);
+          const place = ranked.findIndex((o) => o[main] === t[main] && o[second] === t[second]);
           const order = ranked.indexOf(t);
           return (
             <div key={t.name} className={`podium-col place-${place + 1}`} style={{ '--team': t.color, '--delay': `${(ranked.length - order) * 0.18}s` }}>
@@ -46,33 +50,56 @@ export default function Results({ result, onReplay, onAdmin, onReview }) {
                 <div className="medal">{MEDALS[place]}</div>
                 <div className="podium-hero">{t.hero}</div>
                 <h2>{t.name}</h2>
-                <div className="podium-stats">
-                  <div>
-                    <b>
-                      <CountUp value={t.pos} delay={400} />/{result.trackLength}
-                    </b>
-                    qadam
+                {robot ? (
+                  <div className="podium-stats">
+                    <div>
+                      <b>
+                        ★ <CountUp value={t.score} delay={400} />
+                      </b>
+                      {result.maxScore} dan
+                    </div>
+                    <div>
+                      <b>
+                        <CountUp value={t.solved} delay={400} />/{result.rounds}
+                      </b>
+                      daraja
+                    </div>
+                    <div>
+                      <b>
+                        <CountUp value={result.rounds ? Math.round((t.solved / result.rounds) * 100) : 0} delay={400} />%
+                      </b>
+                      yechildi
+                    </div>
                   </div>
-                  <div>
-                    <b>
-                      <CountUp value={t.correct} delay={400} />
-                    </b>
-                    to‘g‘ri
+                ) : (
+                  <div className="podium-stats">
+                    <div>
+                      <b>
+                        <CountUp value={t.pos} delay={400} />/{result.trackLength}
+                      </b>
+                      qadam
+                    </div>
+                    <div>
+                      <b>
+                        <CountUp value={t.correct} delay={400} />
+                      </b>
+                      to‘g‘ri
+                    </div>
+                    <div>
+                      <b>
+                        <CountUp value={total ? Math.round((t.correct / total) * 100) : 0} delay={400} />%
+                      </b>
+                      aniqlik
+                    </div>
                   </div>
-                  <div>
-                    <b>
-                      <CountUp value={total ? Math.round((t.correct / total) * 100) : 0} delay={400} />%
-                    </b>
-                    aniqlik
-                  </div>
-                </div>
+                )}
               </div>
               <div className="podium-base">{place + 1}</div>
             </div>
           );
         })}
       </div>
-      {result.hard.length > 0 && (
+      {result.hard?.length > 0 && (
         <div className="panel hard-list">
           <h3>📌 Takrorlash kerak bo‘lgan savollar</h3>
           <ul>
@@ -85,7 +112,7 @@ export default function Results({ result, onReplay, onAdmin, onReview }) {
         </div>
       )}
       <div className="row-buttons center">
-        {result.hard.some((item) => item.question) && (
+        {result.hard?.some((item) => item.question) && (
           <button className="btn primary big" onClick={onReview}>
             ✦ Xato savollarni takrorlash
           </button>

@@ -11,6 +11,8 @@ import Race from './screens/Race.jsx';
 import Results from './screens/Results.jsx';
 import Review from './screens/Review.jsx';
 import BackupPanel, { exportBackup } from './components/BackupPanel.jsx';
+import RobotSetup from './screens/RobotSetup.jsx';
+import RobotGame from './screens/RobotGame.jsx';
 
 export default function App() {
   const [data, setData] = useState(null);
@@ -56,7 +58,7 @@ export default function App() {
     setPinRequest({ title, onSuccess, onCancel });
   }, [data?.pinHash]);
   const go = useCallback((next) => {
-    if (next.name === 'home' || (next.name === 'race' && data?.settings.classroomLock)) teacherUnlocked.current = false;
+    if (next.name === 'home' || ((next.name === 'race' || next.name === 'robot') && data?.settings.classroomLock)) teacherUnlocked.current = false;
     setScreen(next);
   }, [data?.settings.classroomLock]);
 
@@ -108,11 +110,40 @@ export default function App() {
     case 'review':
       content = <Review result={screen.result} onBack={() => go({ name: 'results', result: screen.result, config: screen.config })} />;
       break;
+    case 'robotSetup':
+      content = <RobotSetup game={screen.game} go={go} />;
+      break;
+    case 'robot': {
+      const { game } = screen.config;
+      content = (
+        <RobotGame
+          key={screen.key}
+          config={screen.config}
+          progress={data.robot?.[game] || {}}
+          onProgress={(level, stars) =>
+            update((d) => {
+              const p = d.robot?.[game] || {};
+              return { ...d, robot: { ...d.robot, [game]: { ...p, stars: { ...p.stars, [level]: stars } } } };
+            })
+          }
+          askPin={askPin}
+          onExit={() => askPin('O‘qituvchi studiyasi', () => {
+            teacherUnlocked.current = true;
+            go({ name: 'admin', tab: 'robot' });
+          })}
+          onFinish={(result) => {
+            update((d) => ({ ...d, history: [result, ...d.history].slice(0, 300) }));
+            go({ name: 'results', result, config: screen.config });
+          }}
+        />
+      );
+      break;
+    }
     case 'results':
       content = (
         <Results
           result={screen.result}
-          onReplay={() => go({ name: 'race', config: screen.config, key: uid() })}
+          onReplay={() => go({ name: screen.result.kind === 'robot' ? 'robot' : 'race', config: screen.config, key: uid() })}
           onReview={() => go({ name: 'review', result: screen.result, config: screen.config })}
           onAdmin={toAdmin}
         />

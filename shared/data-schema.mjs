@@ -5,6 +5,28 @@ const text = (v, fallback = '') => v === undefined ? fallback : typeof v === 'st
 const list = (v, fallback = []) => v === undefined ? fallback : Array.isArray(v) ? v : fail('Ro‘yxat formati noto‘g‘ri');
 const number = (v, fallback = 0) => v === undefined ? fallback : Number.isFinite(v) && v >= 0 ? v : fail('Son maydoni noto‘g‘ri');
 function unique(items) { if (new Set(items.map(v => v.id)).size !== items.length) fail('Takroriy ID topildi'); return items; }
+// Robot dasturlash: mashqdagi eng yaxshi yulduzlar (daraja raqami -> 1..3).
+const ROBOT_GAMES = ['kod', 'java'];
+function validateRobot(r) {
+  if (r === undefined) return {};
+  if (!object(r)) fail('Robot ma’lumoti formati noto‘g‘ri');
+  const out = {};
+  for (const game of ROBOT_GAMES) {
+    if (r[game] === undefined) continue;
+    const stars = r[game]?.stars ?? {};
+    if (!object(r[game]) || !object(stars)) fail('Robot ma’lumoti formati noto‘g‘ri');
+    for (const [level, value] of Object.entries(stars)) if (!/^\d+$/.test(level) || ![1, 2, 3].includes(value)) fail('Robot yulduzlari noto‘g‘ri');
+    out[game] = { stars: { ...stars } };
+  }
+  return out;
+}
+function validateRobotResult(h) {
+  if (!ROBOT_GAMES.includes(h.game)) fail('Robot o‘yini noma’lum');
+  return {id:h.id,kind:'robot',game:h.game,date:text(h.date),setName:text(h.setName),rounds:number(h.rounds),maxScore:number(h.maxScore),winner:h.winner == null ? null : text(h.winner),teams:h.teams.map(t=>{
+    if (!object(t)) fail('Jamoa formati noto‘g‘ri');
+    return {name:text(t.name),color:text(t.color),hero:text(t.hero),score:number(t.score),solved:number(t.solved)};
+  })};
+}
 export function validateQuestion(q) {
   if (!object(q) || !q.id || typeof q.id !== 'string') fail('Savol ID yoki formati noto‘g‘ri');
   if (!['choice','tf','input','order','match'].includes(q.type)) fail('Noma’lum savol turi');
@@ -26,11 +48,12 @@ export function validateData(raw) {
     return {id:set.id,name:text(set.name,'Nomsiz to‘plam'),subject:text(set.subject,'Umumiy'),grade:text(set.grade,'Aralash'),questions:unique(list(set.questions).map(validateQuestion))};
   })),history:raw.history.slice(0,300).map(h=>{
     if (!object(h) || typeof h.id !== 'string' || !Array.isArray(h.teams)) fail('Natija formati noto‘g‘ri');
+    if (h.kind === 'robot') return validateRobotResult(h);
     return {id:h.id,date:text(h.date),setName:text(h.setName),trackLength:number(h.trackLength),winner:h.winner == null ? null : text(h.winner),teams:h.teams.map(t=>{
       if (!object(t)) fail('Jamoa formati noto‘g‘ri');
       return {name:text(t.name),color:text(t.color),hero:text(t.hero),pos:number(t.pos),correct:number(t.correct),wrong:number(t.wrong)};
     }),hard:list(h.hard).map(q=>({text:text(q.text),wrong:number(q.wrong),...(q.question ? {question:validateQuestion(q.question)} : {})}))};
-  })};
+  }),robot:validateRobot(raw.robot)};
 }
 export function parseBackup(value) {
   const raw=typeof value === 'string' ? JSON.parse(value) : value;

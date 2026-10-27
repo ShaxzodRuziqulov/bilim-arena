@@ -131,3 +131,27 @@ Mahsulot qarorlari va takliflar: [MAHSULOT_QARORLARI.md](MAHSULOT_QARORLARI.md).
 - npm test — 18/18 o‘tdi (animatsiya sozlamasi testi qo‘shildi). npm run build — muvaffaqiyatli.
 - Brauzerda 1600×900 da ko‘rildi: taxta, navbat banneri, yozma va variantli savol, to‘g‘ri/xato javob, natijalar, sinf ekrani. Konsolda xato yo‘q.
 - G‘alaba oynasi skrinshotda alohida ko‘rilmadi. Haqiqiy doska va proyektorda ranglar hali tekshirilmagan.
+
+## 2026-10-27 — Robot dasturlash: Robo Kod va Java Robot
+### Qoidalar
+1. Savol to'plami kerak emas; darajalar o'yin ichida. Studiya → 🤖 Robot dasturlash.
+2. Jamoaviy rejim: har daraja — bitta raund, har jamoaga bittadan navbat; har raundda birinchi bo'lib boshqa jamoa chiqadi. Navbatda dastur bo'sh holatdan boshlanadi.
+3. Robo Kod: buyruq soni ≤ par — 3 ★, ≤ par+3 — 2 ★, aks holda 1 ★. Java Robot: yechilsa 3 ★.
+4. Har xato urinish 1 ★ kamaytiradi, yechilsa kamida 1 ★. Urinishlar (2/3/5) yoki navbat vaqti tugasa — 0 ★.
+5. Eng ko'p ★ yiqqan jamoa g'olib; teng bo'lsa yechilgan darajalar soni, u ham teng bo'lsa — durang. Muddatidan oldin yakunlansa navbatlar tengligi kafolatlanmaydi.
+6. Pauza PINsiz. Yakunlash, navbatni o'tkazish va studiyaga qaytish Sinf himoyasi yoqilganda PIN so'raydi.
+7. Mashq rejimi: daraja erkin tanlanadi, eng yaxshi ★ saqlanadi; natijalar tarixiga yozilmaydi.
+
+### Bajarilgan ishlar
+- Alohida HTML o'yinlar React'ga ko'chirildi; tashqi shriftlar olib tashlandi, internetsiz ishlaydi.
+- Robo Kod: 10 ta daraja (4 tasi yangi), P funksiyasi va rekursiya; Java Robot: 6 ta dars (while, if, kamayuvchi o'zgaruvchi — yangi).
+- Doska uchun: katta tugmalar, maydon ekranga moslashadi, Java'da ekran tugmalari va tayyor kod bo'laklari, avtomatik chekinish, bekor qilish.
+- Qadam-baqadam bajarish, tezlik tanlash, robot izi, Java'da bajarilayotgan/xato qatorni belgilash.
+- Tuzatildi: robot boshiga qaytishda aylanib uchishi; "Qayta"dan keyin batareyaning yo'qolishi; vazifa sharti bajarilmasa ham g'alaba animatsiyasi; `while (...);` cheksiz sikli, “ ” qo'shtirnoqlar va yopilmagan /* uchun tushunarsiz xabarlar.
+- Ma'lumot sxemasi robot natijalari (kind: 'robot') va mashq yulduzlarini saqlaydi; noto'g'ri qiymatlar rad etiladi.
+
+### Tekshiruv
+- npm test — 19/19 o'tdi (robot sxemasi testi qo'shildi). npm run build — muvaffaqiyatli.
+- Barcha 10 daraja va 6 dars namunaviy yechim bilan skriptda yechildi.
+- Brauzerda 1600×900 va 1280×720: jamoaviy raund, ball, urinishlar, PINsiz pauza, yakunlash, natijalar, tarix, qayta yuklashdan keyin saqlanish; Java muharriri, ekran tugmalari va xato qatori.
+- Electron oynasi, Windows o'rnatuvchisi va haqiqiy sensorli doska hali tekshirilmagan.
