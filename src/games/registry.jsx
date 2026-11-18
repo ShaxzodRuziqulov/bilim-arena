@@ -80,6 +80,36 @@ const robotModule = (id) => {
 
 export const GAMES = Object.fromEntries([race, ...ROBOT_GAME_IDS.map(robotModule)].map((g) => [g.id, g]));
 
+// --- Yakka o'yinlar (shaxsiy platforma) ---
+// Har biri o'z ekranini butunlay egallaydi va faqat ochilganda yuklanadi (React.lazy).
+// Maydonlar: id, title, icon, tagline, about, Component ({ onExit }), summary() → { stars, max } (zal kartasi uchun).
+import { lazy } from 'react';
+import { loadSave as kodbuzarSave } from './kodbuzar/game/storage.js';
+import { maxStars as kodbuzarMax, totalStars as kodbuzarStars } from './kodbuzar/game/levels.js';
+import { totalStars as soyaStars } from './soya/engine/save.js';
+import { LEVELS as SOYA_LEVELS } from './soya/engine/levels.js';
+
+export const SOLO_GAMES = {
+  kodbuzar: {
+    id: 'kodbuzar',
+    title: 'Kodbuzar',
+    icon: '🔐',
+    tagline: 'Seyflarni mantiq bilan oching',
+    about: 'Yashirin kodni toping: 2 xonali rangli seyflardan haqiqiy “Buqa va sigir”gacha. Kalitjon yo‘l ko‘rsatadi.',
+    Component: lazy(() => import('./kodbuzar/KodbuzarHost.jsx')),
+    summary: () => ({ stars: kodbuzarStars(kodbuzarSave()), max: kodbuzarMax() }),
+  },
+  soya: {
+    id: 'soya',
+    title: 'Soya',
+    icon: '👤',
+    tagline: 'Harakatingizni yozing, soyangiz takrorlaydi',
+    about: 'Platformer-jumboq: soya tugmani bosib turadi, lazerni to‘sadi, zinapoya bo‘ladi. 15 daraja, 3 dunyo.',
+    Component: lazy(() => import('./soya/SoyaGame.jsx')),
+    summary: () => ({ stars: soyaStars(), max: SOYA_LEVELS.length * 3 }),
+  },
+};
+
 export const gamesOfFamily = (family) => Object.values(GAMES).filter((g) => g.family === family);
 
 // Saqlangan natija qaysi o'yinga tegishli. Eski poyga natijalarida `kind` yo'q — ular Xazina poygasi.

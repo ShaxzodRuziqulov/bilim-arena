@@ -1,6 +1,6 @@
 const FLOATERS = ['🦊', '🧑‍🚀', '🤖', '🐢', '🦁', '⭐', '💰', '🦉'];
 
-export default function Home({ onAdmin, onQuit }) {
+export default function Home({ onAdmin, onHall, onQuit }) {
   return (
     <div className="screen home classroom-home">
       <div className="aurora" aria-hidden="true">
@@ -26,6 +26,11 @@ export default function Home({ onAdmin, onQuit }) {
         <button className="btn primary big" onClick={onAdmin}>
           O‘qituvchi studiyasini ochish ↗
         </button>
+        {onHall && (
+          <button className="btn" onClick={onHall}>
+            O‘yinlar zali
+          </button>
+        )}
         {onQuit && (
           <button className="btn" onClick={onQuit}>
             Chiqish

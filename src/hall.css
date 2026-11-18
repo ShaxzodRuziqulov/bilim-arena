@@ -1,0 +1,94 @@
+/* O'yinlar zali. Asosiy ranglar platformaniki (styles.css :root): sokin fon, yorqinlik faqat afishalarda. */
+.hall {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 28px clamp(16px, 4vw, 40px) 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+.hall-top { display: flex; align-items: center; gap: 16px; }
+.hall-brand { display: flex; align-items: center; gap: 14px; flex: 1; min-width: 0; }
+.hall-brand img { width: 52px; height: 52px; border-radius: 14px; }
+.hall-brand h1 { margin: 0; font-size: 1.6rem; font-weight: 900; letter-spacing: -0.01em; }
+.hall-brand p { margin: 2px 0 0; color: var(--muted); font-size: 1.05rem; }
+.hall-stars {
+  font-weight: 900; font-size: 1.1rem; color: var(--gold);
+  padding: 8px 14px; border-radius: 999px; background: rgb(255 211 107 / 0.1);
+  font-variant-numeric: tabular-nums;
+}
+
+.hall-continue {
+  display: flex; align-items: center; gap: 16px; text-align: left;
+  padding: 14px 18px; border-radius: 16px; cursor: pointer;
+  border: 1px solid rgb(88 237 176 / 0.35); background: rgb(88 237 176 / 0.08); color: var(--text);
+}
+.hall-continue:hover { background: rgb(88 237 176 / 0.14); }
+.hall-continue b { display: block; font-size: 1.1rem; }
+.hall-continue small { color: var(--muted); }
+.hall-continue-icon { font-size: 2rem; }
+.hall-continue-go {
+  margin-left: auto; width: 44px; height: 44px; border-radius: 50%;
+  display: grid; place-items: center; background: var(--accent); color: var(--accent-ink); font-size: 1rem;
+}
+
+.hall-section h2 { margin: 0 0 12px; font-size: 1.25rem; font-weight: 900; }
+.hall-note { margin: -6px 0 12px; color: var(--muted); }
+
+/* Afishalar — zalning yagona yorqin joyi. */
+.posters { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+.poster {
+  display: flex; flex-direction: column; text-align: left; padding: 0; overflow: hidden; cursor: pointer;
+  border-radius: 22px; color: var(--text);
+  border: 1px solid rgb(255 255 255 / 0.1);
+  transition: transform 0.2s cubic-bezier(0.2, 0.9, 0.3, 1), box-shadow 0.2s;
+}
+.poster-kodbuzar { background: linear-gradient(170deg, #2a1b63, #140d36 70%); box-shadow: 0 18px 40px rgb(76 29 149 / 0.35); }
+.poster-soya { background: linear-gradient(170deg, #0f2a3d, #0b0d17 70%); box-shadow: 0 18px 40px rgb(14 116 144 / 0.3); }
+.poster:hover { transform: translateY(-4px); }
+.poster:active { transform: translateY(0) scale(0.99); }
+.poster:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+.poster-art { width: 100%; height: auto; display: block; aspect-ratio: 320 / 170; }
+.poster-body { display: flex; flex-direction: column; gap: 6px; padding: 16px 20px 20px; flex: 1; }
+.poster-title { font-size: 1.7rem; font-weight: 900; line-height: 1.1; }
+.poster-tag { font-size: 1.02rem; font-weight: 700; }
+.poster-kodbuzar .poster-tag { color: #fcd34d; }
+.poster-soya .poster-tag { color: #7dd3fc; }
+.poster-about { color: var(--muted); line-height: 1.45; max-width: 46ch; }
+.poster-foot { display: flex; align-items: center; gap: 12px; margin-top: auto; padding-top: 12px; }
+.poster-progress { display: flex; align-items: center; gap: 10px; color: var(--gold); font-weight: 800; font-variant-numeric: tabular-nums; flex: 1; }
+.poster-progress .bar { flex: 1; max-width: 140px; height: 6px; border-radius: 99px; background: rgb(255 255 255 / 0.12); overflow: hidden; }
+.poster-progress .bar span { display: block; height: 100%; background: var(--gold); border-radius: inherit; }
+.poster-play { padding: 10px 18px; border-radius: 999px; font-weight: 900; background: #fff; color: #111827; }
+
+/* Afisha sahnalari: bitta sekin harakat — sichqoncha ustiga kelganda. */
+.poster-art text { font: 900 22px 'Nunito Variable', sans-serif; fill: #fff; }
+.kb-dial { transform-origin: 160px 86px; transition: transform 0.9s cubic-bezier(0.3, 1.4, 0.4, 1); }
+.poster:hover .kb-dial, .poster:focus-visible .kb-dial { transform: rotate(150deg); }
+.soya-ghost { transition: transform 0.9s ease-in-out; }
+.poster:hover .soya-ghost, .poster:focus-visible .soya-ghost { transform: translate(110px, -38px); }
+.soya-laser { animation: hall-laser 2.4s steps(1) infinite; }
+@keyframes hall-laser { 50% { opacity: 0.15; } }
+
+/* Sinf o'yinlari — sokin qator. */
+.class-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+.class-card {
+  display: flex; align-items: center; gap: 14px; text-align: left; cursor: pointer;
+  padding: 14px 16px; border-radius: 16px; color: var(--text);
+  border: 1px solid var(--line); background: var(--panel);
+}
+.class-card:hover { background: var(--panel-2); }
+.class-card b { display: block; }
+.class-card small { color: var(--muted); }
+.class-icon { font-size: 1.8rem; }
+
+@media (max-width: 560px) {
+  .hall { padding-top: 18px; gap: 22px; }
+  .hall-brand h1 { font-size: 1.3rem; }
+  .poster-title { font-size: 1.45rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .poster, .kb-dial, .soya-ghost { transition: none; }
+  .soya-laser { animation: none; }
+}
+:root.reduce-motion .soya-laser { animation: none; }

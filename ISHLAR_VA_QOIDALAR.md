@@ -178,3 +178,25 @@ Maqsad: yangi o‘yin qo‘shish va mavjudlarini yaxshilashni arzonlashtirish (t
 - `npm run build` — muvaffaqiyatli.
 - Brauzerda qo‘lda: poyga tayyorgarligi → o‘yin → pauza → studiya; Robo Kod mashqi → chiqish (Robot bo‘limiga); Java jamoaviy o‘yin → yakunlash → natijalar → Yana o‘ynash; poyga natijalari; natijalar tarixida ikkala tur. Konsolda xato yo‘q.
 - `scripts/verify-ui.cjs` ishga tushmadi: Playwright o‘rnatilmagan. Electron oynasi va sensorli doskada alohida sinalmagan.
+
+## 2026-11-18 — shaxsiy o‘yin platformasi (branch: platforma)
+Maqsad: Bilim Arena faqat sinf o‘yini emas, balki shaxsiy o‘yinlar platformasi bo‘ladi. Sinf rejimi o‘z holicha qoladi.
+
+### Bajarilgan ishlar
+- Yangi bosh ekran — **O‘yinlar zali** (`src/screens/Hall.jsx`, `src/hall.css`): yakka o‘yinlar katta afishalarda (har birining o‘z SVG sahnasi), sinf o‘yinlari alohida qatorda va o‘qituvchi studiyasi orqali ochiladi. Barcha yakka o‘yinlardagi yulduzlar yig‘indisi va oxirgi o‘ynalgan o‘yinni davom ettirish qatori bor.
+- Reyestrga `SOLO_GAMES` qo‘shildi: `id, title, icon, tagline, about, Component, summary()`. Har o‘yin `React.lazy` bilan faqat ochilganda yuklanadi.
+- **Kodbuzar** (`src/games/kodbuzar/`): alohida loyihadan ko‘chirildi. Shadow DOM ichida o‘z React ildizi bilan ishlaydi (`KodbuzarHost.jsx`) — platformaning `.btn`, `.key`, `.home` kabi global stillari unga ta’sir qilmaydi. CSS `.kb` ichiga o‘ralgan, animatsiyalar `kb-` prefiksli. Bosh sahifasida zalga qaytish tugmasi.
+- **Soya** (`src/games/soya/`): Phaser o‘yini `engine/` ga ko‘chirildi, `start.js` uni berilgan elementga o‘rnatadi va to‘xtatadi (canvas, musiqa va kuzatuv taymeri tozalanadi). Phaser alohida bo‘lak (~1,2 MB) — zal va sinf o‘yinlarini sekinlashtirmaydi. Zalga qaytish tugmasi faqat Soyaning bosh menyusida (boshqa ekranlarda u yerda Soyaning o‘z tugmasi bor). `music.js` ga `stopMusic()` qo‘shildi.
+- Ilova endi zaldan ochiladi. Sinf himoyasi yoqilgan bo‘lsa — avvalgidek sinf ekrani; u yerda “O‘yinlar zali” tugmasi. Studiya tepasida “← Zal” tugmasi. Himoya yoqilgan bo‘lsa, zalga o‘tish o‘qituvchi sessiyasini yopadi.
+- Yangi bog‘liqliklar: `phaser@3.88.2`, `@fontsource/nunito@5`.
+
+### Tekshiruv
+- `npm test` — 53/53 o‘tdi (Kodbuzar va Soya testlari ham ko‘chirildi).
+- `npm run build` — muvaffaqiyatli; bo‘laklar: asosiy ~423 KB, Kodbuzar ~30 KB, Soya/Phaser ~1,2 MB.
+- Brauzerda (web rejim): zal → Kodbuzar (o‘yin, klaviatura, zalga qaytish) → Soya (menyu, daraja, chiqqanda canvas va o‘yin to‘liq yo‘qoladi, StrictMode’da bitta canvas) → sinf kartasi → studiya → Xazina poygasi tayyorgarligi → “← Zal”. 375 px telefon kengligi. Konsolda xato yo‘q.
+- Electron oynasi va sensorli doska alohida sinalmagan.
+
+### Qolgan ishlar
+- Umumiy ovoz sozlamasi va platforma saqlash API’si (hozir Kodbuzar va Soya o‘z `localStorage` kalitlarida saqlaydi; Electron’da ham ishlaydi, lekin platforma zaxirasiga kirmaydi).
+- Platforma nomi (“Bilim Arena” qoladimi) — qaror kutilmoqda; nom o‘zgarsa appId va o‘rnatuvchi nomi ham o‘zgaradi.
+- Robo Kod mustaqil loyihasini platformaga qaytarish — qaror kutilmoqda.

@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
+import { Fragment, Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import { loadData, saveData, quitApp, isDesktop, getSaveStatus, subscribeSaveStatus, flushData, dismissRecovery } from './lib/store.js';
 import { setSoundEnabled } from './lib/sound.js';
 import { uid } from './lib/util.js';
@@ -9,13 +9,15 @@ import SetEditor from './screens/SetEditor.jsx';
 import Results from './screens/Results.jsx';
 import Review from './screens/Review.jsx';
 import BackupPanel, { exportBackup } from './components/BackupPanel.jsx';
-import { GAMES } from './games/registry.jsx';
+import { GAMES, SOLO_GAMES } from './games/registry.jsx';
+import Hall, { rememberLastGame } from './screens/Hall.jsx';
 
 export default function App() {
   const [data, setData] = useState(null);
   const dataRef = useRef(data);
   dataRef.current = data;
-  const [screen, setScreen] = useState({ name: 'admin' });
+  // Platforma O'yinlar zalidan ochiladi. Sinf himoyasi yoqilgan bo'lsa — avvalgidek sinf ekrani.
+  const [screen, setScreen] = useState({ name: 'hall' });
   const [loadError,setLoadError] = useState('');
   const [saveStatus,setSaveStatus] = useState(getSaveStatus);
   useEffect(()=>subscribeSaveStatus(setSaveStatus),[]);
@@ -55,7 +57,7 @@ export default function App() {
     setPinRequest({ title, onSuccess, onCancel });
   }, [data?.pinHash]);
   const go = useCallback((next) => {
-    if (next.name === 'home' || (next.name === 'play' && data?.settings.classroomLock)) teacherUnlocked.current = false;
+    if (next.name === 'home' || ((next.name === 'play' || next.name === 'hall') && data?.settings.classroomLock)) teacherUnlocked.current = false;
     setScreen(next);
   }, [data?.settings.classroomLock]);
 
@@ -82,8 +84,31 @@ export default function App() {
   };
   const findSet = (id) => data.sets.find((s) => s.id === id);
 
+  const quit = isDesktop ? () => askPin('Dasturdan chiqish', quitApp) : null;
   let content;
   switch (screen.name) {
+    case 'hall':
+      content = (
+        <Hall
+          onPlay={(id) => {
+            rememberLastGame(id);
+            go({ name: 'solo', game: id });
+          }}
+          onClass={(tab) => toAdmin(tab)}
+          onQuit={quit}
+        />
+      );
+      break;
+    case 'solo': {
+      // Yakka o'yin butun oynani egallaydi va faqat shu yerda yuklanadi.
+      const Solo = SOLO_GAMES[screen.game]?.Component;
+      content = Solo && (
+        <Suspense fallback={<div className="loading">Yuklanmoqda…</div>}>
+          <Solo onExit={() => go({ name: 'hall' })} />
+        </Suspense>
+      );
+      break;
+    }
     case 'admin':
       content = <Admin data={data} update={update} go={go} askPin={askPin} onRestore={restored} tab={screen.tab} />;
       break;
@@ -126,13 +151,13 @@ export default function App() {
       break;
     default:
       content = (
-        <Home onAdmin={toAdmin} onQuit={isDesktop ? () => askPin('Dasturdan chiqish', quitApp) : null} />
+        <Home onAdmin={toAdmin} onHall={() => go({ name: 'hall' })} onQuit={quit} />
       );
   }
 
   return (
     <>
-      <div key={screen.name} className="screen-enter">{content ?? <Home onAdmin={toAdmin} />}</div>
+      <div key={screen.name} className="screen-enter">{content ?? <Home onAdmin={toAdmin} onHall={() => go({ name: 'hall' })} />}</div>
       {saveStatus.kind === 'error' && <div className="save-banner" role="alert"><span>{saveStatus.message}</span><button className="btn" onClick={()=>flushData()}>Qayta saqlash</button><button className="btn" onClick={()=>exportBackup(data)}>Zaxira olish</button></div>}
       {saveStatus.kind === 'recovered' && <div className="save-banner recovered" role="status"><span>{saveStatus.message}</span><button className="btn" onClick={dismissRecovery}>Tushunarli</button></div>}
       {saveStatus.kind === 'pending' && <div className="saving-indicator" role="status">Saqlanmoqda…</div>}

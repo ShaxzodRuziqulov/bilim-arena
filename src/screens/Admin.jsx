@@ -23,6 +23,7 @@ export default function Admin({ data, update, go, askPin, onRestore, tab: initia
   return (
     <div className="screen admin">
       <header className="topbar">
+        <button className="btn" onClick={() => go({ name: 'hall' })} title="O‘yinlar zaliga qaytish">← Zal</button>
         <strong>🏝️ Bilim Arena</strong>
         <small>Dars studiyasi</small>
         <nav className="tabs">
