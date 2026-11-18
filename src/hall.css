@@ -116,3 +116,6 @@
 :root.reduce-motion .soya-laser, :root.reduce-motion .java-cursor { animation: none; }
 :root.reduce-motion .poster, :root.reduce-motion .kb-dial, :root.reduce-motion .soya-ghost,
 :root.reduce-motion .kod-robot, :root.reduce-motion .race-team { transition: none; }
+
+/* Sozlamalar: o'yin ichidagi sahifadan (savollar, natijalar) O'yinlar bo'limiga qaytish. */
+.admin .sub-back { margin-bottom: 18px; }

@@ -7,20 +7,25 @@ import ConfirmButton from '../components/ConfirmButton.jsx';
 import PinModal from '../components/PinModal.jsx';
 import BackupPanel from '../components/BackupPanel.jsx';
 import { validateQuestion } from '../../shared/data-schema.mjs';
-import { gameOfResult, gamesOfFamily, SOLO_GAMES } from '../games/registry.jsx';
+import { GAMES, gameIdOfResult, gameOfResult, gamesOfFamily, SOLO_GAMES } from '../games/registry.jsx';
 import { reloadSave as reloadSoyaSave } from '../games/soya/engine/save.js';
 
 // Sozlamalar sahifasi (zaldagi ⚙). Umumiy — barcha o'yinlarga tegishli; O'yinlar — har o'yinning o'zi uchun.
+// Savollar va natijalar alohida o'yinlarga tegishli, shuning uchun ular o'sha o'yinning panelidan ochiladi.
 const TABS = [
   ['general', 'Umumiy'],
   ['games', 'O‘yinlar'],
-  ['sets', 'Savollar'],
-  ['history', 'Natijalar'],
 ];
 
 export default function Admin({ data, update, go, askPin, onRestore, tab: initialTab = 'general' }) {
   const [tab, setTab] = useState(initialTab);
+  const [historyGame, setHistoryGame] = useState(null);
   const updateStatus = useUpdateStatus();
+  // Savollar va natijalar — "O'yinlar" ichidagi sahifalar: yuqorida "O'yinlar" belgilangan qoladi.
+  const activeTab = tab === 'sets' || tab === 'history' ? 'games' : tab;
+  const backToGames = (
+    <button className="btn sub-back" onClick={() => setTab('games')}>← O‘yinlar</button>
+  );
 
   return (
     <div className="screen admin">
@@ -29,7 +34,7 @@ export default function Admin({ data, update, go, askPin, onRestore, tab: initia
         <strong>Sozlamalar</strong>
         <nav className="tabs">
           {TABS.map(([id, label]) => (
-            <button key={id} className={`tab ${tab === id ? 'active' : ''}`} onClick={() => setTab(id)}>
+            <button key={id} className={`tab ${activeTab === id ? 'active' : ''}`} onClick={() => setTab(id)}>
               {label}
             </button>
           ))}
@@ -39,15 +44,14 @@ export default function Admin({ data, update, go, askPin, onRestore, tab: initia
             ⬆ Yangi versiya tayyor
           </button>
         )}
-        <button className="btn" disabled={!data.pinHash} title={data.pinHash ? 'Doskani bolalarga topshirish' : 'Qulflash uchun sozlamalarda PIN yarating'} onClick={() => go({ name: 'home' })}>
-          🔒 Qulflash
-        </button>
       </header>
       <main className="admin-main">
         {tab === 'general' && <GeneralTab data={data} update={update} askPin={askPin} onRestore={onRestore} updateStatus={updateStatus} />}
-        {tab === 'games' && <GamesTab data={data} update={update} goSets={() => setTab('sets')} />}
-        {tab === 'sets' && <SetsTab data={data} update={update} go={go} />}
-        {tab === 'history' && <HistoryTab data={data} update={update} />}
+        {tab === 'games' && (
+          <GamesTab data={data} update={update} goSets={() => setTab('sets')} goHistory={(id) => { setHistoryGame(id); setTab('history'); }} />
+        )}
+        {tab === 'sets' && <>{backToGames}<SetsTab data={data} update={update} go={go} /></>}
+        {tab === 'history' && <>{backToGames}<HistoryTab data={data} update={update} game={historyGame} /></>}
       </main>
     </div>
   );
@@ -213,8 +217,9 @@ const safeSummary = (g) => {
 };
 
 /** Har bir o'yinning o'z sozlamalari va natijalari. Ovoz va animatsiyalar — "Umumiy"da, barcha o'yinlar uchun. */
-function GamesTab({ data, update, goSets }) {
+function GamesTab({ data, update, goSets, goHistory }) {
   const [, refresh] = useState(0);
+  const played = (id) => data.history.filter((h) => gameIdOfResult(h) === id).length;
   const s = data.settings;
   const set = (patch) => update((d) => ({ ...d, settings: { ...d.settings, ...patch } }));
   const kb = safeSummary(SOLO_GAMES.kodbuzar);
@@ -246,9 +251,12 @@ function GamesTab({ data, update, goSets }) {
             <div key={id} className="panel">
               <h3>{g.title}</h3>
               <p className="note">Mashqda yechilgan: {solved} / {g.levels.length} daraja. Jamoaviy o‘yin sozlamalari o‘yin boshlanishida tanlanadi.</p>
-              {solved > 0 && (
-                <ConfirmButton onConfirm={() => update((d) => ({ ...d, robot: { ...d.robot, [id]: {} } }))}>↺ Mashqni tozalash</ConfirmButton>
-              )}
+              <div className="row-buttons">
+                <button className="btn" onClick={() => goHistory(id)}>Natijalar ({played(id)})</button>
+                {solved > 0 && (
+                  <ConfirmButton onConfirm={() => update((d) => ({ ...d, robot: { ...d.robot, [id]: {} } }))}>↺ Mashqni tozalash</ConfirmButton>
+                )}
+              </div>
             </div>
           );
         })}
@@ -271,25 +279,31 @@ function GamesTab({ data, update, goSets }) {
             ))}
           </select>
           <p className="note">{readySets} ta tayyor savol to‘plami.</p>
-          <button className="btn" onClick={goSets}>Savollarni boshqarish</button>
+          <div className="row-buttons">
+            <button className="btn primary" onClick={goSets}>Savollar</button>
+            <button className="btn" onClick={() => goHistory('race')}>Natijalar ({played('race')})</button>
+          </div>
         </div>
       </div>
     </>
   );
 }
 
-function HistoryTab({ data, update }) {
+/** Bitta o'yinning jamoaviy o'yinlar tarixi (game — o'yin ID si). Tozalash ham faqat shu o'yinniki. */
+function HistoryTab({ data, update, game }) {
+  const mine = (h) => !game || gameIdOfResult(h) === game;
+  const list = data.history.filter(mine);
   return (
     <>
       <div className="section-head">
-        <h2>Natijalar tarixi</h2>
-        {data.history.length > 0 && (
-          <ConfirmButton onConfirm={() => update((d) => ({ ...d, history: [] }))}>🗑 Tarixni tozalash</ConfirmButton>
+        <h2>{game ? `${GAMES[game]?.title}: natijalar` : 'Natijalar'}</h2>
+        {list.length > 0 && (
+          <ConfirmButton onConfirm={() => update((d) => ({ ...d, history: d.history.filter((h) => !mine(h)) }))}>🗑 Tarixni tozalash</ConfirmButton>
         )}
       </div>
-      {data.history.length === 0 && <p className="muted">Hali o‘yin o‘ynalmagan.</p>}
+      {list.length === 0 && <p className="muted">Hali jamoaviy o‘yin o‘ynalmagan.</p>}
       <div className="history-list">
-        {data.history.map((h) => (
+        {list.map((h) => (
           <div key={h.id} className="history-item">
             <div className="history-meta">
               <b>{h.setName}</b>

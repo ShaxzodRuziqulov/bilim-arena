@@ -264,3 +264,12 @@ Muammo: ⚙ “Boshqaruv”ni ochardi, ichida yana “⚙️ Sozlamalar” bo‘
 ### Tekshiruv
 - `npm test` — 57/57, `npm run build` — muvaffaqiyatli.
 - Brauzerda: ⚙ → “Sozlamalar”, 4 bo‘lim; O‘yinlar bo‘limida 5 ta o‘yin; “Animatsiyalar” o‘chirilganda `html.reduce-motion` va Kodbuzar ichida `.kb.reduce` yoqildi, qayta yoqilganda olib tashlandi.
+
+## 2026-11-18 — Savollar va natijalar o‘z o‘yinida; Qulflash tugmasi olib tashlandi
+- Sozlamalar tepasida faqat **Umumiy** va **O‘yinlar**. “Savollar” va “Natijalar” alohida o‘yinlarga tegishli bo‘lgani uchun o‘sha o‘yin panelidan ochiladi: Xazina poygasi — “Savollar” va “Natijalar (N)”; Robo Kod va Java Robot — “Natijalar (N)”. Ichki sahifalarda “← O‘yinlar”.
+- Natijalar tarixi o‘yin bo‘yicha ajratildi (`HistoryTab` `game` bo‘yicha filtrlaydi); “Tarixni tozalash” ham faqat shu o‘yin natijalarini o‘chiradi.
+- Sozlamalar sarlavhasidagi “🔒 Qulflash” tugmasi olib tashlandi.
+
+### Tekshiruv
+- `npm test` — 57/57, `npm run build` — muvaffaqiyatli.
+- Brauzerda: 2 ta bo‘lim, Qulflash yo‘q; Xazina poygasi → Savollar (yuqorida “O‘yinlar” belgili) → ← O‘yinlar; Robo Kod → Natijalar (Xazina poygasi yozuvlari ko‘rinmaydi); Xazina poygasi → Natijalar (2 ta yozuv).

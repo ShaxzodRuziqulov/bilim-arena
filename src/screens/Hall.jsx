@@ -58,7 +58,7 @@ function buildGames(data) {
       about: 'Jamoalar navbat bilan savol yechadi, to‘g‘ri javob — bir qadam oldinga. Bonus va girdob kataklari bor.',
       note: raceGames ? `${raceGames} ta o‘yin o‘ynalgan` : 'Hali o‘ynalmagan',
       actions: [{ label: 'Jamoalarni tuzish', next: { name: 'setup', game: 'race', setId: readySet?.id }, disabled: !readySet }],
-      warning: readySet ? null : 'Avval ⚙ Sozlamalar → Savollar bo‘limida to‘plam tayyorlang',
+      warning: readySet ? null : 'Savollarni ⚙ Sozlamalar → O‘yinlar → Xazina poygasida tayyorlang',
     },
   ];
 }
