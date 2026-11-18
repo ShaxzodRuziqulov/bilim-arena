@@ -235,3 +235,18 @@ Muammo: zaldagi “Sinf bilan” kartalari (Xazina poygasi, Robo Kod, Java Robot
 - `npm test` — 57/57, `npm run build` — muvaffaqiyatli.
 - Brauzerda: Robo Kod mashqi → pauza → zalga; Robo Kod jamoa tayyorgarligi → Orqaga → zal; Java mashqi → zal; Xazina poygasi → tayyorgarlik → Orqaga → zal; Xazina poygasi → boshlash → yakunlash → natijalar (“← O‘yinlar zali”) → zal. Konsolda xato yo‘q.
 - `BILIM_ARENA_TEST_SHOW=1 npm run smoke:electron` — 12/12 (yangi: Robo Kod mashqi zaldan ochilib zalga qaytadi, Studiya tugmasi).
+
+## 2026-11-18 — Boshqaruv: yashirinroq va zal bilan bir xil dizayn
+Muammo: zaldagi “✎ Studiya” tugmasi o‘yinlar bilan raqobatlashardi; ichkarisi och yashil “Dars studiyasi” mavzusida edi — to‘q zaldan keyin boshqa ilovadek tuyulardi.
+
+### Bajarilgan ishlar
+- Zalda “✎ Studiya” o‘rniga kichik dumaloq ⚙ (ovoz tugmasi bilan bir xil); nomi hamma joyda **Boshqaruv**.
+- Boshqaruv, tayyorgarlik, savol muharriri va natijalar ekrani platformaning to‘q mavzusiga o‘tkazildi (`styles.css` dagi och mavzu bloki almashtirildi; ogohlantirish, tiklash va saqlash xabarlari ham to‘q ranglarda).
+- Boshqaruv sarlavhasi: dumaloq ← (zalga), “Boshqaruv — Savollar, natijalar va sozlamalar”. “Dars studiyasi” reklama bloki va bosh harfli yorliqlar olib tashlandi.
+- O‘yin qayerdan boshlanmasin (zal yoki Boshqaruvdagi “O‘ynash”), undan chiqqanda va natijalardan keyin har doim zalga qaytiladi.
+- `scripts/electron-smoke.mjs`: production rejimida mavjud bo‘lmagan `window.__game` ga tayangan tekshiruvlar tuzatildi (Soya darajasi zal tugmasi yashirinishi bo‘yicha tekshiriladi, Enter 3 martagacha qayta bosiladi). Shu xato sabab avvalgi takroriy “muvaffaqiyatsiz” natijalar ilova xatosi emas edi.
+
+### Tekshiruv
+- `npm test` — 57/57, `npm run build` — muvaffaqiyatli.
+- Brauzerda: Boshqaruvning 4 bo‘limi, savol muharriri — och fonli element qolmagan (faqat asosiy yashil tugmalar); Boshqaruv → O‘ynash → tayyorgarlik → o‘yin → yakunlash → natijalar (“← O‘yinlar zali”) → zal.
+- Tuzatilgan Electron smoke qayta ishga tushirilmadi.

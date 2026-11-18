@@ -61,7 +61,7 @@ export function prepare(q) {
   return { q, options };
 }
 
-export default function Race({ config, askPin, onFinish, onExit, exitLabel = 'Studiyaga qaytish' }) {
+export default function Race({ config, askPin, onFinish, onExit, exitLabel = 'Boshqaruvga qaytish' }) {
   const N = config.trackLength;
   const track = useMemo(() => buildTrack(N), [N]);
   const specials = useMemo(() => buildSpecials(N), [N]);

@@ -58,6 +58,8 @@ export default function App() {
   }, [data?.pinHash]);
   const go = useCallback((next) => {
     if (next.name === 'home' || ((next.name === 'play' || next.name === 'hall') && data?.settings.classroomLock)) teacherUnlocked.current = false;
+    // O'yin qayerdan boshlanmasin (zal yoki Boshqaruvdagi "O'ynash"), undan chiqqanda har doim zalga qaytiladi.
+    if (['setup', 'play', 'results', 'review'].includes(next.name)) next = { ...next, from: 'hall' };
     setScreen(next);
   }, [data?.settings.classroomLock]);
 
@@ -73,7 +75,7 @@ export default function App() {
   if (loadError) return <div className="screen admin"><main className="recovery-screen"><span className="eyebrow">BILIM ARENA</span><h1>Ma’lumotni ochib bo‘lmadi</h1><p role="alert">{loadError}</p><p>Asl ma’lumotlar o‘chirilmadi. Muammoni bartaraf etib qayta oching yoki oldindan olingan zaxira faylini tanlang.</p><button className="btn" onClick={()=>window.location.reload()}>Qayta ochish</button><BackupPanel onRestore={restored}/></main></div>;
   if (!data) return <div className="loading">Yuklanmoqda…</div>;
 
-  const toAdmin = (tab) => askPin('O‘qituvchi studiyasi', () => {
+  const toAdmin = (tab) => askPin('Boshqaruv', () => {
     teacherUnlocked.current = true;
     go({ name: 'admin', tab });
   });
@@ -88,7 +90,7 @@ export default function App() {
     return go({ ...next, from: 'hall' });
   };
   const leaveGame = fromHall ? toHall : () => toAdmin(game?.adminTab);
-  const leaveLabel = fromHall ? 'O‘yinlar zaliga qaytish' : 'Studiyaga qaytish';
+  const leaveLabel = fromHall ? 'O‘yinlar zaliga qaytish' : 'Boshqaruvga qaytish';
   const finishGame = (result) => {
     update((d) => ({ ...d, history: [result, ...d.history].slice(0, 300) }));
     goGame({ name: 'results', game: screen.game, result, config: screen.config });
@@ -163,7 +165,7 @@ export default function App() {
           onReplay={() => goGame({ name: 'play', game: screen.game, config: screen.config, key: uid() })}
           onReview={() => goGame({ name: 'review', game: screen.game, result: screen.result, config: screen.config })}
           onAdmin={leaveGame}
-          adminLabel={fromHall ? 'O‘yinlar zali' : 'Dars studiyasi'}
+          adminLabel={fromHall ? 'O‘yinlar zali' : 'Boshqaruv'}
         />
       );
       break;

@@ -5,7 +5,7 @@ import { play } from '../lib/sound.js';
 import '../hall.css';
 
 // O'yinlar zali — platformaning bosh ekrani. Barcha o'yinlar bir xil afishada va shu yerning o'zidan ochiladi;
-// o'yindan chiqqanda yana shu zalga qaytiladi. O'qituvchi studiyasi faqat savol to'plamlari va sozlamalar uchun.
+// o'yindan chiqqanda yana shu zalga qaytiladi. Boshqaruv (⚙) faqat savol to'plamlari, natijalar va sozlamalar uchun.
 
 const LAST_KEY = 'platforma-oxirgi-oyin';
 export const rememberLastGame = (id) => {
@@ -58,7 +58,7 @@ function buildGames(data) {
       about: 'Jamoalar navbat bilan savol yechadi, to‘g‘ri javob — bir qadam oldinga. Bonus va girdob kataklari bor.',
       note: raceGames ? `${raceGames} ta o‘yin o‘ynalgan` : 'Hali o‘ynalmagan',
       actions: [{ label: 'Jamoalarni tuzish', next: { name: 'setup', game: 'race', setId: readySet?.id }, disabled: !readySet }],
-      warning: readySet ? null : 'Avval studiyada savol to‘plami tayyorlang',
+      warning: readySet ? null : 'Avval ⚙ Boshqaruvda savol to‘plami tayyorlang',
     },
   ];
 }
@@ -84,11 +84,11 @@ export default function Hall({ data, onStart, onStudio, onQuit, soundOn, onToggl
           </div>
         </div>
         <span className="hall-stars" title="Barcha o‘yinlardagi yulduzlar">★ {totalStars}</span>
-        <button className="hall-sound" onClick={onToggleSound} aria-pressed={soundOn}
+        <button className="hall-icon hall-sound" onClick={onToggleSound} aria-pressed={soundOn}
           aria-label={soundOn ? 'Barcha o‘yinlarda ovozni o‘chirish' : 'Ovozni yoqish'} title={soundOn ? 'Ovoz yoqiq — barcha o‘yinlarda' : 'Ovoz o‘chiq — barcha o‘yinlarda'}>
           {soundOn ? '🔊' : '🔇'}
         </button>
-        <button className="btn" onClick={onStudio} title="Savol to‘plamlari, natijalar va sozlamalar">✎ Studiya</button>
+        <button className="hall-icon" onClick={onStudio} aria-label="Boshqaruv: savollar, natijalar va sozlamalar" title="Boshqaruv: savollar, natijalar va sozlamalar">⚙</button>
         {onQuit && <button className="btn" onClick={onQuit}>Chiqish</button>}
       </header>
 

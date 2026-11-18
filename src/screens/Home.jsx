@@ -24,7 +24,7 @@ export default function Home({ onAdmin, onHall, onQuit }) {
       </div>
       <div className="home-actions">
         <button className="btn primary big" onClick={onAdmin}>
-          O‘qituvchi studiyasini ochish ↗
+          Boshqaruvni ochish
         </button>
         {onHall && (
           <button className="btn" onClick={onHall}>

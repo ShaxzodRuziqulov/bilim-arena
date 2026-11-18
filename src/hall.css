@@ -18,10 +18,14 @@
   font-variant-numeric: tabular-nums;
 }
 
-.hall-sound {
-  width: 46px; height: 46px; border-radius: 50%; cursor: pointer; font-size: 1.2rem;
-  border: 1px solid var(--line); background: var(--panel); color: var(--text);
+/* Zal tepasidagi kichik dumaloq tugmalar (ovoz, boshqaruv) va boshqaruvdagi orqaga tugmasi — bir xil. */
+.hall-icon, .admin-back {
+  width: 46px; height: 46px; flex: none; border-radius: 50%; cursor: pointer; font-size: 1.2rem; line-height: 1;
+  display: grid; place-items: center;
+  border: 1px solid var(--line); background: var(--panel); color: var(--muted);
 }
+.hall-icon:hover, .admin-back:hover { color: var(--text); background: var(--panel-2); }
+.hall-sound { color: var(--text); }
 .hall-sound[aria-pressed='false'] { opacity: 0.7; }
 
 .hall-continue {

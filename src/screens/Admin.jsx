@@ -23,9 +23,9 @@ export default function Admin({ data, update, go, askPin, onRestore, tab: initia
   return (
     <div className="screen admin">
       <header className="topbar">
-        <button className="btn" onClick={() => go({ name: 'hall' })} title="O‘yinlar zaliga qaytish">← Zal</button>
-        <strong>🏝️ Bilim Arena</strong>
-        <small>Dars studiyasi</small>
+        <button className="admin-back" onClick={() => go({ name: 'hall' })} aria-label="O‘yinlar zaliga qaytish" title="O‘yinlar zali">←</button>
+        <strong>Boshqaruv</strong>
+        <small>Savollar, natijalar va sozlamalar</small>
         <nav className="tabs">
           {TABS.map(([id, label]) => (
             <button key={id} className={`tab ${tab === id ? 'active' : ''}`} onClick={() => setTab(id)}>
@@ -62,7 +62,6 @@ function SetsTab({ data, update, go }) {
   const [grade, setGrade] = useState('');
   const subjects = [...new Set(data.sets.map((set) => set.subject))];
   const filtered = data.sets.filter((set) => (!subject || set.subject === subject) && (!grade || set.grade === grade) && (set.name + ' ' + set.subject).toLocaleLowerCase('uz').includes(search.toLocaleLowerCase('uz')));
-  const readySet = data.sets.find((set) => playableQuestions(set).length > 0);
 
   const importExcel = async (event) => {
     const file = event.target.files[0];
@@ -113,19 +112,6 @@ function SetsTab({ data, update, go }) {
 
   return (
     <>
-      <section className="studio-hero">
-        <div className="studio-copy">
-          <span className="eyebrow">BILIM ARENA / DARS STUDIYASI</span>
-          <h1>Bugungi darsni<br /><em>sarguzashtga aylantiring.</em></h1>
-          <p>To‘plam tanlang, jamoalarni tuzing va butun sinfni bilim poygasiga qo‘shing.</p>
-          <div className="row-buttons">
-            <button className="btn primary big" disabled={!readySet} onClick={() => go({ name: 'setup', game: 'race', setId: readySet.id })}>Darsni boshlash ↗</button>
-            <button className="btn big" onClick={addSet}>＋ To‘plam yaratish</button>
-          </div>
-          <div className="studio-facts"><span><b>{data.sets.length}</b> to‘plam</span><span><b>{subjects.length}</b> fan</span><span><b>{data.history.length}</b> o‘yin</span></div>
-        </div>
-        <div className="quest-preview" aria-hidden="true"><span className="preview-label">01 / XAZINA POYGASI</span><div className="preview-orbit" /><div className="preview-island"><span>🌴</span></div><i className="preview-step p1">1</i><i className="preview-step p2">2</i><i className="preview-step p3">★</i><span className="preview-hero">🦊</span><span className="preview-treasure">💰</span><div className="preview-caption">Har javob — yangi qadam.<small>2–4 jamoa · 5 xil savol · Internet talab qilmaydi</small></div></div>
-      </section>
       <div className="section-head library-heading">
         <div><span className="eyebrow">SIZNING KUTUBXONANGIZ</span><h2>Savol to‘plamlari</h2></div>
         <div className="row-buttons">

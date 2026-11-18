@@ -144,15 +144,23 @@ try {
   const frames = await js(`const f=window.__game?.loop.frame||0; await new Promise(r=>setTimeout(r,500)); return [f, window.__game?.loop.frame||0, await Promise.race([new Promise(r=>requestAnimationFrame(()=>r(true))), new Promise(r=>setTimeout(()=>r(false),800))])]`);
   check('Soya (Phaser bo‘lagi) file:// orqali yuklandi', soya.canvas === 1 && soya.exit && !soya.error, JSON.stringify({ ...soya, frames }));
   await shot('3-soya-menyu');
-  await cdp('Input.dispatchKeyEvent', { type: 'keyDown', key: 'Enter', code: 'Enter', windowsVirtualKeyCode: 13, text: '\r' });
-  await cdp('Input.dispatchKeyEvent', { type: 'keyUp', key: 'Enter', code: 'Enter', windowsVirtualKeyCode: 13 });
-  check('Soya: daraja boshlandi, zal tugmasi yashirindi', await until(`!document.querySelector('.soya-exit') && window.__game?.scene.isActive('game')`, 8000) || await js(`return !document.querySelector('.soya-exit')`));
+  // Yangi ochilgan oyna OS fokusini darhol olmasligi mumkin — oldinga chiqarib, Enter'ni daraja boshlanguncha (3 martagacha) bosamiz.
+  await cdp('Page.bringToFront').catch(() => {});
+  let started = false;
+  for (let i = 0; i < 3 && !started; i++) {
+    await cdp('Input.dispatchKeyEvent', { type: 'keyDown', key: 'Enter', code: 'Enter', windowsVirtualKeyCode: 13, text: '\r' });
+    await cdp('Input.dispatchKeyEvent', { type: 'keyUp', key: 'Enter', code: 'Enter', windowsVirtualKeyCode: 13 });
+    // window.__game faqat dev rejimida bor; production'da belgi — zal tugmasi faqat Soya bosh menyusida ko'rinadi.
+    started = await until(`!document.querySelector('.soya-exit')`, 3000);
+  }
+  const diag = started ? '' : JSON.stringify(await js(`const g=window.__game; const f=g?.loop.frame; await new Promise(r=>setTimeout(r,400)); return { scenes: g?.scene.getScenes(true).map(s=>s.scene.key), frames: [f, g?.loop.frame], focus: document.hasFocus(), vis: document.visibilityState, kb: g?.input.keyboard?.enabled }`));
+  check('Soya: daraja boshlandi, zal tugmasi yashirindi', started, diag);
   await sleep(1500);
   await shot('4-soya-daraja');
   // Daraja -> darajalar ekrani -> bosh menyu (har bir sahna almashishini kutamiz)
   await cdp('Input.dispatchKeyEvent', { type: 'keyDown', key: 'Escape', code: 'Escape', windowsVirtualKeyCode: 27 });
   await cdp('Input.dispatchKeyEvent', { type: 'keyUp', key: 'Escape', code: 'Escape', windowsVirtualKeyCode: 27 });
-  await until(`window.__game?.scene.isActive('select')`, 8000);
+  await sleep(1500); // daraja -> darajalar ekrani
   await sleep(600);
   await cdp('Input.dispatchKeyEvent', { type: 'keyDown', key: 'Escape', code: 'Escape', windowsVirtualKeyCode: 27 });
   await cdp('Input.dispatchKeyEvent', { type: 'keyUp', key: 'Escape', code: 'Escape', windowsVirtualKeyCode: 27 });
@@ -172,9 +180,9 @@ try {
     return { opened, back: !!document.querySelector('.hall') }`);
   check('Robo Kod mashqi zaldan ochildi va zalga qaytdi', kod.opened && kod.back, JSON.stringify(kod));
 
-  await js(`[...document.querySelectorAll('.hall-top .btn')].find(b=>b.textContent.includes('Studiya')).click()`);
+  await js(`document.querySelector('.hall-icon[aria-label^="Boshqaruv"]').click()`);
   await sleep(1200);
-  check('Studiya tugmasi studiyani ochdi', await js(`return !!document.querySelector('.topbar')`));
+  check('⚙ Boshqaruv tugmasi boshqaruvni ochdi', await js(`return !!document.querySelector('.topbar')`));
   await shot('6-studiya');
 
   check('Konsolda xato yo‘q', consoleErrors.length === 0, consoleErrors.slice(0, 5).join(' | '));
