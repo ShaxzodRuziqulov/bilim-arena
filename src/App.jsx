@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import { loadData, saveData, quitApp, isDesktop, getSaveStatus, subscribeSaveStatus, flushData, dismissRecovery } from './lib/store.js';
 import { setSoundEnabled } from './lib/sound.js';
 import { uid } from './lib/util.js';
@@ -6,13 +6,10 @@ import PinModal from './components/PinModal.jsx';
 import Home from './screens/Home.jsx';
 import Admin from './screens/Admin.jsx';
 import SetEditor from './screens/SetEditor.jsx';
-import GameSetup from './screens/GameSetup.jsx';
-import Race from './screens/Race.jsx';
 import Results from './screens/Results.jsx';
 import Review from './screens/Review.jsx';
 import BackupPanel, { exportBackup } from './components/BackupPanel.jsx';
-import RobotSetup from './screens/RobotSetup.jsx';
-import RobotGame from './screens/RobotGame.jsx';
+import { GAMES } from './games/registry.jsx';
 
 export default function App() {
   const [data, setData] = useState(null);
@@ -58,7 +55,7 @@ export default function App() {
     setPinRequest({ title, onSuccess, onCancel });
   }, [data?.pinHash]);
   const go = useCallback((next) => {
-    if (next.name === 'home' || ((next.name === 'race' || next.name === 'robot') && data?.settings.classroomLock)) teacherUnlocked.current = false;
+    if (next.name === 'home' || (next.name === 'play' && data?.settings.classroomLock)) teacherUnlocked.current = false;
     setScreen(next);
   }, [data?.settings.classroomLock]);
 
@@ -74,10 +71,15 @@ export default function App() {
   if (loadError) return <div className="screen admin"><main className="recovery-screen"><span className="eyebrow">BILIM ARENA</span><h1>Ma’lumotni ochib bo‘lmadi</h1><p role="alert">{loadError}</p><p>Asl ma’lumotlar o‘chirilmadi. Muammoni bartaraf etib qayta oching yoki oldindan olingan zaxira faylini tanlang.</p><button className="btn" onClick={()=>window.location.reload()}>Qayta ochish</button><BackupPanel onRestore={restored}/></main></div>;
   if (!data) return <div className="loading">Yuklanmoqda…</div>;
 
-  const toAdmin = () => askPin('O‘qituvchi studiyasi', () => {
+  const toAdmin = (tab) => askPin('O‘qituvchi studiyasi', () => {
     teacherUnlocked.current = true;
-    go({ name: 'admin' });
+    go({ name: 'admin', tab });
   });
+  const game = GAMES[screen.game];
+  const finishGame = (result) => {
+    update((d) => ({ ...d, history: [result, ...d.history].slice(0, 300) }));
+    go({ name: 'results', game: screen.game, result, config: screen.config });
+  };
   const findSet = (id) => data.sets.find((s) => s.id === id);
 
   let content;
@@ -90,62 +92,35 @@ export default function App() {
       content = set ? <SetEditor set={set} update={update} go={go} /> : null;
       break;
     }
+    // Tayyorgarlik va o'yin ekranlari o'yin modulidan olinadi (src/games/registry.jsx).
     case 'setup':
-      content = <GameSetup data={data} setId={screen.setId} go={go} />;
+      content = game?.renderSetup({ data, go, screen });
       break;
-    case 'race':
-      content = (
-        <Race
-          key={screen.key}
-          config={screen.config}
-          askPin={askPin}
-          onExit={toAdmin}
-          onFinish={(result) => {
-            update((d) => ({ ...d, history: [result, ...d.history].slice(0, 300) }));
-            go({ name: 'results', result, config: screen.config });
-          }}
-        />
+    case 'play':
+      // key har yangi o'yinda ekranni noldan boshlaydi (Yana o'ynash ham).
+      content = game && (
+        <Fragment key={screen.key}>
+          {game.renderPlay({
+            config: screen.config,
+            data,
+            update,
+            askPin,
+            onExit: () => toAdmin(game.adminTab),
+            onFinish: finishGame,
+          })}
+        </Fragment>
       );
       break;
     case 'review':
-      content = <Review result={screen.result} onBack={() => go({ name: 'results', result: screen.result, config: screen.config })} />;
+      content = <Review result={screen.result} onBack={() => go({ name: 'results', game: screen.game, result: screen.result, config: screen.config })} />;
       break;
-    case 'robotSetup':
-      content = <RobotSetup game={screen.game} go={go} />;
-      break;
-    case 'robot': {
-      const { game } = screen.config;
-      content = (
-        <RobotGame
-          key={screen.key}
-          config={screen.config}
-          progress={data.robot?.[game] || {}}
-          onProgress={(level, stars) =>
-            update((d) => {
-              const p = d.robot?.[game] || {};
-              return { ...d, robot: { ...d.robot, [game]: { ...p, stars: { ...p.stars, [level]: stars } } } };
-            })
-          }
-          askPin={askPin}
-          onExit={() => askPin('O‘qituvchi studiyasi', () => {
-            teacherUnlocked.current = true;
-            go({ name: 'admin', tab: 'robot' });
-          })}
-          onFinish={(result) => {
-            update((d) => ({ ...d, history: [result, ...d.history].slice(0, 300) }));
-            go({ name: 'results', result, config: screen.config });
-          }}
-        />
-      );
-      break;
-    }
     case 'results':
       content = (
         <Results
           result={screen.result}
-          onReplay={() => go({ name: screen.result.kind === 'robot' ? 'robot' : 'race', config: screen.config, key: uid() })}
-          onReview={() => go({ name: 'review', result: screen.result, config: screen.config })}
-          onAdmin={toAdmin}
+          onReplay={() => go({ name: 'play', game: screen.game, config: screen.config, key: uid() })}
+          onReview={() => go({ name: 'review', game: screen.game, result: screen.result, config: screen.config })}
+          onAdmin={() => toAdmin(game?.adminTab)}
         />
       );
       break;

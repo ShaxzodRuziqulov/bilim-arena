@@ -20,7 +20,8 @@ export default function RobotSetup({ game, go }) {
 
   const start = () =>
     go({
-      name: 'robot',
+      name: 'play',
+      game,
       key: uid(),
       config: { game, mode: 'team', teams: pickTeams(teams, count), levels, attempts, turnTime },
     });

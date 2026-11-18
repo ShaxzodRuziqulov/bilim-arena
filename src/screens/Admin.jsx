@@ -7,7 +7,7 @@ import ConfirmButton from '../components/ConfirmButton.jsx';
 import PinModal from '../components/PinModal.jsx';
 import BackupPanel from '../components/BackupPanel.jsx';
 import { validateQuestion } from '../../shared/data-schema.mjs';
-import { ROBOT_GAMES } from '../lib/robot/games.js';
+import { gameOfResult, gamesOfFamily } from '../games/registry.jsx';
 
 const TABS = [
   ['sets', '📚 Savol to‘plamlari'],
@@ -118,7 +118,7 @@ function SetsTab({ data, update, go }) {
           <h1>Bugungi darsni<br /><em>sarguzashtga aylantiring.</em></h1>
           <p>To‘plam tanlang, jamoalarni tuzing va butun sinfni bilim poygasiga qo‘shing.</p>
           <div className="row-buttons">
-            <button className="btn primary big" disabled={!readySet} onClick={() => go({ name: 'setup', setId: readySet.id })}>Darsni boshlash ↗</button>
+            <button className="btn primary big" disabled={!readySet} onClick={() => go({ name: 'setup', game: 'race', setId: readySet.id })}>Darsni boshlash ↗</button>
             <button className="btn big" onClick={addSet}>＋ To‘plam yaratish</button>
           </div>
           <div className="studio-facts"><span><b>{data.sets.length}</b> to‘plam</span><span><b>{subjects.length}</b> fan</span><span><b>{data.history.length}</b> o‘yin</span></div>
@@ -178,7 +178,7 @@ function SetsTab({ data, update, go }) {
                 {ready < set.questions.length && ` · ⚠ ${set.questions.length - ready} tasi to‘liq emas`}
               </p>
               <div className="set-card-actions">
-                <button className="btn primary" disabled={ready === 0} onClick={() => go({ name: 'setup', setId: set.id })}>
+                <button className="btn primary" disabled={ready === 0} onClick={() => go({ name: 'setup', game: 'race', setId: set.id })}>
                   ▶ O‘ynash
                 </button>
                 <button className="btn" onClick={() => go({ name: 'editor', setId: set.id })}>
@@ -217,7 +217,7 @@ function RobotTab({ data, update, go }) {
         darajani yechadi va yulduz yig‘adi. <b>Mashq rejimi</b>da darajani erkin tanlash mumkin (masalan, mavzuni tushuntirish uchun).
       </p>
       <div className="set-grid">
-        {Object.entries(ROBOT_GAMES).map(([id, g]) => {
+        {gamesOfFamily('robot').map(({ id, ...g }) => {
           const stars = data.robot?.[id]?.stars || {};
           const solved = Object.keys(stars).length;
           return (
@@ -234,10 +234,10 @@ function RobotTab({ data, update, go }) {
                 {g.levels.length} ta daraja · mashqda yechilgan: {solved}/{g.levels.length}
               </p>
               <div className="set-card-actions">
-                <button className="btn primary" onClick={() => go({ name: 'robotSetup', game: id })}>
+                <button className="btn primary" onClick={() => go({ name: 'setup', game: id })}>
                   ▶ Jamoaviy o‘yin
                 </button>
-                <button className="btn" onClick={() => go({ name: 'robot', key: uid(), config: { game: id, mode: 'practice' } })}>
+                <button className="btn" onClick={() => go({ name: 'play', game: id, key: uid(), config: { game: id, mode: 'practice' } })}>
                   🎯 Mashq rejimi
                 </button>
                 {solved > 0 && (
@@ -274,7 +274,7 @@ function HistoryTab({ data, update }) {
                 <span key={t.name} className="chip" style={{ borderColor: t.color }}>
                   {h.winner === t.name && '👑 '}
                   {t.hero} {t.name}:{' '}
-                  {h.kind === 'robot' ? `★ ${t.score} · ${t.solved}/${h.rounds} daraja` : `${t.pos}/${h.trackLength} qadam · ✓${t.correct} ✗${t.wrong}`}
+                  {gameOfResult(h)?.historyLine(t, h)}
                 </span>
               ))}
             </div>

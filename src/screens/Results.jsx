@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { gameOfResult } from '../games/registry.jsx';
 
 const MEDALS = ['🥇', '🥈', '🥉', '4'];
 
@@ -24,10 +25,9 @@ function CountUp({ value, delay = 0 }) {
 }
 
 export default function Results({ result, onReplay, onAdmin, onReview }) {
-  const robot = result.kind === 'robot';
-  // Robot o'yinlarida tartib yulduzlar bo'yicha, poygada — qadamlar bo'yicha.
-  const main = robot ? 'score' : 'pos';
-  const second = robot ? 'solved' : 'correct';
+  // Tartib va ko'rsatkichlar o'yin modulidan olinadi (masalan: poygada qadamlar, robotda yulduzlar).
+  const game = gameOfResult(result);
+  const [main, second] = game.ranking;
   const ranked = [...result.teams].sort((a, b) => b[main] - a[main] || b[second] - a[second]);
   // Shohsupada g'olib o'rtada turadi: 2 — 1 — 3 — 4.
   const stage = ranked.length >= 3 ? [ranked[1], ranked[0], ...ranked.slice(2)] : ranked;
@@ -40,7 +40,6 @@ export default function Results({ result, onReplay, onAdmin, onReview }) {
       <p className="muted">Ajoyib o‘yin bo‘ldi. Endi xatolar ustida birga ishlaymiz.</p>
       <div className="podium">
         {stage.map((t) => {
-          const total = t.correct + t.wrong;
           // Natijasi teng jamoalar bir xil o'rinni egallaydi.
           const place = ranked.findIndex((o) => o[main] === t[main] && o[second] === t[second]);
           const order = ranked.indexOf(t);
@@ -50,49 +49,18 @@ export default function Results({ result, onReplay, onAdmin, onReview }) {
                 <div className="medal">{MEDALS[place]}</div>
                 <div className="podium-hero">{t.hero}</div>
                 <h2>{t.name}</h2>
-                {robot ? (
-                  <div className="podium-stats">
-                    <div>
+                <div className="podium-stats">
+                  {game.stats(t, result).map((s) => (
+                    <div key={s.label}>
                       <b>
-                        ★ <CountUp value={t.score} delay={400} />
+                        {s.prefix}
+                        <CountUp value={s.value} delay={400} />
+                        {s.suffix}
                       </b>
-                      {result.maxScore} dan
+                      {s.label}
                     </div>
-                    <div>
-                      <b>
-                        <CountUp value={t.solved} delay={400} />/{result.rounds}
-                      </b>
-                      daraja
-                    </div>
-                    <div>
-                      <b>
-                        <CountUp value={result.rounds ? Math.round((t.solved / result.rounds) * 100) : 0} delay={400} />%
-                      </b>
-                      yechildi
-                    </div>
-                  </div>
-                ) : (
-                  <div className="podium-stats">
-                    <div>
-                      <b>
-                        <CountUp value={t.pos} delay={400} />/{result.trackLength}
-                      </b>
-                      qadam
-                    </div>
-                    <div>
-                      <b>
-                        <CountUp value={t.correct} delay={400} />
-                      </b>
-                      to‘g‘ri
-                    </div>
-                    <div>
-                      <b>
-                        <CountUp value={total ? Math.round((t.correct / total) * 100) : 0} delay={400} />%
-                      </b>
-                      aniqlik
-                    </div>
-                  </div>
-                )}
+                  ))}
+                </div>
               </div>
               <div className="podium-base">{place + 1}</div>
             </div>

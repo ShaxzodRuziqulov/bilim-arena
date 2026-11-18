@@ -16,7 +16,8 @@ export default function GameSetup({ data, setId, go }) {
 
   const start = () =>
     go({
-      name: 'race',
+      name: 'play',
+      game: 'race',
       key: uid(),
       config: {
         setName: set.name,

@@ -1,3 +1,4 @@
+import { ROBOT_GAME_IDS as ROBOT_GAMES } from './game-ids.mjs';
 export const DEFAULT_SETTINGS = { time: 30, trackLength: 12, sound: true, classroomLock: false, animations: true };
 const object = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);
 const fail = (message) => { throw new Error(message); };
@@ -6,7 +7,6 @@ const list = (v, fallback = []) => v === undefined ? fallback : Array.isArray(v)
 const number = (v, fallback = 0) => v === undefined ? fallback : Number.isFinite(v) && v >= 0 ? v : fail('Son maydoni noto‘g‘ri');
 function unique(items) { if (new Set(items.map(v => v.id)).size !== items.length) fail('Takroriy ID topildi'); return items; }
 // Robot dasturlash: mashqdagi eng yaxshi yulduzlar (daraja raqami -> 1..3).
-const ROBOT_GAMES = ['kod', 'java'];
 function validateRobot(r) {
   if (r === undefined) return {};
   if (!object(r)) fail('Robot ma’lumoti formati noto‘g‘ri');

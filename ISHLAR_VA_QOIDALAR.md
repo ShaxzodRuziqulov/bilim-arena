@@ -155,3 +155,26 @@ Mahsulot qarorlari va takliflar: [MAHSULOT_QARORLARI.md](MAHSULOT_QARORLARI.md).
 - Barcha 10 daraja va 6 dars namunaviy yechim bilan skriptda yechildi.
 - Brauzerda 1600×900 va 1280×720: jamoaviy raund, ball, urinishlar, PINsiz pauza, yakunlash, natijalar, tarix, qayta yuklashdan keyin saqlanish; Java muharriri, ekran tugmalari va xato qatori.
 - Electron oynasi, Windows o'rnatuvchisi va haqiqiy sensorli doska hali tekshirilmagan.
+
+## 2026-11-09 — o‘yin modullari reyestri
+Maqsad: yangi o‘yin qo‘shish va mavjudlarini yaxshilashni arzonlashtirish (tarqatish va obunaga tayyorgarlikning 1-qadami).
+
+### Bajarilgan ishlar
+- `src/games/registry.jsx` yaratildi: har bir o‘yin (Xazina poygasi, Robo Kod, Java Robot) bitta modul — nomi, belgisi, tayyorgarlik ekrani, o‘yin ekrani, natija tartibi, shohsupa ko‘rsatkichlari va tarix yozuvi.
+- `App.jsx` dagi o‘yinga xos `race`/`robot`/`robotSetup` ekranlari ikkita umumiy ekranga almashtirildi: `setup` va `play` (`game` maydoni bilan).
+- `Results` va natijalar tarixi ko‘rsatkichlarni o‘yin modulidan oladi; `if robot … else …` shoxlari olib tashlandi.
+- Studiyadagi robot kartochkalari reyestrdan chiqadi.
+- O‘yin ID lari `shared/game-ids.mjs` da bir joyda; schema shu ro‘yxatdan foydalanadi. `tests/games.test.js` reyestr va schema mosligini tekshiradi.
+- Saqlanadigan ma’lumot formati o‘zgarmadi: eski natijalar va mashq yulduzlari avvalgidek o‘qiladi.
+- Kichik o‘zgarish: robot o‘yini natijasidan “Dars studiyasi” endi Robot dasturlash bo‘limiga qaytaradi (avval Savol to‘plamlariga qaytardi).
+
+### Yangi o‘yin qo‘shish tartibi
+1. O‘yin ekranini `src/screens/` ga yozish (`config`, `askPin`, `onExit`, `onFinish` props).
+2. `src/games/registry.jsx` ga modul qo‘shish.
+3. Natija yangi formatda saqlansa — `shared/game-ids.mjs` va `shared/data-schema.mjs` ga qo‘shish va test yozish.
+
+### Tekshiruv
+- `npm test` — 22/22 o‘tdi (3 ta yangi reyestr testi bilan).
+- `npm run build` — muvaffaqiyatli.
+- Brauzerda qo‘lda: poyga tayyorgarligi → o‘yin → pauza → studiya; Robo Kod mashqi → chiqish (Robot bo‘limiga); Java jamoaviy o‘yin → yakunlash → natijalar → Yana o‘ynash; poyga natijalari; natijalar tarixida ikkala tur. Konsolda xato yo‘q.
+- `scripts/verify-ui.cjs` ishga tushmadi: Playwright o‘rnatilmagan. Electron oynasi va sensorli doskada alohida sinalmagan.
