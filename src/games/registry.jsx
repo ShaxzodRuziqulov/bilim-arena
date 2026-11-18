@@ -29,8 +29,8 @@ const race = {
   about: 'Jamoalar navbat bilan savollarga javob berib, xazina tomon yuradi.',
   adminTab: undefined,
   renderSetup: ({ data, go, screen }) => <GameSetup data={data} setId={screen.setId} go={go} />,
-  renderPlay: ({ config, askPin, onExit, onFinish }) => (
-    <Race config={config} askPin={askPin} onExit={onExit} onFinish={onFinish} />
+  renderPlay: ({ config, askPin, onExit, onFinish, exitLabel }) => (
+    <Race config={config} askPin={askPin} onExit={onExit} onFinish={onFinish} exitLabel={exitLabel} />
   ),
   ranking: ['pos', 'correct'],
   stats: (t, result) => [
@@ -53,7 +53,7 @@ const robotModule = (id) => {
     levels: g.levels,
     adminTab: 'robot',
     renderSetup: ({ go }) => <RobotSetup game={id} go={go} />,
-    renderPlay: ({ config, data, update, askPin, onExit, onFinish }) => (
+    renderPlay: ({ config, data, update, askPin, onExit, onFinish, exitLabel }) => (
       <RobotGame
         config={config}
         progress={data.robot?.[id] || {}}
@@ -66,6 +66,7 @@ const robotModule = (id) => {
         askPin={askPin}
         onExit={onExit}
         onFinish={onFinish}
+        exitLabel={exitLabel}
       />
     ),
     ranking: ['score', 'solved'],

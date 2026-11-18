@@ -17,7 +17,7 @@ const Stars = ({ n, of = 3 }) => (
 );
 
 // Robot o'yinlari qobig'i: mashq rejimi (erkin daraja tanlash) yoki jamoaviy musobaqa (raundlar, navbat, ball).
-export default function RobotGame({ config, progress, onProgress, askPin, onFinish, onExit }) {
+export default function RobotGame({ config, progress, onProgress, askPin, onFinish, onExit, exitLabel = 'Studiyaga qaytish' }) {
   const g = ROBOT_GAMES[config.game];
   const Workspace = WORKSPACES[config.game];
   const team = config.mode === 'team';
@@ -270,7 +270,7 @@ export default function RobotGame({ config, progress, onProgress, askPin, onFini
               </button>
             )}
             <button className="btn big full" onClick={onExit}>
-              ← Studiyaga qaytish{team ? ' (natija saqlanmaydi)' : ''}
+              ← {exitLabel}{team ? ' (natija saqlanmaydi)' : ''}
             </button>
           </div>
         </div>

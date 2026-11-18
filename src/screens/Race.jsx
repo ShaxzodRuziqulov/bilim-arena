@@ -61,7 +61,7 @@ export function prepare(q) {
   return { q, options };
 }
 
-export default function Race({ config, askPin, onFinish, onExit }) {
+export default function Race({ config, askPin, onFinish, onExit, exitLabel = 'Studiyaga qaytish' }) {
   const N = config.trackLength;
   const track = useMemo(() => buildTrack(N), [N]);
   const specials = useMemo(() => buildSpecials(N), [N]);
@@ -351,8 +351,8 @@ export default function Race({ config, askPin, onFinish, onExit }) {
               <button className="btn gold big full" onClick={() => askPin('O‘yinni yakunlash', finishEarly)}>
                 🏁 O‘yinni yakunlash va natijalar
               </button>
-              <button className="btn big full" onClick={() => askPin('Studiyaga qaytish', onExit)}>
-                ← Studiyaga qaytish (natija saqlanmaydi)
+              <button className="btn big full" onClick={() => askPin(exitLabel, onExit)}>
+                ← {exitLabel} (natija saqlanmaydi)
               </button>
             </div>
           </div>

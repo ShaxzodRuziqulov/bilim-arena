@@ -220,3 +220,18 @@ Maqsad: Bilim Arena faqat sinf o‘yini emas, balki shaxsiy o‘yinlar platforma
 - Zal kartalari uchun Kodbuzar va Soyaning saqlash/darajalar modullari asosiy bo‘lakka kiradi — kichik umumiy “summary” moduli bilan ajratish mumkin.
 - Kodbuzar va Soya manbalari mustaqil loyihalardan nusxa — ikkalasini yagona manbaga keltirish qarori kerak.
 - Zal, `SOLO_GAMES` va sinf himoyasi oqimi uchun avtomatik testlar yo‘q (Electron smoke zal va o‘yinlarni qamraydi, himoyani emas).
+
+## 2026-11-18 — barcha o‘yinlar bitta zalda, bir xil tartibda
+Muammo: zaldagi “Sinf bilan” kartalari (Xazina poygasi, Robo Kod, Java Robot) o‘qituvchi studiyasiga yuborardi, o‘yindan chiqqanda ham studiyaga qaytilardi — platforma ikki xil ilovadek tuyulardi.
+
+### Bajarilgan ishlar
+- Zalda beshala o‘yin bitta “O‘yinlar” to‘rida, bir xil afishada: har birining o‘z sahnasi (SVG), rejimi (Yakka / Yakka yoki jamoa / 2–4 jamoa), natija qatori va bir xil joylashgan tugmalar.
+- Har afisha o‘yinning o‘zini ochadi: Kodbuzar va Soya — o‘yin; Robo Kod va Java Robot — “Mashq qilish” (yakka) yoki “Jamoa bilan” (tayyorgarlik); Xazina poygasi — “Jamoalarni tuzish” (savol to‘plami bo‘lmasa tugma o‘chiq va izoh chiqadi).
+- `App.jsx`: zaldan ochilgan o‘yin `from: 'hall'` belgisini oladi. Tayyorgarlikdagi “Orqaga”, o‘yin ichidagi chiqish, natijalar va takrorlash ekranlari zalga qaytaradi (“← O‘yinlar zaliga qaytish”). Studiyadan ochilgan o‘yinlar avvalgidek studiyaga qaytadi. O‘yin komponentlariga faqat `exitLabel` / `adminLabel` yozuvlari qo‘shildi.
+- Zal tepasida “✎ Studiya” tugmasi — savol to‘plamlari, natijalar va sozlamalar uchun.
+- “Davom ettirish” qatori barcha o‘yinlar uchun ishlaydi.
+
+### Tekshiruv
+- `npm test` — 57/57, `npm run build` — muvaffaqiyatli.
+- Brauzerda: Robo Kod mashqi → pauza → zalga; Robo Kod jamoa tayyorgarligi → Orqaga → zal; Java mashqi → zal; Xazina poygasi → tayyorgarlik → Orqaga → zal; Xazina poygasi → boshlash → yakunlash → natijalar (“← O‘yinlar zali”) → zal. Konsolda xato yo‘q.
+- `BILIM_ARENA_TEST_SHOW=1 npm run smoke:electron` — 12/12 (yangi: Robo Kod mashqi zaldan ochilib zalga qaytadi, Studiya tugmasi).

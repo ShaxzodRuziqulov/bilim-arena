@@ -78,9 +78,25 @@ export default function App() {
     go({ name: 'admin', tab });
   });
   const game = GAMES[screen.game];
+  // O'yin zaldan ochilgan bo'lsa (from: 'hall'), uning barcha "studiyaga" yo'llari zalga buriladi:
+  // o'yinchi bitta platformada qoladi. Studiyadan ochilgan o'yinlar avvalgidek studiyaga qaytadi.
+  const fromHall = screen.from === 'hall';
+  const toHall = () => go({ name: 'hall' });
+  const goGame = (next) => {
+    if (!fromHall) return go(next);
+    if (next.name === 'admin') return toHall();
+    return go({ ...next, from: 'hall' });
+  };
+  const leaveGame = fromHall ? toHall : () => toAdmin(game?.adminTab);
+  const leaveLabel = fromHall ? 'O‘yinlar zaliga qaytish' : 'Studiyaga qaytish';
   const finishGame = (result) => {
     update((d) => ({ ...d, history: [result, ...d.history].slice(0, 300) }));
-    go({ name: 'results', game: screen.game, result, config: screen.config });
+    goGame({ name: 'results', game: screen.game, result, config: screen.config });
+  };
+  // Zaldan istalgan o'yinni ochish (yakka, robot mashqi yoki jamoaviy tayyorgarlik).
+  const startFromHall = (next) => {
+    rememberLastGame(next.game);
+    go({ ...next, from: 'hall' });
   };
   const findSet = (id) => data.sets.find((s) => s.id === id);
 
@@ -90,11 +106,9 @@ export default function App() {
     case 'hall':
       content = (
         <Hall
-          onPlay={(id) => {
-            rememberLastGame(id);
-            go({ name: 'solo', game: id });
-          }}
-          onClass={(tab) => toAdmin(tab)}
+          data={data}
+          onStart={startFromHall}
+          onStudio={() => toAdmin()}
           onQuit={quit}
           soundOn={data.settings.sound}
           onToggleSound={() => update((d) => ({ ...d, settings: { ...d.settings, sound: !d.settings.sound } }))}
@@ -106,7 +120,7 @@ export default function App() {
       const Solo = SOLO_GAMES[screen.game]?.Component;
       content = Solo && (
         <Suspense fallback={<div className="loading">Yuklanmoqda…</div>}>
-          <Solo onExit={() => go({ name: 'hall' })} soundOn={data.settings.sound} />
+          <Solo onExit={toHall} soundOn={data.settings.sound} />
         </Suspense>
       );
       break;
@@ -121,7 +135,7 @@ export default function App() {
     }
     // Tayyorgarlik va o'yin ekranlari o'yin modulidan olinadi (src/games/registry.jsx).
     case 'setup':
-      content = game?.renderSetup({ data, go, screen });
+      content = game?.renderSetup({ data, go: goGame, screen });
       break;
     case 'play':
       // key har yangi o'yinda ekranni noldan boshlaydi (Yana o'ynash ham).
@@ -132,22 +146,24 @@ export default function App() {
             data,
             update,
             askPin,
-            onExit: () => toAdmin(game.adminTab),
+            onExit: leaveGame,
+            exitLabel: leaveLabel,
             onFinish: finishGame,
           })}
         </Fragment>
       );
       break;
     case 'review':
-      content = <Review result={screen.result} onBack={() => go({ name: 'results', game: screen.game, result: screen.result, config: screen.config })} />;
+      content = <Review result={screen.result} onBack={() => goGame({ name: 'results', game: screen.game, result: screen.result, config: screen.config })} />;
       break;
     case 'results':
       content = (
         <Results
           result={screen.result}
-          onReplay={() => go({ name: 'play', game: screen.game, config: screen.config, key: uid() })}
-          onReview={() => go({ name: 'review', game: screen.game, result: screen.result, config: screen.config })}
-          onAdmin={() => toAdmin(game?.adminTab)}
+          onReplay={() => goGame({ name: 'play', game: screen.game, config: screen.config, key: uid() })}
+          onReview={() => goGame({ name: 'review', game: screen.game, result: screen.result, config: screen.config })}
+          onAdmin={leaveGame}
+          adminLabel={fromHall ? 'O‘yinlar zali' : 'Dars studiyasi'}
         />
       );
       break;

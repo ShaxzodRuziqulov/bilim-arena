@@ -104,10 +104,10 @@ try {
   await sleep(2500);
 
   const hall = await js(`return { hall: !!document.querySelector('.hall'), posters: document.querySelectorAll('.poster').length, desktop: !!window.api, url: location.protocol }`);
-  check('Zal ochildi (file://, window.api bor)', hall.hall && hall.posters === 2 && hall.desktop && hall.url === 'file:', JSON.stringify(hall));
+  check('Zal ochildi (file://, window.api bor)', hall.hall && hall.posters === 5 && hall.desktop && hall.url === 'file:', JSON.stringify(hall));
   await shot('1-zal');
 
-  await js(`document.querySelector('.poster-kodbuzar').click()`);
+  await js(`document.querySelector('.poster-kodbuzar .poster-play').click()`);
   await sleep(2500);
   const kb = await js(`const s=document.querySelector('.kb-host')?.shadowRoot; return { shadow: !!s, styled: !!s?.querySelector('style')?.textContent.includes('.kb'), title: s?.querySelector('.title-3d')?.getAttribute('aria-label'), font: s ? getComputedStyle(s.querySelector('.kb')).fontFamily : '' }`);
   check('Kodbuzar Shadow DOM ichida, stillar bilan', kb.shadow && kb.styled && kb.title === 'Kodbuzar', JSON.stringify(kb));
@@ -137,7 +137,7 @@ try {
   await sleep(1000);
   check('Kodbuzardan zalga qaytildi', await js(`return !!document.querySelector('.hall') && !document.querySelector('.kb-host')`));
 
-  await js(`document.querySelector('.poster-soya').click()`);
+  await js(`document.querySelector('.poster-soya .poster-play').click()`);
   await until(`document.querySelector('.soya-exit')`, 15000);
   await sleep(1500);
   const soya = await js(`return { canvas: document.querySelectorAll('.soya-canvas canvas').length, exit: !!document.querySelector('.soya-exit'), error: !!document.querySelector('.soya-status[role=alert]') }`);
@@ -161,12 +161,21 @@ try {
   check('Soya menyusidan zalga qaytildi, canvas tozalandi', back.menu && back.hall && back.canvases === 0, JSON.stringify(back));
 
   const hall2 = await js(`return { cont: document.querySelector('.hall-continue b')?.textContent }`);
-  check('Zal oxirgi o‘yinni eslab qoldi', hall2.cont === 'Soyani davom ettirish', JSON.stringify(hall2));
+  check('Zal oxirgi o‘yinni eslab qoldi', /^Soya:/.test(hall2.cont || ''), JSON.stringify(hall2));
+  await js(`document.querySelector('.hall').scrollTo(0, 0)`);
+  await shot('5-zal');
 
-  await js(`document.querySelector('.class-card').click()`);
+  // Robo Kod mashqi zaldan ochiladi va zalga qaytadi (studiyaga emas).
+  const kod = await js(`const w=(ms)=>new Promise(r=>setTimeout(r,ms)); const btn=(re)=>[...document.querySelectorAll('button')].find(b=>re.test(b.textContent));
+    document.querySelector('.poster-kod .poster-play').click(); await w(1000); const opened=!document.querySelector('.hall');
+    btn(/^⏸$/)?.click(); await w(400); btn(/O‘yinlar zaliga qaytish/)?.click(); await w(800);
+    return { opened, back: !!document.querySelector('.hall') }`);
+  check('Robo Kod mashqi zaldan ochildi va zalga qaytdi', kod.opened && kod.back, JSON.stringify(kod));
+
+  await js(`[...document.querySelectorAll('.hall-top .btn')].find(b=>b.textContent.includes('Studiya')).click()`);
   await sleep(1200);
-  check('Sinf kartasi studiyani ochdi', await js(`return !!document.querySelector('.topbar')`));
-  await shot('5-studiya');
+  check('Studiya tugmasi studiyani ochdi', await js(`return !!document.querySelector('.topbar')`));
+  await shot('6-studiya');
 
   check('Konsolda xato yo‘q', consoleErrors.length === 0, consoleErrors.slice(0, 5).join(' | '));
 } catch (e) {

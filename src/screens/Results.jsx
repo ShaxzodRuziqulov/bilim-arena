@@ -24,7 +24,7 @@ function CountUp({ value, delay = 0 }) {
   return shown;
 }
 
-export default function Results({ result, onReplay, onAdmin, onReview }) {
+export default function Results({ result, onReplay, onAdmin, onReview, adminLabel = 'Dars studiyasi' }) {
   // Tartib va ko'rsatkichlar o'yin modulidan olinadi (masalan: poygada qadamlar, robotda yulduzlar).
   const game = gameOfResult(result);
   const [main, second] = game.ranking;
@@ -89,7 +89,7 @@ export default function Results({ result, onReplay, onAdmin, onReview }) {
           🔁 Yana o‘ynash
         </button>
         <button className="btn big" onClick={onAdmin}>
-          ← Dars studiyasi
+          ← {adminLabel}
         </button>
       </div>
     </div>
