@@ -180,9 +180,9 @@ try {
     return { opened, back: !!document.querySelector('.hall') }`);
   check('Robo Kod mashqi zaldan ochildi va zalga qaytdi', kod.opened && kod.back, JSON.stringify(kod));
 
-  await js(`document.querySelector('.hall-icon[aria-label^="Boshqaruv"]').click()`);
+  await js(`document.querySelector('.hall-icon[aria-label="Sozlamalar"]').click()`);
   await sleep(1200);
-  check('⚙ Boshqaruv tugmasi boshqaruvni ochdi', await js(`return !!document.querySelector('.topbar')`));
+  check('⚙ tugmasi Sozlamalarni ochdi', await js(`return !!document.querySelector('.topbar')`));
   await shot('6-studiya');
 
   check('Konsolda xato yo‘q', consoleErrors.length === 0, consoleErrors.slice(0, 5).join(' | '));

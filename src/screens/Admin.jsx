@@ -7,16 +7,18 @@ import ConfirmButton from '../components/ConfirmButton.jsx';
 import PinModal from '../components/PinModal.jsx';
 import BackupPanel from '../components/BackupPanel.jsx';
 import { validateQuestion } from '../../shared/data-schema.mjs';
-import { gameOfResult, gamesOfFamily } from '../games/registry.jsx';
+import { gameOfResult, gamesOfFamily, SOLO_GAMES } from '../games/registry.jsx';
+import { reloadSave as reloadSoyaSave } from '../games/soya/engine/save.js';
 
+// Sozlamalar sahifasi (zaldagi ⚙). Umumiy — barcha o'yinlarga tegishli; O'yinlar — har o'yinning o'zi uchun.
 const TABS = [
-  ['sets', '📚 Savol to‘plamlari'],
-  ['robot', '🤖 Robot dasturlash'],
-  ['history', '🏆 Natijalar tarixi'],
-  ['settings', '⚙️ Sozlamalar'],
+  ['general', 'Umumiy'],
+  ['games', 'O‘yinlar'],
+  ['sets', 'Savollar'],
+  ['history', 'Natijalar'],
 ];
 
-export default function Admin({ data, update, go, askPin, onRestore, tab: initialTab = 'sets' }) {
+export default function Admin({ data, update, go, askPin, onRestore, tab: initialTab = 'general' }) {
   const [tab, setTab] = useState(initialTab);
   const updateStatus = useUpdateStatus();
 
@@ -24,8 +26,7 @@ export default function Admin({ data, update, go, askPin, onRestore, tab: initia
     <div className="screen admin">
       <header className="topbar">
         <button className="admin-back" onClick={() => go({ name: 'hall' })} aria-label="O‘yinlar zaliga qaytish" title="O‘yinlar zali">←</button>
-        <strong>Boshqaruv</strong>
-        <small>Savollar, natijalar va sozlamalar</small>
+        <strong>Sozlamalar</strong>
         <nav className="tabs">
           {TABS.map(([id, label]) => (
             <button key={id} className={`tab ${tab === id ? 'active' : ''}`} onClick={() => setTab(id)}>
@@ -34,7 +35,7 @@ export default function Admin({ data, update, go, askPin, onRestore, tab: initia
           ))}
         </nav>
         {updateStatus.status === 'ready' && (
-          <button className="btn update-badge" onClick={() => setTab('settings')}>
+          <button className="btn update-badge" onClick={() => setTab('general')}>
             ⬆ Yangi versiya tayyor
           </button>
         )}
@@ -43,10 +44,10 @@ export default function Admin({ data, update, go, askPin, onRestore, tab: initia
         </button>
       </header>
       <main className="admin-main">
+        {tab === 'general' && <GeneralTab data={data} update={update} askPin={askPin} onRestore={onRestore} updateStatus={updateStatus} />}
+        {tab === 'games' && <GamesTab data={data} update={update} goSets={() => setTab('sets')} />}
         {tab === 'sets' && <SetsTab data={data} update={update} go={go} />}
-        {tab === 'robot' && <RobotTab data={data} update={update} go={go} />}
         {tab === 'history' && <HistoryTab data={data} update={update} />}
-        {tab === 'settings' && <SettingsTab data={data} update={update} askPin={askPin} onRestore={onRestore} updateStatus={updateStatus} />}
       </main>
     </div>
   );
@@ -193,47 +194,85 @@ function SetsTab({ data, update, go }) {
   );
 }
 
-function RobotTab({ data, update, go }) {
+// Yakka o'yinlar natijalari o'z localStorage kalitlarida. Tozalashda faqat natijalar o'chadi, o'yinning o'z sozlamalari qoladi.
+function clearSoloProgress(key, keep) {
+  try {
+    const raw = JSON.parse(localStorage.getItem(key) || '{}');
+    const next = Object.fromEntries(Object.entries(raw).filter(([k]) => keep.includes(k)));
+    localStorage.setItem(key, JSON.stringify(next));
+  } catch {
+    /* xotira yopiq yoki buzilgan — tozalanadigan narsa yo'q */
+  }
+}
+const safeSummary = (g) => {
+  try {
+    return g.summary();
+  } catch {
+    return { stars: 0, max: 0 };
+  }
+};
+
+/** Har bir o'yinning o'z sozlamalari va natijalari. Ovoz va animatsiyalar — "Umumiy"da, barcha o'yinlar uchun. */
+function GamesTab({ data, update, goSets }) {
+  const [, refresh] = useState(0);
+  const s = data.settings;
+  const set = (patch) => update((d) => ({ ...d, settings: { ...d.settings, ...patch } }));
+  const kb = safeSummary(SOLO_GAMES.kodbuzar);
+  const soya = safeSummary(SOLO_GAMES.soya);
+  const readySets = data.sets.filter((x) => playableQuestions(x).length).length;
+
   return (
     <>
-      <div className="section-head">
-        <h2>Robot dasturlash</h2>
-      </div>
-      <p className="note">
-        Savol to‘plami kerak emas — darajalar o‘yin ichida tayyor. <b>Jamoaviy o‘yin</b>da jamoalar navbat bilan doskaga chiqib bitta
-        darajani yechadi va yulduz yig‘adi. <b>Mashq rejimi</b>da darajani erkin tanlash mumkin (masalan, mavzuni tushuntirish uchun).
-      </p>
-      <div className="set-grid">
+      <h2>O‘yinlar</h2>
+      <p className="note">Har bir o‘yinning o‘z sozlamalari va natijalari. Ovoz va animatsiyalar “Umumiy” bo‘limida — barcha o‘yinlar uchun.</p>
+      <div className="settings-grid">
+        <div className="panel">
+          <h3>Kodbuzar</h3>
+          <p className="note">★ {kb.stars} / {kb.max} yulduz. Darajalar va kunlik kod seriyasi shu qurilmada saqlanadi.</p>
+          {kb.stars > 0 && (
+            <ConfirmButton onConfirm={() => { clearSoloProgress('kodbuzar-v2', ['settings', 'seenIntro']); refresh((n) => n + 1); }}>↺ Natijalarni tozalash</ConfirmButton>
+          )}
+        </div>
+        <div className="panel">
+          <h3>Soya</h3>
+          <p className="note">★ {soya.stars} / {soya.max} yulduz. Har daraja uchun eng yaxshi vaqt va soyalar soni saqlanadi.</p>
+          {soya.stars > 0 && (
+            <ConfirmButton onConfirm={() => { clearSoloProgress('soya-save-v1', ['sound', 'music']); reloadSoyaSave(); refresh((n) => n + 1); }}>↺ Natijalarni tozalash</ConfirmButton>
+          )}
+        </div>
         {gamesOfFamily('robot').map(({ id, ...g }) => {
-          const stars = data.robot?.[id]?.stars || {};
-          const solved = Object.keys(stars).length;
+          const solved = Object.keys(data.robot?.[id]?.stars || {}).length;
           return (
-            <div key={id} className="set-card robot-card">
-              <div className="set-card-top">
-                <span className="chip">Informatika</span>
-                <span className="chip">{g.grades}</span>
-              </div>
-              <h3>
-                {g.icon} {g.title}
-              </h3>
-              <p className="muted">{g.about}</p>
-              <p className="muted small">
-                {g.levels.length} ta daraja · mashqda yechilgan: {solved}/{g.levels.length}
-              </p>
-              <div className="set-card-actions">
-                <button className="btn primary" onClick={() => go({ name: 'setup', game: id })}>
-                  ▶ Jamoaviy o‘yin
-                </button>
-                <button className="btn" onClick={() => go({ name: 'play', game: id, key: uid(), config: { game: id, mode: 'practice' } })}>
-                  🎯 Mashq rejimi
-                </button>
-                {solved > 0 && (
-                  <ConfirmButton onConfirm={() => update((d) => ({ ...d, robot: { ...d.robot, [id]: {} } }))}>↺ Mashqni tozalash</ConfirmButton>
-                )}
-              </div>
+            <div key={id} className="panel">
+              <h3>{g.title}</h3>
+              <p className="note">Mashqda yechilgan: {solved} / {g.levels.length} daraja. Jamoaviy o‘yin sozlamalari o‘yin boshlanishida tanlanadi.</p>
+              {solved > 0 && (
+                <ConfirmButton onConfirm={() => update((d) => ({ ...d, robot: { ...d.robot, [id]: {} } }))}>↺ Mashqni tozalash</ConfirmButton>
+              )}
             </div>
           );
         })}
+        <div className="panel">
+          <h3>Xazina poygasi</h3>
+          <label>Har bir savol uchun vaqt</label>
+          <select value={s.time} onChange={(e) => set({ time: Number(e.target.value) })}>
+            {[15, 20, 30, 45, 60, 90, 0].map((t) => (
+              <option key={t} value={t}>
+                {t ? `${t} soniya` : 'Cheklanmagan'}
+              </option>
+            ))}
+          </select>
+          <label>Xazinagacha qadamlar soni</label>
+          <select value={s.trackLength} onChange={(e) => set({ trackLength: Number(e.target.value) })}>
+            {[8, 10, 12, 16, 20].map((n) => (
+              <option key={n} value={n}>
+                {n} qadam
+              </option>
+            ))}
+          </select>
+          <p className="note">{readySets} ta tayyor savol to‘plami.</p>
+          <button className="btn" onClick={goSets}>Savollarni boshqarish</button>
+        </div>
       </div>
     </>
   );
@@ -323,7 +362,8 @@ function UpdatePanel({ state, version }) {
   );
 }
 
-function SettingsTab({ data, update, askPin, onRestore, updateStatus }) {
+/** Barcha o'yinlarga tegishli sozlamalar: ovoz, animatsiyalar, xavfsizlik, yangilanish va zaxira. */
+function GeneralTab({ data, update, askPin, onRestore, updateStatus }) {
   const [changingPin, setChangingPin] = useState(false);
   const [saved, setSaved] = useState(false);
   const [version, setVersion] = useState('');
@@ -336,33 +376,17 @@ function SettingsTab({ data, update, askPin, onRestore, updateStatus }) {
 
   return (
     <>
-      <h2>Sozlamalar</h2>
+      <h2>Umumiy</h2>
       <div className="settings-grid">
         <div className="panel">
-          <h3>O‘yin (standart qiymatlar)</h3>
-          <label>Har bir savol uchun vaqt</label>
-          <select value={s.time} onChange={(e) => set({ time: Number(e.target.value) })}>
-            {[15, 20, 30, 45, 60, 90, 0].map((t) => (
-              <option key={t} value={t}>
-                {t ? `${t} soniya` : 'Cheklanmagan'}
-              </option>
-            ))}
-          </select>
-          <label>Xazinagacha qadamlar soni</label>
-          <select value={s.trackLength} onChange={(e) => set({ trackLength: Number(e.target.value) })}>
-            {[8, 10, 12, 16, 20].map((n) => (
-              <option key={n} value={n}>
-                {n} qadam
-              </option>
-            ))}
-          </select>
+          <h3>Barcha o‘yinlar uchun</h3>
           <label className="check">
-            <input type="checkbox" checked={s.sound} onChange={(e) => set({ sound: e.target.checked })} /> Tovush effektlari
+            <input type="checkbox" checked={s.sound} onChange={(e) => set({ sound: e.target.checked })} /> Ovoz va musiqa
           </label>
           <label className="check">
             <input type="checkbox" checked={s.animations} onChange={(e) => set({ animations: e.target.checked })} /> Animatsiyalar
           </label>
-          <p className="note">Kompyuter yoki doska sekin ishlasa, animatsiyalarni o‘chiring.</p>
+          <p className="note">Kodbuzar, Soya, Robo Kod, Java Robot va Xazina poygasiga birdek ta’sir qiladi. Kompyuter yoki doska sekin ishlasa, animatsiyalarni o‘chiring.</p>
         </div>
         <div className="panel">
           <h3>Xavfsizlik</h3>

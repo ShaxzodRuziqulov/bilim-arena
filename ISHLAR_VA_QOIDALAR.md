@@ -250,3 +250,17 @@ Muammo: zaldagi “✎ Studiya” tugmasi o‘yinlar bilan raqobatlashardi; ichk
 - `npm test` — 57/57, `npm run build` — muvaffaqiyatli.
 - Brauzerda: Boshqaruvning 4 bo‘limi, savol muharriri — och fonli element qolmagan (faqat asosiy yashil tugmalar); Boshqaruv → O‘ynash → tayyorgarlik → o‘yin → yakunlash → natijalar (“← O‘yinlar zali”) → zal.
 - Tuzatilgan Electron smoke qayta ishga tushirilmadi.
+
+## 2026-11-18 — Sozlamalar: barcha o‘yinlar uchun bitta tuzilma
+Muammo: ⚙ “Boshqaruv”ni ochardi, ichida yana “⚙️ Sozlamalar” bo‘limi bor edi; u yerdagi “O‘yin” sozlamalari (vaqt, qadamlar) faqat Xazina poygasiga tegishli edi, Kodbuzar va Soya uchun esa hech narsa yo‘q edi.
+
+### Bajarilgan ishlar
+- ⚙ endi to‘g‘ridan-to‘g‘ri **Sozlamalar** sahifasini ochadi. Bo‘limlar: **Umumiy** · **O‘yinlar** · **Savollar** · **Natijalar** (ichida “Sozlamalar” bo‘limi yo‘q).
+- **Umumiy** — barcha o‘yinlar uchun: “Ovoz va musiqa”, “Animatsiyalar”, xavfsizlik (PIN, sinf himoyasi), yangilanishlar, zaxira.
+- **O‘yinlar** — har o‘yin o‘z panelida: Kodbuzar va Soya (yulduzlar, natijalarni tozalash — o‘yinning o‘z sozlamalari saqlanadi), Robo Kod va Java Robot (mashqni tozalash), Xazina poygasi (savol vaqti, qadamlar soni, savollarga o‘tish). Robot bo‘limidagi takroriy “o‘ynash” tugmalari olib tashlandi — o‘yinlar zalda.
+- “Animatsiyalar” endi Kodbuzar (Shadow DOM ichiga `reduceMotion` orqali) va Soyaga (`theme.reducedMotion()` platformaning `html.reduce-motion` belgisini ham tekshiradi) ham ta’sir qiladi. Ovoz avvaldan umumiy edi.
+- Nomlar: hamma joyda “Boshqaruv” → “Sozlamalar”; robot o‘yinlarining `adminTab` → `games`.
+
+### Tekshiruv
+- `npm test` — 57/57, `npm run build` — muvaffaqiyatli.
+- Brauzerda: ⚙ → “Sozlamalar”, 4 bo‘lim; O‘yinlar bo‘limida 5 ta o‘yin; “Animatsiyalar” o‘chirilganda `html.reduce-motion` va Kodbuzar ichida `.kb.reduce` yoqildi, qayta yoqilganda olib tashlandi.

@@ -580,3 +580,11 @@ kbd { background: var(--glass-2); border: 1px solid var(--line); border-radius: 
 }
 .kb .backdrop { position: fixed; }
 .kb .exit-btn { position: absolute; left: 16px; top: 12px; }
+
+/* Platformada "Animatsiyalar" o'chirilgan: Kodbuzar ham harakatsiz (tizimdagi "harakatni kamaytirish" bilan bir xil). */
+.kb.reduce *, .kb.reduce *::before, .kb.reduce *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition: none !important;
+}
+.kb.reduce .float-digit, .kb.reduce .confetti { display: none; }

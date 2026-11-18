@@ -11,7 +11,8 @@ import HowTo from './screens/HowTo.jsx';
 import Game from './screens/Game.jsx';
 
 // soundOn — platformaning umumiy ovoz sozlamasi: o'chiq bo'lsa, Kodbuzarning o'z sozlamasidan qat'i nazar jim.
-export default function KodbuzarApp({ onExit, soundOn = true }) {
+// reduceMotion — platformadagi "Animatsiyalar" o'chirilgan bo'lsa, Kodbuzar animatsiyalari ham o'chadi.
+export default function KodbuzarApp({ onExit, soundOn = true, reduceMotion = false }) {
   const [save, setSave] = useState(loadSave);
   const [screen, setScreen] = useState({ name: 'home' });
   const rootRef = useRef(null);
@@ -106,7 +107,7 @@ export default function KodbuzarApp({ onExit, soundOn = true }) {
   }
 
   return (
-    <div className="kb" ref={rootRef}>
+    <div className={`kb ${reduceMotion ? 'reduce' : ''}`} ref={rootRef}>
       <Backdrop />
       <div className="screen-wrap" key={screen.name === 'level' ? `${screen.worldId}-${screen.level}-${screen.attempt}` : screen.name}>{view}</div>
     </div>

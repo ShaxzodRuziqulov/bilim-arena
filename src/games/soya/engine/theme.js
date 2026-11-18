@@ -46,6 +46,8 @@ export const css = (n) => `#${n.toString(16).padStart(6, '0')}`;
 /** Foydalanuvchi tizimda "harakatni kamaytirish"ni yoqqanmi (9-qoida). */
 export function reducedMotion() {
   try {
+    // Platformada "Animatsiyalar" o'chirilgan bo'lsa (html.reduce-motion) — u ham hisobga olinadi.
+    if (document.documentElement.classList.contains('reduce-motion')) return true;
     return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   } catch {
     return false;

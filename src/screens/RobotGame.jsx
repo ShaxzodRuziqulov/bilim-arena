@@ -17,7 +17,7 @@ const Stars = ({ n, of = 3 }) => (
 );
 
 // Robot o'yinlari qobig'i: mashq rejimi (erkin daraja tanlash) yoki jamoaviy musobaqa (raundlar, navbat, ball).
-export default function RobotGame({ config, progress, onProgress, askPin, onFinish, onExit, exitLabel = 'Boshqaruvga qaytish' }) {
+export default function RobotGame({ config, progress, onProgress, askPin, onFinish, onExit, exitLabel = 'Sozlamalarga qaytish' }) {
   const g = ROBOT_GAMES[config.game];
   const Workspace = WORKSPACES[config.game];
   const team = config.mode === 'team';

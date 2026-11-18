@@ -51,7 +51,7 @@ const robotModule = (id) => {
     grades: g.grades,
     about: g.about,
     levels: g.levels,
-    adminTab: 'robot',
+    adminTab: 'games',
     renderSetup: ({ go }) => <RobotSetup game={id} go={go} />,
     renderPlay: ({ config, data, update, askPin, onExit, onFinish, exitLabel }) => (
       <RobotGame

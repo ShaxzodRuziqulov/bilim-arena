@@ -5,7 +5,7 @@ import KodbuzarApp from './KodbuzarApp.jsx';
 
 // Kodbuzar Shadow DOM ichida, o'z React ildizi bilan ishlaydi: platformaning global stillari (.btn, .key,
 // .home, .overlay va h.k.) unga yetib bormaydi, uning stillari ham platformaga chiqmaydi.
-export default function KodbuzarHost({ onExit, soundOn = true }) {
+export default function KodbuzarHost({ onExit, soundOn = true, reduceMotion = false }) {
   const host = useRef(null);
   const root = useRef(null);
   const exitRef = useRef(onExit);
@@ -29,7 +29,7 @@ export default function KodbuzarHost({ onExit, soundOn = true }) {
 
   // Props o'zgarsa (masalan, umumiy ovoz) — ichki ildiz qayta chiziladi, o'yin holati saqlanadi.
   useEffect(() => {
-    root.current?.render(<KodbuzarApp onExit={exit} soundOn={soundOn} />);
+    root.current?.render(<KodbuzarApp onExit={exit} soundOn={soundOn} reduceMotion={reduceMotion} />);
   });
 
   return <div ref={host} className="kb-host" />;

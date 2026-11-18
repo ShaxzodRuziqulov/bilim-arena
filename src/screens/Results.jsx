@@ -24,7 +24,7 @@ function CountUp({ value, delay = 0 }) {
   return shown;
 }
 
-export default function Results({ result, onReplay, onAdmin, onReview, adminLabel = 'Boshqaruv' }) {
+export default function Results({ result, onReplay, onAdmin, onReview, adminLabel = 'Sozlamalar' }) {
   // Tartib va ko'rsatkichlar o'yin modulidan olinadi (masalan: poygada qadamlar, robotda yulduzlar).
   const game = gameOfResult(result);
   const [main, second] = game.ranking;
