@@ -96,6 +96,8 @@ export default function App() {
           }}
           onClass={(tab) => toAdmin(tab)}
           onQuit={quit}
+          soundOn={data.settings.sound}
+          onToggleSound={() => update((d) => ({ ...d, settings: { ...d.settings, sound: !d.settings.sound } }))}
         />
       );
       break;
@@ -104,7 +106,7 @@ export default function App() {
       const Solo = SOLO_GAMES[screen.game]?.Component;
       content = Solo && (
         <Suspense fallback={<div className="loading">Yuklanmoqda…</div>}>
-          <Solo onExit={() => go({ name: 'hall' })} />
+          <Solo onExit={() => go({ name: 'hall' })} soundOn={data.settings.sound} />
         </Suspense>
       );
       break;
@@ -151,13 +153,14 @@ export default function App() {
       break;
     default:
       content = (
-        <Home onAdmin={toAdmin} onHall={() => go({ name: 'hall' })} onQuit={quit} />
+        // Sinf himoyasi yoqilgan ekrandan zalga o'tish ham PIN bilan (aks holda bolalar qulfni chetlab o'tadi).
+        <Home onAdmin={toAdmin} onHall={() => askPin('O‘yinlar zali', () => go({ name: 'hall' }))} onQuit={quit} />
       );
   }
 
   return (
     <>
-      <div key={screen.name} className="screen-enter">{content ?? <Home onAdmin={toAdmin} onHall={() => go({ name: 'hall' })} />}</div>
+      <div key={screen.name} className="screen-enter">{content ?? <Home onAdmin={toAdmin} onHall={() => askPin('O‘yinlar zali', () => go({ name: 'hall' }))} />}</div>
       {saveStatus.kind === 'error' && <div className="save-banner" role="alert"><span>{saveStatus.message}</span><button className="btn" onClick={()=>flushData()}>Qayta saqlash</button><button className="btn" onClick={()=>exportBackup(data)}>Zaxira olish</button></div>}
       {saveStatus.kind === 'recovered' && <div className="save-banner recovered" role="status"><span>{saveStatus.message}</span><button className="btn" onClick={dismissRecovery}>Tushunarli</button></div>}
       {saveStatus.kind === 'pending' && <div className="saving-indicator" role="status">Saqlanmoqda…</div>}

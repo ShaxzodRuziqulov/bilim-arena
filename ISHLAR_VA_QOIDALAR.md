@@ -200,3 +200,23 @@ Maqsad: Bilim Arena faqat sinf o‘yini emas, balki shaxsiy o‘yinlar platforma
 - Umumiy ovoz sozlamasi va platforma saqlash API’si (hozir Kodbuzar va Soya o‘z `localStorage` kalitlarida saqlaydi; Electron’da ham ishlaydi, lekin platforma zaxirasiga kirmaydi).
 - Platforma nomi (“Bilim Arena” qoladimi) — qaror kutilmoqda; nom o‘zgarsa appId va o‘rnatuvchi nomi ham o‘zgaradi.
 - Robo Kod mustaqil loyihasini platformaga qaytarish — qaror kutilmoqda.
+
+## 2026-11-18 — Electron sinovi, umumiy ovoz, o‘yinlar zaxirasi, kod tekshiruvi
+### Bajarilgan ishlar
+- **Electron sinovi:** `scripts/electron-smoke.mjs` (`npm run smoke:electron`) — haqiqiy `main.cjs` va `dist/` ni `file://` orqali, vaqtinchalik profilda (`BILIM_ARENA_TEST_DATA_DIR`) ishga tushirib, CDP orqali boshqaradi: zal → Kodbuzar (taxmin, g‘alaba, natija saqlanishi) → zal → Soya (menyu, daraja, chiqish, canvas tozalanishi) → oxirgi o‘yin eslab qolinishi → studiya; konsol xatolari. Skrinshotlar OS vaqtinchalik papkasida.
+- `electron/main.cjs`: `BILIM_ARENA_TEST_SHOW=1` — sinovda oynani ko‘rsatish (yashirin oynada Phaser tsikli sekinlashib, natija beqaror bo‘ladi). Oddiy ishga tushirishga ta’siri yo‘q.
+- **Umumiy ovoz:** zalda 🔊 tugmasi platformaning `settings.sound` sozlamasini o‘zgartiradi. O‘chiq bo‘lsa Kodbuzar ham, Soya ham jim (Soyada master ovoz 0 — effektlar va musiqa); o‘yinlarning o‘z saqlangan sozlamalari o‘zgarmaydi.
+- **Zaxira:** to‘liq zaxira faylida ixtiyoriy `games` maydoni — Kodbuzar va Soya natijalari (`shared/game-saves.mjs`, faqat ma’lum kalitlar va to‘g‘ri JSON). Ma’lumot formati va `backupVersion` o‘zgarmadi; eski zaxiralar va eski versiyalar ishlayveradi. Tiklashda avval asosiy ma’lumot, keyin o‘yin natijalari yoziladi; o‘yin natijasi yozilmasa ham asosiy tiklash yakunlanadi va ogohlantirish chiqadi.
+- **Kod tekshiruvi (code-review skill) natijasida tuzatildi:** Soya musiqasi uslub almashtirish taymeri tufayli o‘yindan chiqqandan keyin qayta yoqilib qolishi; Soyaning global tinglovchilari o‘yin yopilgandan keyin ham ovoz kontekstini uyg‘otishi (endi kontekst uxlatiladi); sinf himoyasi ekranidagi “O‘yinlar zali” tugmasi PINsiz qulfni chetlab o‘tishi (endi PIN so‘raladi); zaxira tiklashdagi xavfli tartib.
+
+### Tekshiruv
+- `npm test` — 57/57 (4 ta yangi zaxira testi).
+- `npm run build` — muvaffaqiyatli.
+- `BILIM_ARENA_TEST_SHOW=1 npm run smoke:electron` — oxirgi 5 urinishdan 4 tasida 11/11; bittasida yangi ochilgan oyna fokus olguncha Soyaning Enter bosilishi o‘tkazib yuborildi (sinov vaqti, ilova xatosi emas). Yashirin oynada Soya qadamlari beqaror.
+- Brauzerda: zaldagi ovoz tugmasi holati saqlanadi va qaytariladi; konsolda xato yo‘q.
+
+### Qolgan ishlar (tekshiruvda topilgan, ataylab qoldirilgan)
+- Platforma ovozi o‘chiq bo‘lsa, Soya menyusidagi “Ovoz/Musiqa” tugmalari yoqiq ko‘rinadi (eshitilmaydi) — izoh qo‘shish mumkin.
+- Zal kartalari uchun Kodbuzar va Soyaning saqlash/darajalar modullari asosiy bo‘lakka kiradi — kichik umumiy “summary” moduli bilan ajratish mumkin.
+- Kodbuzar va Soya manbalari mustaqil loyihalardan nusxa — ikkalasini yagona manbaga keltirish qarori kerak.
+- Zal, `SOLO_GAMES` va sinf himoyasi oqimi uchun avtomatik testlar yo‘q (Electron smoke zal va o‘yinlarni qamraydi, himoyani emas).

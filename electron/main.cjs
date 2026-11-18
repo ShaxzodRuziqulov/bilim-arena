@@ -65,7 +65,8 @@ ipcMain.handle('update:install', () => {
 
 function createWindow() {
   win = new BrowserWindow({
-    show: !testDataDir,
+    // Sinovda oyna yashirin; BILIM_ARENA_TEST_SHOW=1 — ko'rinadigan (Phaser kabi animatsiya tsikllari yashirin oynada sekinlashadi).
+    show: !testDataDir || process.env.BILIM_ARENA_TEST_SHOW === '1',
     width: 1600,
     height: 900,
     fullscreen: false,

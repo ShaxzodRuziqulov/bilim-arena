@@ -10,7 +10,8 @@ import Levels from './screens/Levels.jsx';
 import HowTo from './screens/HowTo.jsx';
 import Game from './screens/Game.jsx';
 
-export default function KodbuzarApp({ onExit }) {
+// soundOn — platformaning umumiy ovoz sozlamasi: o'chiq bo'lsa, Kodbuzarning o'z sozlamasidan qat'i nazar jim.
+export default function KodbuzarApp({ onExit, soundOn = true }) {
   const [save, setSave] = useState(loadSave);
   const [screen, setScreen] = useState({ name: 'home' });
   const rootRef = useRef(null);
@@ -24,8 +25,8 @@ export default function KodbuzarApp({ onExit }) {
   }, []);
 
   useEffect(() => {
-    setSoundEnabled(save.settings.sound);
-  }, [save.settings.sound]);
+    setSoundEnabled(save.settings.sound && soundOn);
+  }, [save.settings.sound, soundOn]);
   useEffect(() => {
     rootRef.current?.scrollTo(0, 0);
   }, [screen]);

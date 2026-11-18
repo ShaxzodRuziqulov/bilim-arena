@@ -6,7 +6,7 @@ import '@fontsource/nunito/latin-400.css';
 import '@fontsource/nunito/latin-700.css';
 import { GAME_H, GAME_W, RES } from './engine/layout.js';
 import { getSave } from './engine/save.js';
-import { setAudioEnabled } from './engine/audio.js';
+import { setAudioActive, setAudioEnabled, setPlatformMuted } from './engine/audio.js';
 import { setMusicEnabled, stopMusic } from './engine/music.js';
 import BootScene from './engine/scenes/BootScene.js';
 import MenuScene from './engine/scenes/MenuScene.js';
@@ -39,11 +39,14 @@ function patchText() {
 /**
  * O'yinni boshlaydi va to'xtatish funksiyasini qaytaradi.
  * onPlaying(true|false) — bosh menyudan tashqaridami (daraja va darajalar ekranida chap yuqorida Soyaning o'z tugmasi bor).
+ * soundOn — platformaning umumiy ovoz sozlamasi.
  */
-export async function startSoya(parent, isCancelled = () => false, onPlaying = () => {}) {
+export async function startSoya(parent, { isCancelled = () => false, onPlaying = () => {}, soundOn = true } = {}) {
   await fontsReady();
   // Shrift kutilayotganda foydalanuvchi chiqib ketgan bo'lsa — o'yin umuman yaratilmaydi.
   if (isCancelled()) return () => {};
+  setAudioActive(true);
+  setPlatformMuted(!soundOn);
   setAudioEnabled(getSave().sound);
   setMusicEnabled(getSave().music);
   patchText();
@@ -70,6 +73,7 @@ export async function startSoya(parent, isCancelled = () => false, onPlaying = (
   return () => {
     clearInterval(watch);
     stopMusic();
+    setAudioActive(false);
     game.destroy(true);
     if (window.__game === game) delete window.__game;
   };

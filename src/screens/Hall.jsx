@@ -27,7 +27,7 @@ const CLASS_GAMES = [
   { id: 'java', tab: 'robot', note: 'Haqiqiy Java kodi' },
 ];
 
-export default function Hall({ onPlay, onClass, onQuit }) {
+export default function Hall({ onPlay, onClass, onQuit, soundOn, onToggleSound }) {
   const solo = Object.values(SOLO_GAMES).map((g) => ({ ...g, ...safeSummary(g) }));
   const totalStars = solo.reduce((s, g) => s + g.stars, 0);
   const last = SOLO_GAMES[lastGame()];
@@ -48,6 +48,10 @@ export default function Hall({ onPlay, onClass, onQuit }) {
           </div>
         </div>
         <span className="hall-stars" title="Barcha o‘yinlardagi yulduzlar">★ {totalStars}</span>
+        <button className="hall-sound" onClick={onToggleSound} aria-pressed={soundOn}
+          aria-label={soundOn ? 'Barcha o‘yinlarda ovozni o‘chirish' : 'Ovozni yoqish'} title={soundOn ? 'Ovoz yoqiq — barcha o‘yinlarda' : 'Ovoz o‘chiq — barcha o‘yinlarda'}>
+          {soundOn ? '🔊' : '🔇'}
+        </button>
         {onQuit && <button className="btn" onClick={onQuit}>Chiqish</button>}
       </header>
 

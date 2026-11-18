@@ -64,6 +64,7 @@ let style = null;
 let styleKey = null;
 let enabled = true;
 let timer = null;
+let switchTimer = null; // playMusic: eski kuy so'ngach yangisini boshlash
 let nextTime = 0;
 let step = 0; // 1/8 nota hisoblagichi; takt = 8 qadam, akkord = 16 qadam
 let melodyIdx = 7; // kuy: scale bo'ylab indeks (bir necha oktava)
@@ -291,7 +292,8 @@ export function playMusic(key) {
   if (timer) {
     // Uslubni almashtirish: sekin so'nish, keyin yangi kuy (pad va reverb dumlari tabiiy so'nadi).
     stop(1);
-    setTimeout(() => {
+    clearTimeout(switchTimer);
+    switchTimer = setTimeout(() => {
       style = STYLES[styleKey];
       start();
     }, 1000);
@@ -309,6 +311,9 @@ export function setMusicEnabled(on) {
 
 /** Platformada o'yindan chiqilganda: musiqa so'nadi, keyingi ochilishda boshidan boshlanadi. */
 export function stopMusic() {
+  // Uslub almashtirish taymeri kutilayotgan bo'lsa — u musiqani o'yindan chiqqandan keyin qayta yoqib yubormasin.
+  clearTimeout(switchTimer);
+  switchTimer = null;
   stop(0.4);
   styleKey = null;
 }

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import './soya.css';
 
 /** Soya platforma ichida: Phaser o'yini butun oynani egallaydi, chap yuqorida zalga qaytish tugmasi turadi. */
-export default function SoyaGame({ onExit }) {
+export default function SoyaGame({ onExit, soundOn = true }) {
   const host = useRef(null);
   const [state, setState] = useState('loading');
   const [playing, setPlaying] = useState(false);
@@ -11,7 +11,7 @@ export default function SoyaGame({ onExit }) {
     let stop = null;
     let cancelled = false;
     import('./start.js')
-      .then(({ startSoya }) => startSoya(host.current, () => cancelled, setPlaying))
+      .then(({ startSoya }) => startSoya(host.current, { isCancelled: () => cancelled, onPlaying: setPlaying, soundOn }))
       .then((stopFn) => {
         if (cancelled) stopFn();
         else {

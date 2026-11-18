@@ -10,6 +10,14 @@ export function setAudioEnabled(on) {
   enabled = on;
 }
 
+// Platformaning umumiy ovoz sozlamasi (o'yinlar zalidagi 🔊). Jim bo'lsa — master 0: effektlar ham, musiqa ham
+// eshitilmaydi, Soyaning o'z "Ovoz"/"Musiqa" tugmalari va saqlangan sozlamalari esa o'zgarmaydi.
+let platformMuted = false;
+export function setPlatformMuted(muted) {
+  platformMuted = muted;
+  if (master) master.gain.value = muted ? 0 : 0.9;
+}
+
 function audio() {
   if (!ctx) {
     const AC = window.AudioContext || window.webkitAudioContext;
@@ -19,10 +27,10 @@ function audio() {
     comp.threshold.value = -18;
     comp.ratio.value = 6;
     master = ctx.createGain();
-    master.gain.value = 0.9;
+    master.gain.value = platformMuted ? 0 : 0.9;
     master.connect(comp).connect(ctx.destination);
   }
-  if (ctx.state === 'suspended' && !document.hidden) ctx.resume();
+  if (active && ctx.state === 'suspended' && !document.hidden) ctx.resume();
   return ctx;
 }
 
@@ -32,16 +40,26 @@ export function audioOut() {
   return c ? { ctx: c, master } : null;
 }
 
+// Platformada Soya yopilganda ovoz konteksti uxlatiladi; quyidagi global tinglovchilar uni faqat o'yin ochiq
+// bo'lganda uyg'otadi (aks holda boshqa o'yinlardagi har bir bosish Soyaning kontekstini qayta yoqardi).
+let active = true;
+export function setAudioActive(on) {
+  active = on;
+  if (!ctx) return;
+  if (on && !document.hidden) ctx.resume();
+  else if (!on) ctx.suspend();
+}
+
 if (typeof window !== 'undefined') {
   // Brauzer ovozni faqat foydalanuvchi biror narsa bosgandan keyin ruxsat beradi.
   const unlock = () => {
-    if (ctx && ctx.state === 'suspended') ctx.resume();
+    if (active && ctx && ctx.state === 'suspended') ctx.resume();
   };
   window.addEventListener('pointerdown', unlock);
   window.addEventListener('keydown', unlock);
   // Boshqa varaqqa o'tilganda ovoz to'xtaydi, qaytganda davom etadi.
   document.addEventListener('visibilitychange', () => {
-    if (!ctx) return;
+    if (!ctx || !active) return;
     if (document.hidden) ctx.suspend();
     else ctx.resume();
   });
@@ -207,7 +225,7 @@ const MIN_GAP = { step: 90, wire: 60, laserOn: 120, laserCharge: 200, timerTick:
  * Ovoz chalish. x — ekrandagi gorizontal joy (0…width) bo'lsa, ovoz chap/o'ngga suriladi.
  */
 export function sfx(name, x, width = 960) {
-  if (!enabled) return;
+  if (!enabled || platformMuted) return;
   const now = performance.now();
   const gap = MIN_GAP[name];
   if (gap && now - (lastPlayed[name] || 0) < gap) return;

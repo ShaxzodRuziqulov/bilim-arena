@@ -19,6 +19,11 @@ export function getSave() {
   return cache;
 }
 
+/** Platforma zaxiradan tiklaganda: keyingi o'qish localStorage'dan yangidan bo'ladi. */
+export function reloadSave() {
+  cache = null;
+}
+
 function persist() {
   try {
     localStorage.setItem(KEY, JSON.stringify(cache));

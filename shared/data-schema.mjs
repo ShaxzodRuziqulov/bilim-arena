@@ -1,4 +1,5 @@
 import { ROBOT_GAME_IDS as ROBOT_GAMES } from './game-ids.mjs';
+import { pickGameSaves } from './game-saves.mjs';
 export const DEFAULT_SETTINGS = { time: 30, trackLength: 12, sound: true, classroomLock: false, animations: true };
 const object = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);
 const fail = (message) => { throw new Error(message); };
@@ -63,4 +64,10 @@ export function parseBackup(value) {
   }
   return validateData(raw);
 }
-export function makeBackup(data) { return {format:'bilim-arena-backup',backupVersion:1,createdAt:new Date().toISOString(),data:validateData(data)}; }
+// games — ixtiyoriy: yakka o'yinlar saqlamalari (shared/game-saves.mjs). Eski versiyalar bu maydonni e'tiborsiz qoldiradi.
+export function makeBackup(data, games) {
+  const backup = {format:'bilim-arena-backup',backupVersion:1,createdAt:new Date().toISOString(),data:validateData(data)};
+  const saves = pickGameSaves(games);
+  if (Object.keys(saves).length) backup.games = saves;
+  return backup;
+}
