@@ -11,6 +11,10 @@ export const ROBOT_GAMES = {
     grades: '5–7-sinf',
     about: 'Bloklar bilan dasturlash: buyruqlar ketma-ketligi, funksiya (P) va rekursiya. Hammasi tugmalar bilan — doskaga juda qulay.',
     levels: KOD_LEVELS,
+    // Zinapoyadagi tartib — osondan qiyinga (KOD_LEVELS dagi indekslar; massiv tartibi saqlangan yulduzlar kaliti,
+    // shuning uchun u o'zgartirilmaydi). Tushunchalar: yurish → burilish → orqaga burilish (P ixtiyoriy) →
+    // P majburiy → P bilan shakllar → uzun P yo'llari → rekursiya (P o'zini chaqiradi).
+    order: [0, 1, 3, 2, 4, 5, 8, 9, 6, 7],
     levelName: (l) => l.name,
     scoring: 'Bloklar qismida kam buyruq bilan yechilsa — ko‘proq yulduz (1–3 ★).',
     turnTime: 180,
@@ -22,6 +26,8 @@ export const ROBOT_GAMES = {
     grades: '8–11-sinf',
     about: 'Haqiqiy Java kodi: metodlar, int, for, while, if. Xatolar o‘zbekcha, qator raqami bilan ko‘rsatiladi.',
     levels: JAVA_LESSONS,
+    // metod → int → for → while → if → o'zgaruvchini o'zgartirish: allaqachon osondan qiyinga.
+    order: JAVA_LESSONS.map((_, i) => i),
     levelName: (l) => l.title,
     scoring: 'Java qismida birinchi urinishda yechilsa — 3 ★.',
     turnTime: 300,
@@ -30,9 +36,9 @@ export const ROBOT_GAMES = {
 
 export const ROBOT_PARTS = ['kod', 'java'];
 
-// Bitta zinapoya: avval bloklar (Robo Kod), keyin haqiqiy Java kodi. Har qadam qaysi qismga va
-// shu qismdagi qaysi darajaga tegishli ekanini biladi.
-const STEPS = ROBOT_PARTS.flatMap((part) => ROBOT_GAMES[part].levels.map((level, local) => ({ part, local, level })));
+// Bitta zinapoya: avval bloklar (Robo Kod), keyin haqiqiy Java kodi, har qism ichida osondan qiyinga.
+// Har qadam qaysi qismga va shu qismdagi qaysi darajaga (local — saqlash kaliti) tegishli ekanini biladi.
+const STEPS = ROBOT_PARTS.flatMap((part) => ROBOT_GAMES[part].order.map((local) => ({ part, local, level: ROBOT_GAMES[part].levels[local] })));
 
 export const ROBOT_LADDER = {
   id: 'robot',

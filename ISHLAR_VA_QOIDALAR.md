@@ -311,3 +311,12 @@ Muammo: zalda ikkita deyarli bir xil afisha bor edi — ikkalasi ham bir xil rob
 - `npm run build` — muvaffaqiyatli. `BILIM_ARENA_TEST_SHOW=1 npm run smoke:electron` — 12/12 (zal 4 afisha; Robot dasturlash 16 daraja, Java qismi ochiladi, zalga qaytadi).
 - Brauzerda eski formatdagi ma’lumot bilan: zal ★ 8/48 va “Robot dasturlash: davom etish” (eski `kod`); mashq 3-darajadan ochildi; 4-daraja (Bloklar) yechildi → `kod.stars[3]`, 12-daraja (Java) yechildi → `java.stars[1]`; jamoaviy o‘yin 10 (Bloklar) → 11 (Java) raundlari, natijalar; Sozlamalar paneli “Bloklar: 3/10, Java: 2/6”, natijalarda eski Java Robot va Robo Kod yozuvlari ham bor. Konsolda xato yo‘q.
 - Haqiqiy doskada sinalmagan.
+
+### Darajalar tartibi: osondan qiyinga (2026-11-19)
+Bloklar qismida tartib buzilgan edi: 3-daraja “Zinapoya” P funksiyasini majburiy qilardi (P siz eng qisqa yechim 17 buyruq, asosiy dasturda 12 joy), 4-daraja “Orqaga qaytish” esa P siz ham yechiladi (11 buyruq). Rekursiya (“Cheksiz yo‘l”, “Tog‘ga chiqish”) 7–8-o‘rinda, P bilan oddiy uzun yo‘llar (“Ilon”, “Spiral”) undan keyin turardi.
+- Har daraja uchun P siz eng qisqa yechim hisoblandi va tushunchalar bo‘yicha tartiblandi: Birinchi qadam → Burilish → Orqaga qaytish → Zinapoya (P) → Kvadrat → Katta kvadrat → Ilon → Spiral → Cheksiz yo‘l (rekursiya) → Tog‘ga chiqish (rekursiya + zinapoya).
+- Java qismi allaqachon to‘g‘ri: metod → int → for → while → if → o‘zgaruvchini o‘zgartirish.
+- Tartib `ROBOT_GAMES.<qism>.order` da; `KOD_LEVELS` massivi o‘zgarmadi, shuning uchun saqlangan yulduzlar o‘z darajasida qoladi.
+- 10 → 11 o‘tishida grid oson bo‘ladi, lekin vazifa qiyinroq: tugmalardan haqiqiy Java sintaksisini yozishga o‘tiladi.
+- Tekshiruv: `npm test` — 60/60 (yangi: tartib va yulduz kaliti), `npm run build` — muvaffaqiyatli; brauzerda 1–11 darajalar yangi tartibda.
+- Mustaqil `robot-kod` loyihasidagi tartib o‘zgartirilmadi.

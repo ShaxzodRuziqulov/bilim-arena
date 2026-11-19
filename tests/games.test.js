@@ -30,6 +30,15 @@ test('zinapoya: avval bloklar, keyin Java — barcha darajalar bir marta', () =>
   assert.ok(steps.slice(0, ROBOT_GAMES.kod.levels.length).every((s) => s.part === 'kod'));
   assert.ok(steps.slice(ROBOT_GAMES.kod.levels.length).every((s) => s.part === 'java'));
   steps.forEach((s, i) => assert.equal(s.level, ROBOT_GAMES[s.part].levels[s.local], `qadam ${i}`));
+  // Har qism tartibi — o'z darajalarining to'liq almashtirmasi (har daraja aynan bir marta).
+  for (const p of ROBOT_PARTS) assert.deepEqual([...ROBOT_GAMES[p].order].sort((a, b) => a - b), ROBOT_GAMES[p].levels.map((_, i) => i));
+});
+
+test('bloklar osondan qiyinga: P kerak bo‘lmaganlar oldin, rekursiya oxirida', () => {
+  const names = ROBOT_LADDER.steps.filter((s) => s.part === 'kod').map((s) => s.level.name);
+  assert.deepEqual(names, ['Birinchi qadam', 'Burilish', 'Orqaga qaytish', 'Zinapoya', 'Kvadrat', 'Katta kvadrat', 'Ilon', 'Spiral', 'Cheksiz yo‘l', 'Tog‘ga chiqish']);
+  // Tartib o'zgarsa ham yulduzlar o'z darajasida qoladi: 3-qadam (Orqaga qaytish) — saqlashda kod.stars[3].
+  assert.equal(ladderStars({ kod: { stars: { 3: 2 } } }, 2), 2);
 });
 
 test('zinapoya yulduzlari eski saqlash formatida (data.robot.kod / .java) o‘qiladi va yoziladi', () => {
