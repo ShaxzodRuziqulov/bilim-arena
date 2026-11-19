@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { gameOfResult } from '../games/registry.jsx';
+import { gameIdOfResult, gameOfResult } from '../games/registry.jsx';
+import { soloStars } from '../lib/race-rules.js';
 
 const MEDALS = ['🥇', '🥈', '🥉', '4'];
 
@@ -31,11 +32,47 @@ export default function Results({ result, onReplay, onAdmin, onReview, adminLabe
   const ranked = [...result.teams].sort((a, b) => b[main] - a[main] || b[second] - a[second]);
   // Shohsupada g'olib o'rtada turadi: 2 — 1 — 3 — 4.
   const stage = ranked.length >= 3 ? [ranked[1], ranked[0], ...ranked.slice(2)] : ranked;
+  // Yakka Xazina poygasi: shohsupa o'rniga bitta o'yinchi kartasi va yulduzlar.
+  const solo = gameIdOfResult(result) === 'race' && result.teams.length === 1;
+  const player = result.teams[0];
+  const stars = solo ? soloStars(player, result.trackLength) : 0;
 
   return (
     <div className="screen results">
       <div className="results-glow" aria-hidden="true" />
       <span className="eyebrow">{result.setName}</span>
+      {solo ? (
+        <>
+          <h1>{player.pos >= result.trackLength ? '💰 Xazina topildi!' : '🧭 Xazinagacha oz qoldi'}</h1>
+          <p className="muted">
+            {player.pos >= result.trackLength
+              ? stars === 3 ? 'Birorta ham xatosiz! Zo‘r natija.' : 'Barakalla! Xato savollarni takrorlab, uch yulduzga intiling.'
+              : `${result.trackLength - player.pos} qadam qoldi. Yana urinib ko‘ring!`}
+          </p>
+          <div className="solo-result" style={{ '--team': player.color }}>
+            <div className="podium-hero">{player.hero}</div>
+            <h2>{player.name}</h2>
+            <div className="win-stars big" aria-label={`${stars} yulduz`}>
+              {[0, 1, 2].map((i) => (
+                <span key={i} className={i < stars ? 'on' : ''} style={{ '--i': i }}>★</span>
+              ))}
+            </div>
+            <div className="podium-stats">
+              {game.stats(player, result).map((s) => (
+                <div key={s.label}>
+                  <b>
+                    {s.prefix}
+                    <CountUp value={s.value} delay={400} />
+                    {s.suffix}
+                  </b>
+                  {s.label}
+                </div>
+              ))}
+            </div>
+          </div>
+        </>
+      ) : (
+        <>
       <h1>{result.winner ? <>🏆 {result.winner} g‘olib!</> : '🤝 Durang!'}</h1>
       <p className="muted">Ajoyib o‘yin bo‘ldi. Endi xatolar ustida birga ishlaymiz.</p>
       <div className="podium">
@@ -67,6 +104,8 @@ export default function Results({ result, onReplay, onAdmin, onReview, adminLabe
           );
         })}
       </div>
+        </>
+      )}
       {result.hard?.length > 0 && (
         <div className="panel hard-list">
           <h3>📌 Takrorlash kerak bo‘lgan savollar</h3>

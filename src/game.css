@@ -186,8 +186,8 @@
 .podium-col { width: min(270px, 22vw); min-width: 170px; display: flex; flex-direction: column; animation: podium-up .7s cubic-bezier(.2, 1.2, .4, 1) both; animation-delay: var(--delay); }
 @keyframes podium-up { from { transform: translateY(40px); opacity: 0; } }
 .podium-col .podium-card { width: auto; min-width: 0; border-radius: 22px 22px 0 0; border: 3px solid var(--team); border-bottom: 0; animation: none; box-shadow: 0 -10px 30px #2a4a3a14; }
-.results .podium-stats { color: #6c7c71; }
-.results .podium-stats b { color: #17312a; font-variant-numeric: tabular-nums; }
+.results .podium-stats { color: var(--muted); }
+.results .podium-stats b { color: var(--text); font-variant-numeric: tabular-nums; }
 .podium-col.place-1 .podium-card { box-shadow: 0 0 40px color-mix(in srgb, var(--team) 45%, transparent); }
 .podium-col.place-1 .medal { animation: trophy .8s 1s cubic-bezier(.2, 1.5, .4, 1) both; }
 .podium-base { display: grid; place-items: center; font-size: clamp(28px, 3vw, 48px); font-weight: 900; color: #fff; background: linear-gradient(180deg, var(--team), color-mix(in srgb, var(--team) 65%, #000)); border-radius: 0 0 16px 16px; text-shadow: 0 3px 0 #0003; }

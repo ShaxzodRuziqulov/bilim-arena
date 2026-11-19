@@ -26,7 +26,7 @@ export default function RobotGame({ config, robot, onProgress, askPin, onFinish,
 
   // Mashq rejimi
   const firstUnsolved = steps.findIndex((_, i) => !starsOf(i));
-  const [practiceIdx, setPracticeIdx] = useState(firstUnsolved < 0 ? 0 : firstUnsolved);
+  const [practiceIdx, setPracticeIdx] = useState(config.start ?? (firstUnsolved < 0 ? 0 : firstUnsolved));
   const [practiceKey, setPracticeKey] = useState(0);
 
   // Jamoaviy rejim

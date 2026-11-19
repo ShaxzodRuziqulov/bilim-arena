@@ -5,7 +5,7 @@ import CodeBlock from '../components/CodeBlock.jsx';
 import OrderAnswer from '../components/OrderAnswer.jsx';
 import MatchAnswer from '../components/MatchAnswer.jsx';
 
-import { raceWinner, roundFinished } from '../lib/race-rules.js';
+import { isSolo, raceWinner, roundFinished, soloStars } from '../lib/race-rules.js';
 
 const GEMS = ['◆', '●', '▲', '■'];
 const STEP_MS = 550;
@@ -63,6 +63,8 @@ export function prepare(q) {
 
 export default function Race({ config, askPin, onFinish, onExit, exitLabel = 'Sozlamalarga qaytish' }) {
   const N = config.trackLength;
+  // Yakka rejim: bitta o'yinchi savollarga ketma-ket javob beradi, xazinaga yetganda aniqlik bo'yicha yulduz oladi.
+  const solo = isSolo(config.teams);
   const track = useMemo(() => buildTrack(N), [N]);
   const specials = useMemo(() => buildSpecials(N), [N]);
 
@@ -290,8 +292,8 @@ export default function Race({ config, askPin, onFinish, onExit, exitLabel = 'So
         {phase === 'ready' && (
           <div key={`banner-${turn}-${questionNumber.current}`} className="turn-banner" style={{ '--team': team.color }} aria-hidden="true">
             <span>{team.hero}</span>
-            <b>{team.name}</b>
-            <small>navbati</small>
+            <b>{solo ? `${questionNumber.current + 1}-savol` : team.name}</b>
+            <small>{solo ? team.name : 'navbati'}</small>
           </div>
         )}
 
@@ -299,8 +301,8 @@ export default function Race({ config, askPin, onFinish, onExit, exitLabel = 'So
           <div className="turn-panel" style={{ '--team': team.color }}>
             <span className="turn-hero">{team.hero}</span>
             <div className="turn-text">
-              <b>{team.name} navbati!</b>
-              <small>{phase === 'ready' ? 'Jamoaning keyingi o‘quvchisi doskaga chiqsin' : 'Qahramon yo‘lda…'}</small>
+              <b>{solo ? `${team.name}, ${questionNumber.current + 1}-savol` : `${team.name} navbati!`}</b>
+              <small>{phase === 'ready' ? (solo ? 'Tayyor bo‘lsangiz, savolni oching' : 'Jamoaning keyingi o‘quvchisi doskaga chiqsin') : 'Qahramon yo‘lda…'}</small>
             </div>
             {phase === 'ready' && (
               <button className="btn primary huge" onClick={openQuestion}>
@@ -317,6 +319,7 @@ export default function Race({ config, askPin, onFinish, onExit, exitLabel = 'So
             key={questionNumber.current}
             item={current}
             team={team}
+            solo={solo}
             time={config.time}
             paused={paused}
             phase={phase}
@@ -331,9 +334,27 @@ export default function Race({ config, askPin, onFinish, onExit, exitLabel = 'So
             <div className="win-rays" aria-hidden="true" />
             <Confetti />
             <div className="win-card" style={{ '--team': team.color }}>
-              <div className="win-hero">🏆</div>
-              <h1>{raceWinner(teams) ? `${raceWinner(teams)} g‘olib!` : 'Durang!'}</h1>
-              <p>Barcha jamoalar teng navbat o‘ynadi. Tabriklaymiz!</p>
+              {solo ? (
+                <>
+                  <div className="win-hero">💰</div>
+                  <h1>Xazina topildi!</h1>
+                  <div className="win-stars" aria-label={`${soloStars(team, N)} yulduz`}>
+                    {[0, 1, 2].map((i) => (
+                      <span key={i} className={i < soloStars(team, N) ? 'on' : ''} style={{ '--i': i }}>★</span>
+                    ))}
+                  </div>
+                  <p>
+                    {team.correct} ta to‘g‘ri, {team.wrong} ta xato · aniqlik{' '}
+                    {Math.round((team.correct / Math.max(1, team.correct + team.wrong)) * 100)}%
+                  </p>
+                </>
+              ) : (
+                <>
+                  <div className="win-hero">🏆</div>
+                  <h1>{raceWinner(teams) ? `${raceWinner(teams)} g‘olib!` : 'Durang!'}</h1>
+                  <p>Barcha jamoalar teng navbat o‘ynadi. Tabriklaymiz!</p>
+                </>
+              )}
               <button className="btn gold huge" onClick={() => finish(raceWinner(teamsRef.current))}>
                 Natijalarni ko‘rish
               </button>
@@ -362,7 +383,7 @@ export default function Race({ config, askPin, onFinish, onExit, exitLabel = 'So
   );
 }
 
-export function QuestionCard({ item, team, time, paused, phase, result, onAnswer, onContinue, review = false }) {
+export function QuestionCard({ item, team, solo = false, time, paused, phase, result, onAnswer, onContinue, review = false }) {
   const { q, options } = item;
   const [left, setLeft] = useState(time);
   const [value, setValue] = useState('');
@@ -393,9 +414,9 @@ export function QuestionCard({ item, team, time, paused, phase, result, onAnswer
 
   let feedback = null;
   if (answered) {
-    if (result.correct) feedback = review ? '✅ To‘g‘ri! Bilimingiz mustahkamlandi.' : '✅ To‘g‘ri! Jamoa 1 qadam oldinga yuradi';
-    else if (result.timeout) feedback = '⏰ Vaqt tugadi! Navbat keyingi jamoaga o‘tadi';
-    else feedback = review ? '💡 Yechimni ko‘rib chiqing va keyingi savolga o‘ting.' : '❌ Noto‘g‘ri. Navbat keyingi jamoaga o‘tadi';
+    if (result.correct) feedback = review ? '✅ To‘g‘ri! Bilimingiz mustahkamlandi.' : solo ? '✅ To‘g‘ri! 1 qadam oldinga' : '✅ To‘g‘ri! Jamoa 1 qadam oldinga yuradi';
+    else if (result.timeout) feedback = solo ? '⏰ Vaqt tugadi! Joyingizda qolasiz' : '⏰ Vaqt tugadi! Navbat keyingi jamoaga o‘tadi';
+    else feedback = review ? '💡 Yechimni ko‘rib chiqing va keyingi savolga o‘ting.' : solo ? '❌ Noto‘g‘ri. Joyingizda qolasiz — keyingi savol' : '❌ Noto‘g‘ri. Navbat keyingi jamoaga o‘tadi';
   }
 
   return (
@@ -403,7 +424,7 @@ export function QuestionCard({ item, team, time, paused, phase, result, onAnswer
       <div className="question-card" style={{ '--team': team.color }}>
         <div className="q-top">
           <span className="q-team">
-            {team.hero} {team.name} javob beryapti
+            {team.hero} {solo ? team.name : `${team.name} javob beryapti`}
           </span>
           {time > 0 && <TimerRing left={Math.max(0, left)} total={time} urgent={left <= 5 && !answered} />}
         </div>

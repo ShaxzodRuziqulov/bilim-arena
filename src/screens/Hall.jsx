@@ -1,6 +1,6 @@
 import { SOLO_GAMES } from '../games/registry.jsx';
 import { ROBOT_LADDER, ladderTotal } from '../lib/robot/games.js';
-import { playableQuestions, uid } from '../lib/util.js';
+import { playableQuestions } from '../lib/util.js';
 import { play } from '../lib/sound.js';
 import '../hall.css';
 
@@ -26,7 +26,6 @@ const lastGameId = () => {
   }
 };
 
-const robotPractice = (id) => ({ name: 'play', game: id, key: uid(), config: { game: id, mode: 'practice' } });
 
 /** Zaldagi har bir o'yin: afisha ma'lumoti va uni ochadigan amallar (birinchisi — asosiy). */
 function buildGames(data) {
@@ -46,7 +45,7 @@ function buildGames(data) {
       id: g.id, title: g.title, mode: `Yakka yoki jamoa, ${g.grades}`, tagline: 'Bloklardan haqiqiy Java kodigacha', about: g.about,
       stars, max: g.steps.length * 3,
       actions: [
-        { label: stars ? 'Davom etish' : 'Mashq qilish', next: robotPractice(g.id) },
+        { label: stars ? 'Davom etish' : 'Boshlash', next: { name: 'setup', game: g.id, home: true } },
         { label: 'Jamoa bilan', next: { name: 'setup', game: g.id } },
       ],
     };
@@ -56,10 +55,13 @@ function buildGames(data) {
     solo(SOLO_GAMES.soya),
     robot(),
     {
-      id: 'race', title: 'Xazina poygasi', mode: '2–4 jamoa, 5–11-sinf', tagline: 'Savollarga javob berib, xazinaga birinchi yeting',
-      about: 'Jamoalar navbat bilan savol yechadi, to‘g‘ri javob — bir qadam oldinga. Bonus va girdob kataklari bor.',
+      id: 'race', title: 'Xazina poygasi', mode: 'Yakka yoki 2–4 jamoa, 5–11-sinf', tagline: 'Savollarga javob berib, xazinaga yeting',
+      about: 'Yakka yoki jamoalar bilan savol yechib xazina tomon yuring: to‘g‘ri javob — bir qadam oldinga. Bonus va girdob kataklari bor.',
       note: raceGames ? `${raceGames} ta o‘yin o‘ynalgan` : 'Hali o‘ynalmagan',
-      actions: [{ label: 'Jamoalarni tuzish', next: { name: 'setup', game: 'race', setId: readySet?.id }, disabled: !readySet }],
+      actions: [
+        { label: 'Yakka o‘ynash', next: { name: 'setup', game: 'race', setId: readySet?.id, solo: true }, disabled: !readySet },
+        { label: 'Jamoa bilan', next: { name: 'setup', game: 'race', setId: readySet?.id }, disabled: !readySet },
+      ],
       warning: readySet ? null : 'Savollarni ⚙ Sozlamalar → O‘yinlar → Xazina poygasida tayyorlang',
     },
   ];

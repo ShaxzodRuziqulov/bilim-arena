@@ -41,7 +41,7 @@ export default function RobotSetup({ go }) {
   return (
     <div className="screen admin">
       <header className="topbar">
-        <button className="btn" onClick={() => go({ name: 'admin', tab: 'robot' })}>
+        <button className="btn" onClick={() => go({ name: 'setup', game, home: true })}>
           ← Orqaga
         </button>
         <strong>

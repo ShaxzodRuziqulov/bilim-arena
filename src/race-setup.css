@@ -1,0 +1,62 @@
+/* ---------- Xazina poygasi: kirish (tayyorgarlik) ekrani — dengiz, orol va oltin ---------- */
+.race-setup {
+  --sand: #f6d68f;
+  --gold: #ffcf4a;
+  --sea: #0c3b4a;
+  position: relative;
+  min-height: 100vh;
+  overflow-x: hidden;
+  background:
+    radial-gradient(ellipse at 50% -15%, #ffd36b33 0, transparent 50%),
+    radial-gradient(ellipse at 10% 100%, #0e6b7a88 0, transparent 55%),
+    linear-gradient(180deg, #0a2f3d 0%, #072230 60%, #051a26 100%);
+}
+.race-setup > :not(.rs-sea) { position: relative; z-index: 1; }
+.race-setup .topbar { background: transparent; border: 0; }
+.race-setup .topbar .btn { width: 2.8em; padding: 0; border-radius: .9em; background: #0e3a4acc; border-color: #ffcf4a55; color: #fff4d6; }
+
+/* To'lqinlar foni */
+.rs-sea { position: absolute; inset: auto 0 0; height: 40vh; pointer-events: none; overflow: hidden; z-index: 0; }
+.rs-sea i {
+  position: absolute; left: -10%; width: 120%; height: 100%;
+  background: radial-gradient(ellipse 60px 14px at 50% 0, transparent 70%, #0e5266 72%) 0 0 / 120px 40px repeat-x;
+  opacity: .35; animation: rs-wave 9s linear infinite;
+}
+.rs-sea i:nth-child(1) { top: 10%; }
+.rs-sea i:nth-child(2) { top: 40%; opacity: .25; animation-duration: 13s; animation-direction: reverse; }
+.rs-sea i:nth-child(3) { top: 70%; opacity: .2; animation-duration: 17s; }
+@keyframes rs-wave { to { transform: translateX(120px); } }
+
+.rs-hero { display: flex; flex-direction: column; align-items: center; text-align: center; margin: -1.2em 0 .6em; }
+.rs-island { width: clamp(120px, 12vw, 190px); filter: drop-shadow(0 8px 14px #0008); animation: rs-bob 3.2s ease-in-out infinite; }
+.rs-palm { transform-origin: 47px 16px; animation: rs-sway 3.6s ease-in-out infinite; }
+.rs-coin { animation: rs-shine 1.6s ease-in-out infinite; }
+@keyframes rs-bob { 50% { transform: translateY(-6px); } }
+@keyframes rs-sway { 50% { transform: rotate(-5deg); } }
+@keyframes rs-shine { 50% { fill: #fff7c2; filter: drop-shadow(0 0 4px #fde047); } }
+
+.rs-logo { margin: .1em 0 0; display: flex; flex-direction: column; align-items: center; line-height: .9; }
+.rs-logo span {
+  font: 900 clamp(46px, 6vw, 96px) 'Nunito Variable', sans-serif;
+  letter-spacing: .06em;
+  background: linear-gradient(180deg, #fff4c2 0%, var(--gold) 50%, #e08a12 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(0 .06em 0 #7a4a06) drop-shadow(0 0 .3em #ffb70055);
+}
+.rs-logo small { font: 800 clamp(18px, 1.8vw, 28px) 'Nunito Variable', sans-serif; letter-spacing: .4em; text-transform: uppercase; color: #9be3f0; margin-top: .25em; }
+.rs-tag { margin: .5em 0 0; color: #b9dbe3; font-weight: 700; }
+
+/* Panellar — xarita qog'ozidek iliq chegara bilan */
+.race-setup .panel {
+  background: linear-gradient(180deg, #0f3442ee, #0b2834ee);
+  border: 1px solid #ffcf4a40;
+  box-shadow: 0 10px 30px #0006, inset 0 1px 0 #ffffff10;
+}
+.race-setup .panel h3 { color: #ffe08a; }
+.race-setup .rules { background: #0a2530; border-color: #ffcf4a33; }
+.race-setup .segmented button.active { background: var(--gold); color: #3a2400; border-color: var(--gold); }
+.race-setup .btn.primary { background: linear-gradient(180deg, #ffd85a, #f0a417); color: #3a2400; border-color: #f0a417; box-shadow: 0 .3em 0 #9a5f06; font-weight: 900; }
+.race-setup .btn.primary:active { transform: translateY(.2em); box-shadow: 0 .1em 0 #9a5f06; }
+.race-setup .theme-picker button.selected { background: #133f4d; border-color: var(--gold); }
+
+:root.reduce-motion .race-setup *, :root.reduce-motion .rs-sea i { animation: none !important; }

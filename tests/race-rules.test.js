@@ -19,3 +19,16 @@ test('teng natija yoki harakatsiz o‘yin durang', () => {
   assert.equal(raceWinner([team('A',8,7),team('B',8,7)]),null);
   assert.equal(raceWinner([team('A',0,0),team('B',0,0)]),null);
 });
+test('yakka rejim: xazinaga yetmasa 0, xatosiz 3, 75% dan yuqori 2, qolgani 1 yulduz', async () => {
+  const { soloStars, isSolo } = await import('../src/lib/race-rules.js');
+  const p = (pos, correct, wrong) => ({ pos, correct, wrong });
+  assert.equal(isSolo([p(0, 0, 0)]), true);
+  assert.equal(isSolo([p(0, 0, 0), p(0, 0, 0)]), false);
+  assert.equal(soloStars(p(7, 7, 0), 8), 0);
+  assert.equal(soloStars(p(8, 6, 0), 8), 3);
+  assert.equal(soloStars(p(8, 6, 2), 8), 2);
+  assert.equal(soloStars(p(8, 6, 4), 8), 1);
+  // Yakka o'yinda davra bitta navbatdan iborat: xazinaga yetishi bilan tugaydi.
+  assert.equal(roundFinished([p(8, 6, 0)], 0, 8), true);
+  assert.equal(raceWinner([{ name: 'Ali', pos: 8, correct: 6 }]), 'Ali');
+});

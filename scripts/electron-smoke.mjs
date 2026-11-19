@@ -173,14 +173,16 @@ try {
   await js(`document.querySelector('.hall').scrollTo(0, 0)`);
   await shot('5-zal');
 
-  // Robot dasturlash mashqi zaldan ochiladi: 16 daraja (bloklar + Java), Java darajasiga o‘tiladi, zalga qaytadi.
+  // Robot dasturlash: zal → o‘z bosh ekrani (16 tugunli zinapoya) → mashq → Java darajasi → menyu → zal.
   const kod = await js(`const w=(ms)=>new Promise(r=>setTimeout(r,ms)); const btn=(re)=>[...document.querySelectorAll('button')].find(b=>re.test(b.textContent));
-    document.querySelector('.poster-robot .poster-play').click(); await w(1000); const opened=!document.querySelector('.hall');
+    document.querySelector('.poster-robot .poster-play').click(); await w(1000); const home=document.querySelectorAll('.rh-node').length;
+    document.querySelector('.rh-cta').click(); await w(1000); const opened=!!document.querySelector('.robo-wrap');
     const lv=[...document.querySelectorAll('.robo-lv')]; const levels=lv.length; const javaBtn=document.querySelector('.robo-lv-part');
     javaBtn?.click(); await w(600); const java=!!document.querySelector('.robo-wrap textarea, .robo-wrap .cm-editor, .java-editor, .robo-wrap [contenteditable]') || /Java/.test(document.querySelector('.robo-title small')?.textContent||'');
-    btn(/^⏸$/)?.click(); await w(400); btn(/O‘yinlar zaliga qaytish/)?.click(); await w(800);
-    return { opened, levels, java, back: !!document.querySelector('.hall') }`);
-  check('Robot dasturlash: 16 daraja, Java qismi ochildi, zalga qaytildi', kod.opened && kod.levels === 16 && kod.java && kod.back, JSON.stringify(kod));
+    btn(/^⏸$/)?.click(); await w(400); btn(/Robot menyusiga qaytish/)?.click(); await w(800); const menu=!!document.querySelector('.rh');
+    document.querySelector('.rh-icon')?.click(); await w(800);
+    return { home, opened, levels, java, menu, back: !!document.querySelector('.hall') }`);
+  check('Robot dasturlash: bosh ekran, 16 daraja, Java qismi, menyu va zalga qaytish', kod.home === 16 && kod.opened && kod.levels === 16 && kod.java && kod.menu && kod.back, JSON.stringify(kod));
 
   await js(`document.querySelector('.hall-icon[aria-label="Sozlamalar"]').click()`);
   await sleep(1200);

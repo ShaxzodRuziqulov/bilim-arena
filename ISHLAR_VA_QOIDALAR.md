@@ -320,3 +320,23 @@ Bloklar qismida tartib buzilgan edi: 3-daraja “Zinapoya” P funksiyasini majb
 - 10 → 11 o‘tishida grid oson bo‘ladi, lekin vazifa qiyinroq: tugmalardan haqiqiy Java sintaksisini yozishga o‘tiladi.
 - Tekshiruv: `npm test` — 60/60 (yangi: tartib va yulduz kaliti), `npm run build` — muvaffaqiyatli; brauzerda 1–11 darajalar yangi tartibda.
 - Mustaqil `robot-kod` loyihasidagi tartib o‘zgartirilmadi.
+
+## 2026-11-19 — Xazina poygasida yakka rejim; har o‘yinga o‘z kirish ekrani
+### Xazina poygasi: yakka rejim
+- Tayyorgarlikda “👤 Yakka | 2 | 3 | 4 jamoa”; zalda “Yakka o‘ynash” va “Jamoa bilan” tugmalari.
+- Yakkada: savollar ketma-ket, to‘g‘ri javob — 1 qadam, xatoda joyda qolinadi; bonus va girdob avvalgidek. Xazinaga yetganda aniqlik bo‘yicha yulduz: xatosiz ★★★, ≥75% ★★, qolgani ★ (`soloStars`, `src/lib/race-rules.js`).
+- Matnlar yakkaga moslandi (“O‘yinchi, 3-savol”, “Joyingizda qolasiz”), g‘alaba kartasi “Xazina topildi!” va yulduzlar, natija ekrani shohsupa o‘rniga bitta o‘yinchi kartasi.
+- Saqlash formati o‘zgarmadi: yakka natija — bitta jamoali poyga natijasi.
+- Topilgan va tuzatilgan xato: natija ekranidagi ko‘rsatkich raqamlari eski och mavzu rangida (#17312a) qolgan edi — to‘q fonda deyarli ko‘rinmasdi (jamoaviy shohsupada ham). Endi `--text` / `--muted`.
+
+### Dizayn: har o‘yin o‘ziga yarasha (andoza — Kodbuzar)
+Solishtiruv: Kodbuzar va Soyada o‘z kirish ekrani bor edi; Robot dasturlash to‘g‘ridan-to‘g‘ri ish maydoniga tushardi, Xazina poygasi tayyorgarligi sozlamalar formasiga o‘xshardi.
+- **Robot dasturlash** — yangi bosh ekran `src/screens/RobotHome.jsx` + `src/robot-home.css` (robot laboratoriyasi: to‘r fon, uchib yuruvchi kod belgilari, “ROBOT > dasturlash_” logotipi, gapiradigan maskot Robi — gapi yutuqqa qarab o‘zgaradi, 16 tugunli zinapoya xaritasi, “Davom etish” kartasi, Bloklar / Java / Jamoa kartalari). Zal → bosh ekran → mashq → “Robot menyusiga qaytish”. O‘yin ekrani ham shu uslubda (to‘r fon, g‘alaba kartasi va yulduzlar animatsiyasi).
+- **Xazina poygasi** — tayyorgarlik ekrani `src/race-setup.css`: dengiz va to‘lqinlar, tebranayotgan palma va yaltiroq tangali orol, oltin “XAZINA poygasi” logotipi, oltin tugmalar.
+- **Soya** — atrofdagi qora chiziq o‘rniga o‘yin osmoniga mos gradient.
+- Barcha yangi animatsiyalar “Animatsiyalar” sozlamasi o‘chirilganda to‘xtaydi.
+
+### Tekshiruv
+- `npm test` — 61/61 (yangi: yakka yulduzlar), `npm run build` — muvaffaqiyatli.
+- `BILIM_ARENA_TEST_SHOW=1 npm run smoke:electron` — 12/12 (yangilangan: Robot bosh ekrani, 16 tugun, menyuga va zalga qaytish). Bir urinishda Soya qadami avvaldan ma’lum vaqt muammosi bilan o‘tmadi, keyingi ikki urinish 12/12.
+- Brauzerda: yakka Xazina poygasi boshidan oxirigacha (g‘alaba kartasi, natija ekrani), Robot bosh ekrani → 12-daraja → menyu → zal, Xazina tayyorgarligi, Soya. Konsolda xato yo‘q.

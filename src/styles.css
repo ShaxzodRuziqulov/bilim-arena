@@ -791,3 +791,22 @@ button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-
 .review-wrap .stage { background: #153c36; }.review-heading { position: absolute; inset: 2% 3% auto; display: flex; align-items: center; gap: 24px; z-index: 10; }.review-heading > span:first-child { flex: 1; }.review-heading b { display: block; font-size: 1.8cqw; }.review-heading small { display: block; color: #a9c6b5; font-size: 1cqw; margin-top: .5cqh; }.review-heading .btn { font-size: 1.2cqw; }.review-summary { position: absolute; inset: 22% 10%; text-align: center; padding: 3cqw; background: #f3f6ea; color: #315b3d; border-radius: 2cqw; }.review-summary > span { font-size: 5cqw; color: #85a86b; }.review-summary h1 { font-size: 3cqw; }.review-summary p { font-size: 1.7cqw; }.review-summary .btn { font-size: 1.5cqw; }
 
 .text-answer .answer-display { font-size: 2.2cqw; overflow-wrap: anywhere; overflow-y: auto; max-height: 30cqh; }
+
+/* ---------- Xazina poygasi: yakka rejim ---------- */
+.win-stars { display: flex; justify-content: center; gap: 1.2cqw; margin: .6cqw 0 1cqw; }
+.win-stars span { font-size: 6cqw; line-height: 1; color: #ffffff22; text-shadow: none; animation: star-pop .5s cubic-bezier(.3, 1.6, .5, 1) both; animation-delay: calc(.5s + var(--i) * .25s); }
+.win-stars span.on { color: #ffd34d; text-shadow: 0 0 2cqw #ffb70099, 0 .3cqw 0 #8a5a00; }
+.win-stars.big span { font-size: clamp(44px, 6vw, 84px); }
+@keyframes star-pop { from { transform: scale(0) rotate(-40deg); opacity: 0; } }
+.solo-result {
+  width: min(460px, 90vw);
+  margin: 4vh auto;
+  padding: 26px 22px;
+  border-radius: 28px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--team) 30%, var(--panel)), var(--panel));
+  border: 3px solid var(--team);
+  box-shadow: 0 0 50px color-mix(in srgb, var(--team) 45%, transparent);
+  animation: rise-in .5s ease-out both;
+}
+.solo-result h2 { margin: 4px 0 8px; }
+:root.reduce-motion .win-stars span, :root.reduce-motion .solo-result { animation: none; }

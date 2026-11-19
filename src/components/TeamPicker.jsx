@@ -12,16 +12,17 @@ export const freshTeams = () => TEAM_PRESETS.map((t) => ({ ...t }));
 export const pickTeams = (teams, count) =>
   teams.slice(0, count).map((t, i) => ({ ...t, id: i, name: t.name.trim() || TEAM_PRESETS[i].name }));
 
-export default function TeamPicker({ count, setCount, teams, setTeams }) {
+// allowSolo — "Yakka" (bitta o'yinchi) tanlovi ham ko'rsatiladi (Xazina poygasi).
+export default function TeamPicker({ count, setCount, teams, setTeams, allowSolo = false }) {
   const editTeam = (i, patch) => setTeams((ts) => ts.map((t, j) => (j === i ? { ...t, ...patch } : t)));
   const nextHero = (i) => editTeam(i, { hero: HEROES[(HEROES.indexOf(teams[i].hero) + 1) % HEROES.length] });
 
   return (
     <>
       <div className="segmented">
-        {[2, 3, 4].map((n) => (
+        {[...(allowSolo ? [1] : []), 2, 3, 4].map((n) => (
           <button key={n} className={count === n ? 'active' : ''} onClick={() => setCount(n)}>
-            {n} jamoa
+            {n === 1 ? '👤 Yakka' : `${n} jamoa`}
           </button>
         ))}
       </div>
@@ -35,7 +36,7 @@ export default function TeamPicker({ count, setCount, teams, setTeams }) {
           </div>
         ))}
       </div>
-      <p className="note small">Qahramonni almashtirish uchun uning ustiga bosing.</p>
+      <p className="note small">{count === 1 ? 'Ismingizni yozing va qahramoningizni tanlang (ustiga bosing).' : 'Qahramonni almashtirish uchun uning ustiga bosing.'}</p>
     </>
   );
 }

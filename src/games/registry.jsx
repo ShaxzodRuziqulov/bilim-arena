@@ -15,6 +15,7 @@
 import GameSetup from '../screens/GameSetup.jsx';
 import Race from '../screens/Race.jsx';
 import RobotSetup from '../screens/RobotSetup.jsx';
+import RobotHome from '../screens/RobotHome.jsx';
 import RobotGame from '../screens/RobotGame.jsx';
 import { ROBOT_LADDER, withLadderStars } from '../lib/robot/games.js';
 
@@ -28,7 +29,7 @@ const race = {
   grades: '5–11-sinf',
   about: 'Jamoalar navbat bilan savollarga javob berib, xazina tomon yuradi.',
   adminTab: undefined,
-  renderSetup: ({ data, go, screen }) => <GameSetup data={data} setId={screen.setId} go={go} />,
+  renderSetup: ({ data, go, screen }) => <GameSetup data={data} setId={screen.setId} solo={screen.solo} go={go} />,
   renderPlay: ({ config, askPin, onExit, onFinish, exitLabel }) => (
     <Race config={config} askPin={askPin} onExit={onExit} onFinish={onFinish} exitLabel={exitLabel} />
   ),
@@ -51,18 +52,23 @@ const robot = {
   about: ROBOT_LADDER.about,
   levels: ROBOT_LADDER.steps,
   adminTab: 'games',
-  renderSetup: ({ go }) => <RobotSetup go={go} />,
-  renderPlay: ({ config, data, update, askPin, onExit, onFinish, exitLabel }) => (
+  // screen.home — o'yinning o'z bosh ekrani (zaldan kirish shu yerga); aks holda jamoaviy tayyorgarlik.
+  renderSetup: ({ data, go, screen }) => (screen.home ? <RobotHome robot={data.robot || {}} go={go} /> : <RobotSetup go={go} />),
+  renderPlay: ({ config, data, update, askPin, go, onExit, onFinish, exitLabel }) => {
+    // Bosh ekrandan ochilgan mashqdan chiqqanda yana Robot bosh ekraniga qaytiladi.
+    const toHome = config.from === 'home' && go;
+    return (
     <RobotGame
       config={config}
       robot={data.robot || {}}
       onProgress={(step, stars) => update((d) => ({ ...d, robot: withLadderStars(d.robot, step, stars) }))}
       askPin={askPin}
-      onExit={onExit}
+      onExit={toHome ? () => go({ name: 'setup', game: ROBOT_LADDER.id, home: true }) : onExit}
       onFinish={onFinish}
-      exitLabel={exitLabel}
+      exitLabel={toHome ? 'Robot menyusiga qaytish' : exitLabel}
     />
-  ),
+    );
+  },
   ranking: ['score', 'solved'],
   stats: (t, result) => [
     { value: t.score, prefix: '★ ', label: `${result.maxScore} dan` },

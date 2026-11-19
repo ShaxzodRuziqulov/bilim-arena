@@ -142,6 +142,7 @@ export default function App() {
             data,
             update,
             askPin,
+            go: goGame,
             onExit: toHall,
             exitLabel: 'O‘yinlar zaliga qaytish',
             onFinish: finishGame,

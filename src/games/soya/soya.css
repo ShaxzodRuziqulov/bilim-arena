@@ -1,5 +1,5 @@
 /* Soya platforma ichida (manba: soya/index.html dagi stillar). */
-.soya-host { position: fixed; inset: 0; z-index: 5; background: #0b0d17; overflow: hidden; }
+.soya-host { position: fixed; inset: 0; z-index: 5; overflow: hidden; background: radial-gradient(ellipse at 50% 35%, #1c1f4f 0, #12142f 45%, #0b0d17 100%); }
 .soya-canvas { width: 100vw; height: 100vh; }
 .soya-exit {
   position: absolute; left: 12px; top: 12px; z-index: 2;

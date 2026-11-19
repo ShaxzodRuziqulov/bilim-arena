@@ -301,3 +301,24 @@
   .rb-wrap { min-height: 18em; }
   .robo-hud { flex-wrap: wrap; }
 }
+
+/* ---------- Robot laboratoriyasi uslubi (bosh ekran bilan bir xil) ---------- */
+.robo-wrap {
+  background:
+    radial-gradient(ellipse at 20% 0%, #17406055 0, transparent 55%),
+    radial-gradient(ellipse at 100% 100%, #2a1a4a66 0, transparent 50%),
+    linear-gradient(#58edb00b 1px, transparent 1px) 0 0 / 2.6em 2.6em,
+    linear-gradient(90deg, #58edb00b 1px, transparent 1px) 0 0 / 2.6em 2.6em,
+    #06101f;
+}
+.robo-hud { background: #081627e6; border-bottom: 1px solid #58edb033; box-shadow: 0 1px 1.2em #58edb014; }
+.robo-title b { color: #8ff7cf; text-shadow: 0 0 .6em #58edb055; }
+.robo-lv.on { box-shadow: 0 0 0 .15em #ffd36b, 0 0 1em #ffd36b77; }
+.robo-lv-java.on { background: #fb923c; border-color: #fb923c; color: #2a1206; }
+/* G'alaba: karta "sakrab" chiqadi, yulduzlar birin-ketin yonadi */
+.robo-won { animation: rw-in .45s cubic-bezier(.2, 1.4, .4, 1) both; box-shadow: 0 0 1.6em #58edb040; }
+.robo-won .stars { display: inline-flex; }
+.robo-won .stars { animation: rw-stars .6s .25s cubic-bezier(.2, 1.6, .4, 1) both; text-shadow: 0 0 .5em #ffb70099; }
+@keyframes rw-in { from { transform: translateY(.6em) scale(.92); opacity: 0; } }
+@keyframes rw-stars { from { transform: scale(0) rotate(-25deg); opacity: 0; } }
+:root.reduce-motion .robo-won, :root.reduce-motion .robo-won .stars { animation: none; }
