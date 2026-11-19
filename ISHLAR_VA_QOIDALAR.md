@@ -155,3 +155,141 @@ Mahsulot qarorlari va takliflar: [MAHSULOT_QARORLARI.md](MAHSULOT_QARORLARI.md).
 - Barcha 10 daraja va 6 dars namunaviy yechim bilan skriptda yechildi.
 - Brauzerda 1600×900 va 1280×720: jamoaviy raund, ball, urinishlar, PINsiz pauza, yakunlash, natijalar, tarix, qayta yuklashdan keyin saqlanish; Java muharriri, ekran tugmalari va xato qatori.
 - Electron oynasi, Windows o'rnatuvchisi va haqiqiy sensorli doska hali tekshirilmagan.
+
+## 2026-11-09 — o‘yin modullari reyestri
+Maqsad: yangi o‘yin qo‘shish va mavjudlarini yaxshilashni arzonlashtirish (tarqatish va obunaga tayyorgarlikning 1-qadami).
+
+### Bajarilgan ishlar
+- `src/games/registry.jsx` yaratildi: har bir o‘yin (Xazina poygasi, Robo Kod, Java Robot) bitta modul — nomi, belgisi, tayyorgarlik ekrani, o‘yin ekrani, natija tartibi, shohsupa ko‘rsatkichlari va tarix yozuvi.
+- `App.jsx` dagi o‘yinga xos `race`/`robot`/`robotSetup` ekranlari ikkita umumiy ekranga almashtirildi: `setup` va `play` (`game` maydoni bilan).
+- `Results` va natijalar tarixi ko‘rsatkichlarni o‘yin modulidan oladi; `if robot … else …` shoxlari olib tashlandi.
+- Studiyadagi robot kartochkalari reyestrdan chiqadi.
+- O‘yin ID lari `shared/game-ids.mjs` da bir joyda; schema shu ro‘yxatdan foydalanadi. `tests/games.test.js` reyestr va schema mosligini tekshiradi.
+- Saqlanadigan ma’lumot formati o‘zgarmadi: eski natijalar va mashq yulduzlari avvalgidek o‘qiladi.
+- Kichik o‘zgarish: robot o‘yini natijasidan “Dars studiyasi” endi Robot dasturlash bo‘limiga qaytaradi (avval Savol to‘plamlariga qaytardi).
+
+### Yangi o‘yin qo‘shish tartibi
+1. O‘yin ekranini `src/screens/` ga yozish (`config`, `askPin`, `onExit`, `onFinish` props).
+2. `src/games/registry.jsx` ga modul qo‘shish.
+3. Natija yangi formatda saqlansa — `shared/game-ids.mjs` va `shared/data-schema.mjs` ga qo‘shish va test yozish.
+
+### Tekshiruv
+- `npm test` — 22/22 o‘tdi (3 ta yangi reyestr testi bilan).
+- `npm run build` — muvaffaqiyatli.
+- Brauzerda qo‘lda: poyga tayyorgarligi → o‘yin → pauza → studiya; Robo Kod mashqi → chiqish (Robot bo‘limiga); Java jamoaviy o‘yin → yakunlash → natijalar → Yana o‘ynash; poyga natijalari; natijalar tarixida ikkala tur. Konsolda xato yo‘q.
+- `scripts/verify-ui.cjs` ishga tushmadi: Playwright o‘rnatilmagan. Electron oynasi va sensorli doskada alohida sinalmagan.
+
+## 2026-11-18 — shaxsiy o‘yin platformasi (branch: platforma)
+Maqsad: Bilim Arena faqat sinf o‘yini emas, balki shaxsiy o‘yinlar platformasi bo‘ladi. Sinf rejimi o‘z holicha qoladi.
+
+### Bajarilgan ishlar
+- Yangi bosh ekran — **O‘yinlar zali** (`src/screens/Hall.jsx`, `src/hall.css`): yakka o‘yinlar katta afishalarda (har birining o‘z SVG sahnasi), sinf o‘yinlari alohida qatorda va o‘qituvchi studiyasi orqali ochiladi. Barcha yakka o‘yinlardagi yulduzlar yig‘indisi va oxirgi o‘ynalgan o‘yinni davom ettirish qatori bor.
+- Reyestrga `SOLO_GAMES` qo‘shildi: `id, title, icon, tagline, about, Component, summary()`. Har o‘yin `React.lazy` bilan faqat ochilganda yuklanadi.
+- **Kodbuzar** (`src/games/kodbuzar/`): alohida loyihadan ko‘chirildi. Shadow DOM ichida o‘z React ildizi bilan ishlaydi (`KodbuzarHost.jsx`) — platformaning `.btn`, `.key`, `.home` kabi global stillari unga ta’sir qilmaydi. CSS `.kb` ichiga o‘ralgan, animatsiyalar `kb-` prefiksli. Bosh sahifasida zalga qaytish tugmasi.
+- **Soya** (`src/games/soya/`): Phaser o‘yini `engine/` ga ko‘chirildi, `start.js` uni berilgan elementga o‘rnatadi va to‘xtatadi (canvas, musiqa va kuzatuv taymeri tozalanadi). Phaser alohida bo‘lak (~1,2 MB) — zal va sinf o‘yinlarini sekinlashtirmaydi. Zalga qaytish tugmasi faqat Soyaning bosh menyusida (boshqa ekranlarda u yerda Soyaning o‘z tugmasi bor). `music.js` ga `stopMusic()` qo‘shildi.
+- Ilova endi zaldan ochiladi. Sinf himoyasi yoqilgan bo‘lsa — avvalgidek sinf ekrani; u yerda “O‘yinlar zali” tugmasi. Studiya tepasida “← Zal” tugmasi. Himoya yoqilgan bo‘lsa, zalga o‘tish o‘qituvchi sessiyasini yopadi.
+- Yangi bog‘liqliklar: `phaser@3.88.2`, `@fontsource/nunito@5`.
+
+### Tekshiruv
+- `npm test` — 53/53 o‘tdi (Kodbuzar va Soya testlari ham ko‘chirildi).
+- `npm run build` — muvaffaqiyatli; bo‘laklar: asosiy ~423 KB, Kodbuzar ~30 KB, Soya/Phaser ~1,2 MB.
+- Brauzerda (web rejim): zal → Kodbuzar (o‘yin, klaviatura, zalga qaytish) → Soya (menyu, daraja, chiqqanda canvas va o‘yin to‘liq yo‘qoladi, StrictMode’da bitta canvas) → sinf kartasi → studiya → Xazina poygasi tayyorgarligi → “← Zal”. 375 px telefon kengligi. Konsolda xato yo‘q.
+- Electron oynasi va sensorli doska alohida sinalmagan.
+
+### Qolgan ishlar
+- Umumiy ovoz sozlamasi va platforma saqlash API’si (hozir Kodbuzar va Soya o‘z `localStorage` kalitlarida saqlaydi; Electron’da ham ishlaydi, lekin platforma zaxirasiga kirmaydi).
+- Platforma nomi (“Bilim Arena” qoladimi) — qaror kutilmoqda; nom o‘zgarsa appId va o‘rnatuvchi nomi ham o‘zgaradi.
+- Robo Kod mustaqil loyihasini platformaga qaytarish — qaror kutilmoqda.
+
+## 2026-11-18 — Electron sinovi, umumiy ovoz, o‘yinlar zaxirasi, kod tekshiruvi
+### Bajarilgan ishlar
+- **Electron sinovi:** `scripts/electron-smoke.mjs` (`npm run smoke:electron`) — haqiqiy `main.cjs` va `dist/` ni `file://` orqali, vaqtinchalik profilda (`BILIM_ARENA_TEST_DATA_DIR`) ishga tushirib, CDP orqali boshqaradi: zal → Kodbuzar (taxmin, g‘alaba, natija saqlanishi) → zal → Soya (menyu, daraja, chiqish, canvas tozalanishi) → oxirgi o‘yin eslab qolinishi → studiya; konsol xatolari. Skrinshotlar OS vaqtinchalik papkasida.
+- `electron/main.cjs`: `BILIM_ARENA_TEST_SHOW=1` — sinovda oynani ko‘rsatish (yashirin oynada Phaser tsikli sekinlashib, natija beqaror bo‘ladi). Oddiy ishga tushirishga ta’siri yo‘q.
+- **Umumiy ovoz:** zalda 🔊 tugmasi platformaning `settings.sound` sozlamasini o‘zgartiradi. O‘chiq bo‘lsa Kodbuzar ham, Soya ham jim (Soyada master ovoz 0 — effektlar va musiqa); o‘yinlarning o‘z saqlangan sozlamalari o‘zgarmaydi.
+- **Zaxira:** to‘liq zaxira faylida ixtiyoriy `games` maydoni — Kodbuzar va Soya natijalari (`shared/game-saves.mjs`, faqat ma’lum kalitlar va to‘g‘ri JSON). Ma’lumot formati va `backupVersion` o‘zgarmadi; eski zaxiralar va eski versiyalar ishlayveradi. Tiklashda avval asosiy ma’lumot, keyin o‘yin natijalari yoziladi; o‘yin natijasi yozilmasa ham asosiy tiklash yakunlanadi va ogohlantirish chiqadi.
+- **Kod tekshiruvi (code-review skill) natijasida tuzatildi:** Soya musiqasi uslub almashtirish taymeri tufayli o‘yindan chiqqandan keyin qayta yoqilib qolishi; Soyaning global tinglovchilari o‘yin yopilgandan keyin ham ovoz kontekstini uyg‘otishi (endi kontekst uxlatiladi); sinf himoyasi ekranidagi “O‘yinlar zali” tugmasi PINsiz qulfni chetlab o‘tishi (endi PIN so‘raladi); zaxira tiklashdagi xavfli tartib.
+
+### Tekshiruv
+- `npm test` — 57/57 (4 ta yangi zaxira testi).
+- `npm run build` — muvaffaqiyatli.
+- `BILIM_ARENA_TEST_SHOW=1 npm run smoke:electron` — oxirgi 5 urinishdan 4 tasida 11/11; bittasida yangi ochilgan oyna fokus olguncha Soyaning Enter bosilishi o‘tkazib yuborildi (sinov vaqti, ilova xatosi emas). Yashirin oynada Soya qadamlari beqaror.
+- Brauzerda: zaldagi ovoz tugmasi holati saqlanadi va qaytariladi; konsolda xato yo‘q.
+
+### Qolgan ishlar (tekshiruvda topilgan, ataylab qoldirilgan)
+- Platforma ovozi o‘chiq bo‘lsa, Soya menyusidagi “Ovoz/Musiqa” tugmalari yoqiq ko‘rinadi (eshitilmaydi) — izoh qo‘shish mumkin.
+- Zal kartalari uchun Kodbuzar va Soyaning saqlash/darajalar modullari asosiy bo‘lakka kiradi — kichik umumiy “summary” moduli bilan ajratish mumkin.
+- Kodbuzar va Soya manbalari mustaqil loyihalardan nusxa — ikkalasini yagona manbaga keltirish qarori kerak.
+- Zal, `SOLO_GAMES` va sinf himoyasi oqimi uchun avtomatik testlar yo‘q (Electron smoke zal va o‘yinlarni qamraydi, himoyani emas).
+
+## 2026-11-18 — barcha o‘yinlar bitta zalda, bir xil tartibda
+Muammo: zaldagi “Sinf bilan” kartalari (Xazina poygasi, Robo Kod, Java Robot) o‘qituvchi studiyasiga yuborardi, o‘yindan chiqqanda ham studiyaga qaytilardi — platforma ikki xil ilovadek tuyulardi.
+
+### Bajarilgan ishlar
+- Zalda beshala o‘yin bitta “O‘yinlar” to‘rida, bir xil afishada: har birining o‘z sahnasi (SVG), rejimi (Yakka / Yakka yoki jamoa / 2–4 jamoa), natija qatori va bir xil joylashgan tugmalar.
+- Har afisha o‘yinning o‘zini ochadi: Kodbuzar va Soya — o‘yin; Robo Kod va Java Robot — “Mashq qilish” (yakka) yoki “Jamoa bilan” (tayyorgarlik); Xazina poygasi — “Jamoalarni tuzish” (savol to‘plami bo‘lmasa tugma o‘chiq va izoh chiqadi).
+- `App.jsx`: zaldan ochilgan o‘yin `from: 'hall'` belgisini oladi. Tayyorgarlikdagi “Orqaga”, o‘yin ichidagi chiqish, natijalar va takrorlash ekranlari zalga qaytaradi (“← O‘yinlar zaliga qaytish”). Studiyadan ochilgan o‘yinlar avvalgidek studiyaga qaytadi. O‘yin komponentlariga faqat `exitLabel` / `adminLabel` yozuvlari qo‘shildi.
+- Zal tepasida “✎ Studiya” tugmasi — savol to‘plamlari, natijalar va sozlamalar uchun.
+- “Davom ettirish” qatori barcha o‘yinlar uchun ishlaydi.
+
+### Tekshiruv
+- `npm test` — 57/57, `npm run build` — muvaffaqiyatli.
+- Brauzerda: Robo Kod mashqi → pauza → zalga; Robo Kod jamoa tayyorgarligi → Orqaga → zal; Java mashqi → zal; Xazina poygasi → tayyorgarlik → Orqaga → zal; Xazina poygasi → boshlash → yakunlash → natijalar (“← O‘yinlar zali”) → zal. Konsolda xato yo‘q.
+- `BILIM_ARENA_TEST_SHOW=1 npm run smoke:electron` — 12/12 (yangi: Robo Kod mashqi zaldan ochilib zalga qaytadi, Studiya tugmasi).
+
+## 2026-11-18 — Boshqaruv: yashirinroq va zal bilan bir xil dizayn
+Muammo: zaldagi “✎ Studiya” tugmasi o‘yinlar bilan raqobatlashardi; ichkarisi och yashil “Dars studiyasi” mavzusida edi — to‘q zaldan keyin boshqa ilovadek tuyulardi.
+
+### Bajarilgan ishlar
+- Zalda “✎ Studiya” o‘rniga kichik dumaloq ⚙ (ovoz tugmasi bilan bir xil); nomi hamma joyda **Boshqaruv**.
+- Boshqaruv, tayyorgarlik, savol muharriri va natijalar ekrani platformaning to‘q mavzusiga o‘tkazildi (`styles.css` dagi och mavzu bloki almashtirildi; ogohlantirish, tiklash va saqlash xabarlari ham to‘q ranglarda).
+- Boshqaruv sarlavhasi: dumaloq ← (zalga), “Boshqaruv — Savollar, natijalar va sozlamalar”. “Dars studiyasi” reklama bloki va bosh harfli yorliqlar olib tashlandi.
+- O‘yin qayerdan boshlanmasin (zal yoki Boshqaruvdagi “O‘ynash”), undan chiqqanda va natijalardan keyin har doim zalga qaytiladi.
+- `scripts/electron-smoke.mjs`: production rejimida mavjud bo‘lmagan `window.__game` ga tayangan tekshiruvlar tuzatildi (Soya darajasi zal tugmasi yashirinishi bo‘yicha tekshiriladi, Enter 3 martagacha qayta bosiladi). Shu xato sabab avvalgi takroriy “muvaffaqiyatsiz” natijalar ilova xatosi emas edi.
+
+### Tekshiruv
+- `npm test` — 57/57, `npm run build` — muvaffaqiyatli.
+- Brauzerda: Boshqaruvning 4 bo‘limi, savol muharriri — och fonli element qolmagan (faqat asosiy yashil tugmalar); Boshqaruv → O‘ynash → tayyorgarlik → o‘yin → yakunlash → natijalar (“← O‘yinlar zali”) → zal.
+- Tuzatilgan Electron smoke qayta ishga tushirilmadi.
+
+## 2026-11-18 — Sozlamalar: barcha o‘yinlar uchun bitta tuzilma
+Muammo: ⚙ “Boshqaruv”ni ochardi, ichida yana “⚙️ Sozlamalar” bo‘limi bor edi; u yerdagi “O‘yin” sozlamalari (vaqt, qadamlar) faqat Xazina poygasiga tegishli edi, Kodbuzar va Soya uchun esa hech narsa yo‘q edi.
+
+### Bajarilgan ishlar
+- ⚙ endi to‘g‘ridan-to‘g‘ri **Sozlamalar** sahifasini ochadi. Bo‘limlar: **Umumiy** · **O‘yinlar** · **Savollar** · **Natijalar** (ichida “Sozlamalar” bo‘limi yo‘q).
+- **Umumiy** — barcha o‘yinlar uchun: “Ovoz va musiqa”, “Animatsiyalar”, xavfsizlik (PIN, sinf himoyasi), yangilanishlar, zaxira.
+- **O‘yinlar** — har o‘yin o‘z panelida: Kodbuzar va Soya (yulduzlar, natijalarni tozalash — o‘yinning o‘z sozlamalari saqlanadi), Robo Kod va Java Robot (mashqni tozalash), Xazina poygasi (savol vaqti, qadamlar soni, savollarga o‘tish). Robot bo‘limidagi takroriy “o‘ynash” tugmalari olib tashlandi — o‘yinlar zalda.
+- “Animatsiyalar” endi Kodbuzar (Shadow DOM ichiga `reduceMotion` orqali) va Soyaga (`theme.reducedMotion()` platformaning `html.reduce-motion` belgisini ham tekshiradi) ham ta’sir qiladi. Ovoz avvaldan umumiy edi.
+- Nomlar: hamma joyda “Boshqaruv” → “Sozlamalar”; robot o‘yinlarining `adminTab` → `games`.
+
+### Tekshiruv
+- `npm test` — 57/57, `npm run build` — muvaffaqiyatli.
+- Brauzerda: ⚙ → “Sozlamalar”, 4 bo‘lim; O‘yinlar bo‘limida 5 ta o‘yin; “Animatsiyalar” o‘chirilganda `html.reduce-motion` va Kodbuzar ichida `.kb.reduce` yoqildi, qayta yoqilganda olib tashlandi.
+
+## 2026-11-18 — Savollar va natijalar o‘z o‘yinida; Qulflash tugmasi olib tashlandi
+- Sozlamalar tepasida faqat **Umumiy** va **O‘yinlar**. “Savollar” va “Natijalar” alohida o‘yinlarga tegishli bo‘lgani uchun o‘sha o‘yin panelidan ochiladi: Xazina poygasi — “Savollar” va “Natijalar (N)”; Robo Kod va Java Robot — “Natijalar (N)”. Ichki sahifalarda “← O‘yinlar”.
+- Natijalar tarixi o‘yin bo‘yicha ajratildi (`HistoryTab` `game` bo‘yicha filtrlaydi); “Tarixni tozalash” ham faqat shu o‘yin natijalarini o‘chiradi.
+- Sozlamalar sarlavhasidagi “🔒 Qulflash” tugmasi olib tashlandi.
+
+### Tekshiruv
+- `npm test` — 57/57, `npm run build` — muvaffaqiyatli.
+- Brauzerda: 2 ta bo‘lim, Qulflash yo‘q; Xazina poygasi → Savollar (yuqorida “O‘yinlar” belgili) → ← O‘yinlar; Robo Kod → Natijalar (Xazina poygasi yozuvlari ko‘rinmaydi); Xazina poygasi → Natijalar (2 ta yozuv).
+
+## 2026-11-18/19 — Sinf himoyasi olib tashlandi, PIN sessiyada bir marta
+Muammo: “Sinf himoyasi” yoqilganda dastur alohida sinf ekranidan (`Home.jsx`) ochilar va o‘yindan chiqishda PIN so‘rardi — zal bilan bir platforma tuyg‘usini buzardi, Qulflash tugmasi esa avvalroq olib tashlangan edi.
+
+### Bajarilgan ishlar
+- `src/screens/Home.jsx` (sinf ekrani) o‘chirildi; dastur har doim O‘yinlar zalidan ochiladi.
+- PIN o‘rnatilgan bo‘lsa faqat ⚙ Sozlamalarni ochish va dasturdan chiqishda so‘raladi, dastur yopilguncha bir marta (`guard` / `pinUnlocked` — `App.jsx`). PINni almashtirish va zaxiradan tiklash har safar so‘raydi. O‘yin ichidagi yakunlash/zalga qaytish PINsiz.
+- Sozlamalar → Umumiy → PIN bo‘limi matni yangi tartibga moslandi; zaxiradan tiklagach Umumiy bo‘lim ochiladi.
+- `classroomLock` sozlamasi `DEFAULT_SETTINGS`, normallashtirilgan ma’lumot va zaxira tiklashdan olib tashlandi. Eski fayllardagi maydon xato bermaydi, e’tiborsiz qoldiriladi.
+- README, MAHSULOT_QARORLARI (PIN jadvali, bosh sahifa qarori) va SINF_SINOVI yangi tartibga moslandi.
+
+### Tekshiruv
+- `npm test` — 57/57, `npm run build` — muvaffaqiyatli.
+- `BILIM_ARENA_TEST_SHOW=1 npm run smoke:electron` — 12/12.
+- Brauzerda: PIN yaratish (ikki marta) → qayta ochish → ⚙ PIN so‘radi → noto‘g‘ri PIN “PIN noto‘g‘ri” → to‘g‘ri PIN → ⚙ ikkinchi marta PINsiz. Xazina poygasi: tayyorgarlik → o‘yin → pauza → yakunlash (PINsiz) → natijalar → zal. Java mashqi → pauza → zal. Sozlamalar → O‘yinlar: 5 ta o‘yin paneli, Xazina poygasi Savollar va Natijalar. Konsolda xato yo‘q.
+
+### Qolgan ishlar
+- PIN va Sozlamalar oqimi uchun avtomatik test yo‘q.
+- `platforma` branchi `main`ga qo‘shilmagan va GitHub’ga push qilinmagan.
+- Qarorlar kutilmoqda: platforma nomi, Robo Kod mustaqil loyihasi, Kodbuzar/Soya manbalarini yagona qilish.

@@ -1,4 +1,6 @@
-export const DEFAULT_SETTINGS = { time: 30, trackLength: 12, sound: true, classroomLock: false, animations: true };
+import { ROBOT_GAME_IDS as ROBOT_GAMES } from './game-ids.mjs';
+import { pickGameSaves } from './game-saves.mjs';
+export const DEFAULT_SETTINGS = { time: 30, trackLength: 12, sound: true, animations: true };
 const object = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);
 const fail = (message) => { throw new Error(message); };
 const text = (v, fallback = '') => v === undefined ? fallback : typeof v === 'string' ? v : fail('Matn maydoni noto‘g‘ri');
@@ -6,7 +8,6 @@ const list = (v, fallback = []) => v === undefined ? fallback : Array.isArray(v)
 const number = (v, fallback = 0) => v === undefined ? fallback : Number.isFinite(v) && v >= 0 ? v : fail('Son maydoni noto‘g‘ri');
 function unique(items) { if (new Set(items.map(v => v.id)).size !== items.length) fail('Takroriy ID topildi'); return items; }
 // Robot dasturlash: mashqdagi eng yaxshi yulduzlar (daraja raqami -> 1..3).
-const ROBOT_GAMES = ['kod', 'java'];
 function validateRobot(r) {
   if (r === undefined) return {};
   if (!object(r)) fail('Robot ma’lumoti formati noto‘g‘ri');
@@ -42,8 +43,9 @@ export function validateData(raw) {
   const s=raw.settings ?? {}; if (!object(s)) fail('Sozlamalar formati noto‘g‘ri');
   const time=s.time ?? 30, trackLength=s.trackLength ?? 12;
   if (![0,15,20,30,45,60,90].includes(time) || ![8,10,12,16,20].includes(trackLength)) fail('O‘yin sozlamalari noto‘g‘ri');
+  // classroomLock — eski versiyalardagi "Sinf himoyasi"; eski fayllar qabul qilinadi, qiymati e'tiborsiz qoldiriladi.
   if ((s.sound !== undefined && typeof s.sound !== 'boolean') || (s.classroomLock !== undefined && typeof s.classroomLock !== 'boolean') || (s.animations !== undefined && typeof s.animations !== 'boolean')) fail('Sozlamalar turi noto‘g‘ri');
-  return {version:1,pinHash:raw.pinHash ?? null,settings:{time,trackLength,sound:s.sound ?? true,classroomLock:!!raw.pinHash && !!s.classroomLock,animations:s.animations ?? true},sets:unique(raw.sets.map(set=>{
+  return {version:1,pinHash:raw.pinHash ?? null,settings:{time,trackLength,sound:s.sound ?? true,animations:s.animations ?? true},sets:unique(raw.sets.map(set=>{
     if (!object(set) || !set.id || typeof set.id !== 'string') fail('To‘plam formati noto‘g‘ri');
     return {id:set.id,name:text(set.name,'Nomsiz to‘plam'),subject:text(set.subject,'Umumiy'),grade:text(set.grade,'Aralash'),questions:unique(list(set.questions).map(validateQuestion))};
   })),history:raw.history.slice(0,300).map(h=>{
@@ -63,4 +65,10 @@ export function parseBackup(value) {
   }
   return validateData(raw);
 }
-export function makeBackup(data) { return {format:'bilim-arena-backup',backupVersion:1,createdAt:new Date().toISOString(),data:validateData(data)}; }
+// games — ixtiyoriy: yakka o'yinlar saqlamalari (shared/game-saves.mjs). Eski versiyalar bu maydonni e'tiborsiz qoldiradi.
+export function makeBackup(data, games) {
+  const backup = {format:'bilim-arena-backup',backupVersion:1,createdAt:new Date().toISOString(),data:validateData(data)};
+  const saves = pickGameSaves(games);
+  if (Object.keys(saves).length) backup.games = saves;
+  return backup;
+}

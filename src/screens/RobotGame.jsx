@@ -17,7 +17,7 @@ const Stars = ({ n, of = 3 }) => (
 );
 
 // Robot o'yinlari qobig'i: mashq rejimi (erkin daraja tanlash) yoki jamoaviy musobaqa (raundlar, navbat, ball).
-export default function RobotGame({ config, progress, onProgress, askPin, onFinish, onExit }) {
+export default function RobotGame({ config, progress, onProgress, askPin, onFinish, onExit, exitLabel = 'Sozlamalarga qaytish' }) {
   const g = ROBOT_GAMES[config.game];
   const Workspace = WORKSPACES[config.game];
   const team = config.mode === 'team';
@@ -123,7 +123,7 @@ export default function RobotGame({ config, progress, onProgress, askPin, onFini
     setPhase('ready');
   };
 
-  // Pauza PINsiz; yakunlash, navbatni o'tkazish va chiqish Sinf himoyasi yoqilgan bo'lsa PIN so'raydi.
+  // Pauza, yakunlash, navbatni o'tkazish va chiqish PINsiz (PIN faqat Sozlamalar va dasturdan chiqish uchun).
   const openMenu = () => {
     setPaused(true);
     setMenu(true);
@@ -270,7 +270,7 @@ export default function RobotGame({ config, progress, onProgress, askPin, onFini
               </button>
             )}
             <button className="btn big full" onClick={onExit}>
-              ← Studiyaga qaytish{team ? ' (natija saqlanmaydi)' : ''}
+              ← {exitLabel}{team ? ' (natija saqlanmaydi)' : ''}
             </button>
           </div>
         </div>

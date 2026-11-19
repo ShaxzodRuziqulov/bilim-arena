@@ -1,0 +1,121 @@
+/* O'yinlar zali. Asosiy ranglar platformaniki (styles.css :root): sokin fon, yorqinlik faqat afishalarda. */
+.hall {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 28px clamp(16px, 4vw, 40px) 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+.hall-top { display: flex; align-items: center; gap: 16px; }
+.hall-brand { display: flex; align-items: center; gap: 14px; flex: 1; min-width: 0; }
+.hall-brand img { width: 52px; height: 52px; border-radius: 14px; }
+.hall-brand h1 { margin: 0; font-size: 1.6rem; font-weight: 900; letter-spacing: -0.01em; }
+.hall-brand p { margin: 2px 0 0; color: var(--muted); font-size: 1.05rem; }
+.hall-stars {
+  font-weight: 900; font-size: 1.1rem; color: var(--gold);
+  padding: 8px 14px; border-radius: 999px; background: rgb(255 211 107 / 0.1);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Zal tepasidagi kichik dumaloq tugmalar (ovoz, boshqaruv) va boshqaruvdagi orqaga tugmasi — bir xil. */
+.hall-icon, .admin-back {
+  width: 46px; height: 46px; flex: none; border-radius: 50%; cursor: pointer; font-size: 1.2rem; line-height: 1;
+  display: grid; place-items: center;
+  border: 1px solid var(--line); background: var(--panel); color: var(--muted);
+}
+.hall-icon:hover, .admin-back:hover { color: var(--text); background: var(--panel-2); }
+.hall-sound { color: var(--text); }
+.hall-sound[aria-pressed='false'] { opacity: 0.7; }
+
+.hall-continue {
+  display: flex; align-items: center; gap: 16px; text-align: left;
+  padding: 14px 18px; border-radius: 16px; cursor: pointer;
+  border: 1px solid rgb(88 237 176 / 0.35); background: rgb(88 237 176 / 0.08); color: var(--text);
+}
+.hall-continue:hover { background: rgb(88 237 176 / 0.14); }
+.hall-continue b { display: block; font-size: 1.1rem; }
+.hall-continue small { color: var(--muted); }
+.hall-continue-icon { font-size: 2rem; }
+.hall-continue-go {
+  margin-left: auto; width: 44px; height: 44px; border-radius: 50%;
+  display: grid; place-items: center; background: var(--accent); color: var(--accent-ink); font-size: 1rem;
+}
+
+.hall-section h2 { margin: 0 0 12px; font-size: 1.25rem; font-weight: 900; }
+.hall-note { margin: -6px 0 12px; color: var(--muted); }
+
+/* Afishalar — zalning yagona yorqin joyi. */
+.posters { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
+.poster {
+  display: flex; flex-direction: column; overflow: hidden;
+  border-radius: 22px; color: var(--text);
+  border: 1px solid rgb(255 255 255 / 0.1);
+  transition: transform 0.2s cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+/* Har o'yinning o'z rangi — afisha foni va shiori shu rangda. */
+.poster-kodbuzar { background: linear-gradient(170deg, #2a1b63, #140d36 70%); --tag: #fcd34d; }
+.poster-soya { background: linear-gradient(170deg, #0f2a3d, #0b0d17 70%); --tag: #7dd3fc; }
+.poster-kod { background: linear-gradient(170deg, #0d3a2c, #08130f 70%); --tag: #6ee7b7; }
+.poster-java { background: linear-gradient(170deg, #3b1d0a, #140904 70%); --tag: #fdba74; }
+.poster-race { background: linear-gradient(170deg, #0c4a5c, #061a22 70%); --tag: #fde68a; }
+.poster:hover { transform: translateY(-4px); }
+.poster-art-btn { display: block; width: 100%; padding: 0; border: 0; background: none; cursor: pointer; }
+.poster-art-btn:disabled { cursor: default; filter: grayscale(0.6); }
+.poster-art-btn:focus-visible { outline: 3px solid var(--gold); outline-offset: -3px; }
+.poster-art { width: 100%; height: auto; display: block; aspect-ratio: 320 / 170; }
+.poster-body { display: flex; flex-direction: column; gap: 6px; padding: 16px 20px 20px; flex: 1; }
+.poster-mode { color: var(--muted); font-size: 0.9rem; font-weight: 700; }
+.poster-title { margin: 0; font-size: 1.7rem; font-weight: 900; line-height: 1.1; }
+.poster-tag { font-size: 1.02rem; font-weight: 700; color: var(--tag); }
+.poster-about { margin: 0; color: var(--muted); line-height: 1.45; max-width: 46ch; }
+/* Barcha afishalarda bir xil tartib: yuqorida natija qatori, pastida tugmalar qatori. */
+.poster-foot { display: flex; flex-direction: column; gap: 12px; margin-top: auto; padding-top: 14px; }
+.poster-progress { display: flex; align-items: center; gap: 10px; min-height: 24px; color: var(--gold); font-weight: 800; font-variant-numeric: tabular-nums; }
+.poster-progress .bar { flex: 1; height: 6px; border-radius: 99px; background: rgb(255 255 255 / 0.12); overflow: hidden; }
+.poster-progress .bar span { display: block; height: 100%; background: var(--gold); border-radius: inherit; }
+.poster-note { display: flex; align-items: center; min-height: 24px; color: var(--muted); font-weight: 700; }
+.poster-actions { display: flex; gap: 8px; }
+.poster-actions > * { flex: 1; }
+.poster-play, .poster-alt { padding: 10px 14px; border-radius: 999px; font-weight: 900; cursor: pointer; border: 0; white-space: nowrap; }
+.poster-play { background: #fff; color: #111827; }
+.poster-alt { background: rgb(255 255 255 / 0.1); color: var(--text); border: 1px solid rgb(255 255 255 / 0.2); }
+.poster-play:hover, .poster-alt:hover { filter: brightness(1.08); }
+.poster-play:disabled { opacity: 0.45; cursor: default; }
+.hall-continue-art { width: 64px; flex: none; border-radius: 10px; overflow: hidden; }
+.hall-continue-art .poster-art { width: 64px; }
+
+/* Afisha sahnalari: bitta sekin harakat — sichqoncha ustiga kelganda. */
+.poster-art text { font: 900 22px 'Nunito Variable', sans-serif; fill: #fff; }
+.kb-dial { transform-origin: 160px 86px; transition: transform 0.9s cubic-bezier(0.3, 1.4, 0.4, 1); }
+.poster:hover .kb-dial, .poster:focus-visible .kb-dial { transform: rotate(150deg); }
+.soya-ghost { transition: transform 0.9s ease-in-out; }
+.poster:hover .soya-ghost, .poster:focus-visible .soya-ghost { transform: translate(110px, -38px); }
+.soya-laser { animation: hall-laser 2.4s steps(1) infinite; }
+@keyframes hall-laser { 50% { opacity: 0.15; } }
+.poster-art .art-dark { fill: #422006; font-size: 18px; }
+.poster-art .art-code { font: 700 12.5px Consolas, 'Cascadia Mono', monospace; }
+.kod-robot { transition: transform 0.9s cubic-bezier(0.3, 1.2, 0.4, 1); }
+.poster:hover .kod-robot { transform: translate(90px, -60px); }
+.java-steam { transition: opacity 0.4s; opacity: 0.4; }
+.poster:hover .java-steam { opacity: 1; }
+.java-cursor { animation: hall-laser 1.2s steps(1) infinite; }
+.race-team { transition: transform 0.8s cubic-bezier(0.3, 1.3, 0.4, 1); }
+.poster:hover .race-team { transform: translate(64px, -12px); }
+.poster:hover .race-team.b { transform: translate(96px, -18px); }
+
+@media (max-width: 560px) {
+  .hall { padding-top: 18px; gap: 22px; }
+  .hall-brand h1 { font-size: 1.3rem; }
+  .poster-title { font-size: 1.45rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .poster, .kb-dial, .soya-ghost, .kod-robot, .race-team { transition: none; }
+  .soya-laser, .java-cursor { animation: none; }
+}
+:root.reduce-motion .soya-laser, :root.reduce-motion .java-cursor { animation: none; }
+:root.reduce-motion .poster, :root.reduce-motion .kb-dial, :root.reduce-motion .soya-ghost,
+:root.reduce-motion .kod-robot, :root.reduce-motion .race-team { transition: none; }
+
+/* Sozlamalar: o'yin ichidagi sahifadan (savollar, natijalar) O'yinlar bo'limiga qaytish. */
+.admin .sub-back { margin-bottom: 18px; }

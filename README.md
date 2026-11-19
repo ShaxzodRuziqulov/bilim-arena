@@ -1,10 +1,14 @@
 # Bilim Arena
 
-Sensorli elektron doska uchun jamoaviy ta'limiy o'yin (birinchi fan — Informatika, 5–11-sinflar).
+Ta'limiy o'yinlar platformasi: sensorli elektron doskada jamoaviy o'yinlar va yakka o'yinlar (birinchi fan — Informatika, 5–11-sinflar).
 
-## Hozir nimalar bor (1–2-bosqich)
+## Hozir nimalar bor
 
-- **Dars studiyasi** — birinchi ochilishdan parolsiz ishlaydi. Ixtiyoriy “Sinf himoyasi” va qo‘lda qulflash bor. Himoya yoqilganda o‘yin boshqaruviga qaytish uchun PIN kerak; pauza va davom etish PINsiz.
+- **O‘yinlar zali** — dastur har doim shu yerdan ochiladi. Beshala o‘yin bir xil afishada: Kodbuzar, Soya (yakka), Robo Kod, Java Robot (yakka yoki jamoa), Xazina poygasi (2–4 jamoa). Har o‘yindan chiqqanda zalga qaytiladi; oxirgi o‘ynalgan o‘yinni davom ettirish qatori bor.
+- **Kodbuzar** — 2 xonali rangli seyflardagi kodni topish (“Buqa va sigir” mantig‘i), darajalar va kunlik kod.
+- **Soya** — platformer-jumboq: harakatlaringizni yozing, soyangiz ularni takrorlaydi. 15 daraja, 3 dunyo.
+- **Sozlamalar** (zaldagi ⚙) — ikki bo‘lim: **Umumiy** (ovoz va musiqa, animatsiyalar, PIN, yangilanishlar, zaxira — barcha o‘yinlar uchun) va **O‘yinlar** (har o‘yinning o‘z sozlamalari, natijalari; Xazina poygasining savol to‘plamlari).
+- **PIN (ixtiyoriy)** — o‘rnatilsa, Sozlamalarni ochish va dasturdan chiqishda so‘raladi, dastur ochiq turgan vaqtda bir marta. O‘yinlar, pauza va natijalar PINsiz.
 - **Savol muharriri** — besh xil savol turi:
   - variantli (2–4 ta javob),
   - to‘g‘ri / noto‘g‘ri,
@@ -18,7 +22,7 @@ Sensorli elektron doska uchun jamoaviy ta'limiy o'yin (birinchi fan — Informat
   va dastur yopilganda o‘rnatadi (Sozlamalar → Yangilanishlar).
 - **Xazina poygasi** — 2–4 jamoa navbat bilan doskaga chiqib javob beradi. To‘g‘ri javob — 1 qadam oldinga,
   ⭐ bonus katak (+1), 🌀 girdob (−1). Bir jamoa xazinaga yetgach, davra oxirigacha navbatlar tenglashtiriladi. Qadamlar, keyin to‘g‘ri javoblar soni solishtiriladi; teng natija — durang.
-- **Robot dasturlash** (O‘qituvchi paneli → 🤖) — savol to‘plami kerak emas:
+- **Robot dasturlash** (zaldagi Robo Kod va Java Robot afishalari) — savol to‘plami kerak emas:
   - *Robo Kod* (5–7-sinf) — tugmalar bilan buyruqlar, P funksiyasi va rekursiya, 10 ta daraja;
   - *Java Robot* (8–11-sinf) — haqiqiy Java kodi (metod, int, for, while, if), 6 ta dars,
     xatolar o‘zbekcha va qator raqami bilan; doskada yozish uchun tayyor bo‘laklar va ekran tugmalari.
@@ -46,7 +50,9 @@ npm run dev
 `npm run web` — faqat brauzerda ochish (http://localhost:5173), tez sinash uchun.
 
 `npm run dist` — Windows o‘rnatuvchi (`release/` papkasida `.exe`) yig‘adi.
-O‘rnatilgan dastur kattalashtirilgan oddiy oynada ochiladi. O‘yin ichidagi ⛶ tugmasi to‘liq ekranga o‘tkazadi. PIN faqat ixtiyoriy himoya yoki qo‘lda qulflashda so‘raladi.
+O‘rnatilgan dastur kattalashtirilgan oddiy oynada ochiladi. O‘yin ichidagi ⛶ tugmasi to‘liq ekranga o‘tkazadi. PIN (agar o‘rnatilgan bo‘lsa) faqat Sozlamalar va dasturdan chiqishda so‘raladi.
+
+Windows PowerShell `npm` skriptini bloklasa, `npm.cmd run dev` deb yozing.
 
 ## Yangi versiya chiqarish
 
@@ -80,8 +86,10 @@ Avtomatik oldingi nusxa: data.json.bak. PIN unutilsa savollar faylini o‘chirma
 ```
 electron/        Electron asosiy jarayoni (oyna, fayl saqlash, chiqishni qulflash)
 src/lib/         Ma'lumotlar, PIN, tovush, yordamchi funksiyalar, namunaviy savollar
-src/components/  PIN oynasi, kod ko‘rinishi, tasdiqlash tugmasi
-src/screens/     Bosh ekran, admin, muharrir, o‘yin sozlash, poyga, natijalar
+src/components/  PIN oynasi, kod ko‘rinishi, tasdiqlash tugmasi, zaxira paneli
+src/screens/     O‘yinlar zali, Sozlamalar, muharrir, o‘yin sozlash, poyga, robot o‘yini, natijalar
+src/games/       O‘yinlar reyestri (registry.jsx), Kodbuzar va Soya
+shared/          Ma'lumot sxemasi, o‘yin ID lari, yakka o‘yinlar zaxirasi
 ```
 
 ## Keyingi bosqichlar
@@ -95,4 +103,4 @@ Maqsad, amaldagi qoidalar va o‘zgarishlar: [ISHLAR_VA_QOIDALAR.md](ISHLAR_VA_Q
 
 Dizayn qarorlari, PIN tartibi va kelajakdagi pullik mahsulot rejasi: [MAHSULOT_QARORLARI.md](MAHSULOT_QARORLARI.md).
 
-Tekshiruvlar: npm test va npm run build. Haqiqiy dars ssenariysi: [SINF_SINOVI.md](SINF_SINOVI.md).
+Tekshiruvlar: `npm test`, `npm run build` va Electron sinovi `npm run smoke:electron` (oynani ko‘rsatish uchun `BILIM_ARENA_TEST_SHOW=1`). Haqiqiy dars ssenariysi: [SINF_SINOVI.md](SINF_SINOVI.md).
