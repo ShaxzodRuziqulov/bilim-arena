@@ -376,3 +376,8 @@ Foydalanuvchi telefonda sinadi: yon tomonga buriladigan o‘yinlar kichik, boshl
 - **Tayyorgarlik (Xazina, Robot jamoa):** telefonda “O‘yinni boshlash” ekran pastiga mahkamlangan; Xazina sarlavhasi ixcham.
 - **Sozlamalar:** kataklar o‘rniga yoqish/o‘chirish kalitlari (52×30); telefonda bo‘lim tugmalari butun kenglikda 48px; tugma va tanlovlar ≥ 48px.
 - Tekshiruv: `npm test` 61/61, build, Electron smoke 12/12; brauzerda 375×812 va 752×336 (sensorli) — zal, Xazina (tayyorgarlik, taxta, 10 ta savol), Soya (menyu, 1-1 va eng uzun yo‘riqnomali 2-5), Sozlamalar. Kompyuter ko‘rinishi o‘zgarmagan. To‘liq ekran va avtomatik burilish faqat APK’da — telefonda sinash kerak.
+
+## 2026-11-19 — 0.8.0: Android APK doimiy kalit bilan
+- Doimiy imzolash kaliti yaratildi (PKCS12, RSA 4096, 30 yil). Zaxira nusxa va parol: `C:\Users\Shaxsiy\shaxsiy\_zaxira\bilim-arena-android-kalit\` — repoda yo‘q. GitHub maxfiy sozlamalari: `BILIM_KEYSTORE_BASE64`, `BILIM_KEYSTORE_PASSWORD`, `BILIM_KEY_ALIAS`.
+- Imzolangan release APK sinov yig‘ishida tekshirildi: APK ichida aynan shu sertifikat va v2 imzo bloki bor.
+- Bundan keyin har `v*` tegida Release’ga `Bilim-Arena-Setup.exe` va `Bilim-Arena.apk` qo‘shiladi; APK yangi versiyasi eski ustidan o‘rnatiladi (sinov debug APK’lari bundan mustasno — ularni o‘chirib o‘rnatish kerak).
