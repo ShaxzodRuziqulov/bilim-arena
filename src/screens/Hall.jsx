@@ -1,5 +1,5 @@
 import { SOLO_GAMES } from '../games/registry.jsx';
-import { ROBOT_GAMES } from '../lib/robot/games.js';
+import { ROBOT_LADDER, ladderTotal } from '../lib/robot/games.js';
 import { playableQuestions, uid } from '../lib/util.js';
 import { play } from '../lib/sound.js';
 import '../hall.css';
@@ -15,9 +15,12 @@ export const rememberLastGame = (id) => {
     /* saqlab bo'lmadi — zal baribir ishlaydi */
   }
 };
+// Eski versiyalarda Robo Kod va Java Robot alohida o'yin edi — endi ikkalasi ham Robot dasturlash.
+const OLD_IDS = { kod: 'robot', java: 'robot' };
 const lastGameId = () => {
   try {
-    return localStorage.getItem(LAST_KEY);
+    const id = localStorage.getItem(LAST_KEY);
+    return OLD_IDS[id] || id;
   } catch {
     return null;
   }
@@ -27,7 +30,6 @@ const robotPractice = (id) => ({ name: 'play', game: id, key: uid(), config: { g
 
 /** Zaldagi har bir o'yin: afisha ma'lumoti va uni ochadigan amallar (birinchisi — asosiy). */
 function buildGames(data) {
-  const robotStars = (id) => Object.values(data.robot?.[id]?.stars || {}).reduce((a, b) => a + b, 0);
   const readySet = data.sets.find((s) => playableQuestions(s).length);
   const raceGames = data.history.filter((h) => h.kind !== 'robot').length;
   const solo = (g) => {
@@ -37,22 +39,22 @@ function buildGames(data) {
       actions: [{ label: stars ? 'Davom etish' : 'Boshlash', next: { name: 'solo', game: g.id } }],
     };
   };
-  const robot = (id, tagline) => {
-    const g = ROBOT_GAMES[id];
+  const robot = () => {
+    const g = ROBOT_LADDER;
+    const stars = ladderTotal(data.robot);
     return {
-      id, title: g.title, mode: `Yakka yoki jamoa, ${g.grades}`, tagline, about: g.about,
-      stars: robotStars(id), max: g.levels.length * 3,
+      id: g.id, title: g.title, mode: `Yakka yoki jamoa, ${g.grades}`, tagline: 'Bloklardan haqiqiy Java kodigacha', about: g.about,
+      stars, max: g.steps.length * 3,
       actions: [
-        { label: robotStars(id) ? 'Davom etish' : 'Mashq qilish', next: robotPractice(id) },
-        { label: 'Jamoa bilan', next: { name: 'setup', game: id } },
+        { label: stars ? 'Davom etish' : 'Mashq qilish', next: robotPractice(g.id) },
+        { label: 'Jamoa bilan', next: { name: 'setup', game: g.id } },
       ],
     };
   };
   return [
     solo(SOLO_GAMES.kodbuzar),
     solo(SOLO_GAMES.soya),
-    robot('kod', 'Bloklar bilan robotni boshqaring'),
-    robot('java', 'Robotni haqiqiy Java kodi bilan boshqaring'),
+    robot(),
     {
       id: 'race', title: 'Xazina poygasi', mode: '2–4 jamoa, 5–11-sinf', tagline: 'Savollarga javob berib, xazinaga birinchi yeting',
       about: 'Jamoalar navbat bilan savol yechadi, to‘g‘ri javob — bir qadam oldinga. Bonus va girdob kataklari bor.',
@@ -210,59 +212,42 @@ function Art({ id }) {
       </svg>
     );
   }
-  if (id === 'kod') {
-    // To'r ustida robot va buyruq bloklari: ↑ ↑ → ⟳
+  if (id === 'robot') {
+    // Zinapoya: chapda to'rda robot, o'ngda avval buyruq bloklari, pastda xuddi shu harakat Java kodida.
     return (
       <svg className="poster-art" viewBox="0 0 320 170" aria-hidden="true">
         <rect width="320" height="170" fill="#0d2a22" />
         <g opacity="0.35" stroke="#34d399" strokeWidth="1">
-          {Array.from({ length: 7 }, (_, i) => <line key={`v${i}`} x1={40 + i * 30} y1="20" x2={40 + i * 30} y2="140" />)}
-          {Array.from({ length: 5 }, (_, i) => <line key={`h${i}`} x1="40" y1={20 + i * 30} x2="220" y2={20 + i * 30} />)}
+          {Array.from({ length: 6 }, (_, i) => <line key={`v${i}`} x1={20 + i * 30} y1="20" x2={20 + i * 30} y2="140" />)}
+          {Array.from({ length: 5 }, (_, i) => <line key={`h${i}`} x1="20" y1={20 + i * 30} x2="170" y2={20 + i * 30} />)}
         </g>
-        <path className="kod-path" d="M85 125 V65 H175" fill="none" stroke="#fbbf24" strokeWidth="4" strokeDasharray="6 6" />
-        <rect x="160" y="35" width="30" height="30" rx="6" fill="#fbbf24" opacity="0.9" />
-        <text x="175" y="57" textAnchor="middle" className="art-dark">★</text>
+        <path className="kod-path" d="M65 125 V65 H125" fill="none" stroke="#fbbf24" strokeWidth="4" strokeDasharray="6 6" />
+        <rect x="110" y="35" width="30" height="30" rx="6" fill="#fbbf24" opacity="0.9" />
+        <text x="125" y="57" textAnchor="middle" className="art-dark">★</text>
         <g className="kod-robot">
-          <rect x="72" y="112" width="26" height="24" rx="6" fill="#a7f3d0" />
-          <circle cx="80" cy="122" r="3" fill="#064e3b" />
-          <circle cx="90" cy="122" r="3" fill="#064e3b" />
-          <line x1="85" y1="112" x2="85" y2="104" stroke="#a7f3d0" strokeWidth="3" />
+          <rect x="52" y="112" width="26" height="24" rx="6" fill="#a7f3d0" />
+          <circle cx="60" cy="122" r="3" fill="#064e3b" />
+          <circle cx="70" cy="122" r="3" fill="#064e3b" />
+          <line x1="65" y1="112" x2="65" y2="104" stroke="#a7f3d0" strokeWidth="3" />
         </g>
-        {['↑', '↑', '→', '⟳'].map((ch, i) => (
-          <g key={i} transform={`translate(242 ${24 + i * 32})`}>
-            <rect width="56" height="26" rx="7" fill={i === 3 ? '#8b5cf6' : '#10b981'} />
-            <text x="28" y="19" textAnchor="middle">{ch}</text>
+        {['↑', '↑', '→'].map((ch, i) => (
+          <g key={i} transform={`translate(${186 + i * 42} 20)`}>
+            <rect width="36" height="26" rx="7" fill="#10b981" />
+            <text x="18" y="19" textAnchor="middle">{ch}</text>
           </g>
         ))}
-      </svg>
-    );
-  }
-  if (id === 'java') {
-    return (
-      <svg className="poster-art" viewBox="0 0 320 170" aria-hidden="true">
-        <rect width="320" height="170" fill="#2a1608" />
-        <rect x="22" y="20" width="196" height="130" rx="10" fill="#1c1008" stroke="#7c4a1e" />
+        <path className="robot-step" d="M247 52 v18 m-6 -6 l6 6 l6 -6" fill="none" stroke="#fdba74" strokeWidth="3" strokeLinecap="round" />
+        <rect x="184" y="78" width="128" height="72" rx="8" fill="#1c1008" stroke="#7c4a1e" />
         {[
           // O'yindagi haqiqiy buyruqlar (src/lib/robot/java.js).
-          ['for', ' (int i = 0; i < 3; i++) {', '#fb923c'],
-          ['', '    robot.yur();', '#fde68a'],
-          ['', '}', '#fb923c'],
-          ['while', ' (robot.oldindaDevor()) {', '#fb923c'],
-          ['', '    robot.chapga();', '#fde68a'],
-          ['', '}', '#fb923c'],
-        ].map(([kw, rest, c], i) => (
-          <text key={i} x="34" y={42 + i * 18} className="art-code" style={{ whiteSpace: 'pre' }}>
-            <tspan fill="#f472b6">{kw}</tspan>
-            <tspan fill={c}>{rest}</tspan>
+          ['robot.yur();', '#fde68a'],
+          ['robot.yur();', '#fde68a'],
+          ['robot.ongga();', '#fb923c'],
+        ].map(([line, c], i) => (
+          <text key={i} x="194" y={99 + i * 18} className="art-code">
+            <tspan fill={c}>{line}</tspan>
           </text>
         ))}
-        <rect className="java-cursor" x="34" y="138" width="8" height="3" fill="#fde68a" />
-        <g className="java-cup">
-          <path d="M240 78 h46 v40 a20 20 0 0 1 -20 20 h-6 a20 20 0 0 1 -20 -20 z" fill="#f5f5f4" />
-          <path d="M286 88 a12 12 0 0 1 0 22" fill="none" stroke="#f5f5f4" strokeWidth="5" />
-          <ellipse cx="263" cy="80" rx="21" ry="5" fill="#7c2d12" />
-          <path className="java-steam" d="M254 66 q6 -10 0 -20 M268 66 q6 -10 0 -20" fill="none" stroke="#fed7aa" strokeWidth="3" strokeLinecap="round" />
-        </g>
       </svg>
     );
   }

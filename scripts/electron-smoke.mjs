@@ -104,7 +104,7 @@ try {
   await sleep(2500);
 
   const hall = await js(`return { hall: !!document.querySelector('.hall'), posters: document.querySelectorAll('.poster').length, desktop: !!window.api, url: location.protocol }`);
-  check('Zal ochildi (file://, window.api bor)', hall.hall && hall.posters === 5 && hall.desktop && hall.url === 'file:', JSON.stringify(hall));
+  check('Zal ochildi (file://, window.api bor)', hall.hall && hall.posters === 4 && hall.desktop && hall.url === 'file:', JSON.stringify(hall));
   await shot('1-zal');
 
   await js(`document.querySelector('.poster-kodbuzar .poster-play').click()`);
@@ -173,12 +173,14 @@ try {
   await js(`document.querySelector('.hall').scrollTo(0, 0)`);
   await shot('5-zal');
 
-  // Robo Kod mashqi zaldan ochiladi va zalga qaytadi (studiyaga emas).
+  // Robot dasturlash mashqi zaldan ochiladi: 16 daraja (bloklar + Java), Java darajasiga o‘tiladi, zalga qaytadi.
   const kod = await js(`const w=(ms)=>new Promise(r=>setTimeout(r,ms)); const btn=(re)=>[...document.querySelectorAll('button')].find(b=>re.test(b.textContent));
-    document.querySelector('.poster-kod .poster-play').click(); await w(1000); const opened=!document.querySelector('.hall');
+    document.querySelector('.poster-robot .poster-play').click(); await w(1000); const opened=!document.querySelector('.hall');
+    const lv=[...document.querySelectorAll('.robo-lv')]; const levels=lv.length; const javaBtn=document.querySelector('.robo-lv-part');
+    javaBtn?.click(); await w(600); const java=!!document.querySelector('.robo-wrap textarea, .robo-wrap .cm-editor, .java-editor, .robo-wrap [contenteditable]') || /Java/.test(document.querySelector('.robo-title small')?.textContent||'');
     btn(/^⏸$/)?.click(); await w(400); btn(/O‘yinlar zaliga qaytish/)?.click(); await w(800);
-    return { opened, back: !!document.querySelector('.hall') }`);
-  check('Robo Kod mashqi zaldan ochildi va zalga qaytdi', kod.opened && kod.back, JSON.stringify(kod));
+    return { opened, levels, java, back: !!document.querySelector('.hall') }`);
+  check('Robot dasturlash: 16 daraja, Java qismi ochildi, zalga qaytildi', kod.opened && kod.levels === 16 && kod.java && kod.back, JSON.stringify(kod));
 
   await js(`document.querySelector('.hall-icon[aria-label="Sozlamalar"]').click()`);
   await sleep(1200);

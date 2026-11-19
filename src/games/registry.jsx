@@ -6,6 +6,7 @@
 //   id, title, icon, grades, about   — kartochka va sarlavhalar uchun
 //   family                           — 'quiz' (savol to'plami bilan) yoki 'robot' (o'z darajalari bilan)
 //   adminTab                         — Sozlamalardagi o'yin bo'limi (games)
+//   levels                           — (robot) zinapoya qadamlari: { part, local, level }
 //   renderSetup({ data, go, screen })                                    — tayyorgarlik ekrani
 //   renderPlay({ config, data, update, askPin, onExit, onFinish })       — o'yin ekrani
 //   ranking: [asosiy, qo'shimcha]    — natija jadvalidagi tartib maydonlari
@@ -15,8 +16,7 @@ import GameSetup from '../screens/GameSetup.jsx';
 import Race from '../screens/Race.jsx';
 import RobotSetup from '../screens/RobotSetup.jsx';
 import RobotGame from '../screens/RobotGame.jsx';
-import { ROBOT_GAMES } from '../lib/robot/games.js';
-import { ROBOT_GAME_IDS } from '../../shared/game-ids.mjs';
+import { ROBOT_LADDER, withLadderStars } from '../lib/robot/games.js';
 
 const percent = (part, whole) => (whole ? Math.round((part / whole) * 100) : 0);
 
@@ -41,45 +41,38 @@ const race = {
   historyLine: (t, h) => `${t.pos}/${h.trackLength} qadam · ✓${t.correct} ✗${t.wrong}`,
 };
 
-const robotModule = (id) => {
-  const g = ROBOT_GAMES[id];
-  return {
-    id,
-    family: 'robot',
-    title: g.title,
-    icon: g.icon,
-    grades: g.grades,
-    about: g.about,
-    levels: g.levels,
-    adminTab: 'games',
-    renderSetup: ({ go }) => <RobotSetup game={id} go={go} />,
-    renderPlay: ({ config, data, update, askPin, onExit, onFinish, exitLabel }) => (
-      <RobotGame
-        config={config}
-        progress={data.robot?.[id] || {}}
-        onProgress={(level, stars) =>
-          update((d) => {
-            const p = d.robot?.[id] || {};
-            return { ...d, robot: { ...d.robot, [id]: { ...p, stars: { ...p.stars, [level]: stars } } } };
-          })
-        }
-        askPin={askPin}
-        onExit={onExit}
-        onFinish={onFinish}
-        exitLabel={exitLabel}
-      />
-    ),
-    ranking: ['score', 'solved'],
-    stats: (t, result) => [
-      { value: t.score, prefix: '★ ', label: `${result.maxScore} dan` },
-      { value: t.solved, suffix: `/${result.rounds}`, label: 'daraja' },
-      { value: percent(t.solved, result.rounds), suffix: '%', label: 'yechildi' },
-    ],
-    historyLine: (t, h) => `★ ${t.score} · ${t.solved}/${h.rounds} daraja`,
-  };
+// Robot dasturlash — bitta zinapoya: Robo Kod (bloklar) darajalari, keyin Java Robot darslari.
+const robot = {
+  id: ROBOT_LADDER.id,
+  family: 'robot',
+  title: ROBOT_LADDER.title,
+  icon: ROBOT_LADDER.icon,
+  grades: ROBOT_LADDER.grades,
+  about: ROBOT_LADDER.about,
+  levels: ROBOT_LADDER.steps,
+  adminTab: 'games',
+  renderSetup: ({ go }) => <RobotSetup go={go} />,
+  renderPlay: ({ config, data, update, askPin, onExit, onFinish, exitLabel }) => (
+    <RobotGame
+      config={config}
+      robot={data.robot || {}}
+      onProgress={(step, stars) => update((d) => ({ ...d, robot: withLadderStars(d.robot, step, stars) }))}
+      askPin={askPin}
+      onExit={onExit}
+      onFinish={onFinish}
+      exitLabel={exitLabel}
+    />
+  ),
+  ranking: ['score', 'solved'],
+  stats: (t, result) => [
+    { value: t.score, prefix: '★ ', label: `${result.maxScore} dan` },
+    { value: t.solved, suffix: `/${result.rounds}`, label: 'daraja' },
+    { value: percent(t.solved, result.rounds), suffix: '%', label: 'yechildi' },
+  ],
+  historyLine: (t, h) => `★ ${t.score} · ${t.solved}/${h.rounds} daraja`,
 };
 
-export const GAMES = Object.fromEntries([race, ...ROBOT_GAME_IDS.map(robotModule)].map((g) => [g.id, g]));
+export const GAMES = Object.fromEntries([race, robot].map((g) => [g.id, g]));
 
 // --- Yakka o'yinlar (shaxsiy platforma) ---
 // Har biri o'z ekranini butunlay egallaydi va faqat ochilganda yuklanadi (React.lazy).
@@ -114,5 +107,6 @@ export const SOLO_GAMES = {
 export const gamesOfFamily = (family) => Object.values(GAMES).filter((g) => g.family === family);
 
 // Saqlangan natija qaysi o'yinga tegishli. Eski poyga natijalarida `kind` yo'q — ular Xazina poygasi.
-export const gameIdOfResult = (result) => (result.kind === 'robot' ? result.game : 'race');
+// Eski alohida Robo Kod / Java Robot natijalari (game: 'kod' | 'java') ham yagona Robot dasturlashga tegishli.
+export const gameIdOfResult = (result) => (result.kind === 'robot' ? 'robot' : 'race');
 export const gameOfResult = (result) => GAMES[gameIdOfResult(result)];

@@ -1,4 +1,4 @@
-import { ROBOT_GAME_IDS as ROBOT_GAMES } from './game-ids.mjs';
+import { ROBOT_GAME_IDS, ROBOT_PART_IDS } from './game-ids.mjs';
 import { pickGameSaves } from './game-saves.mjs';
 export const DEFAULT_SETTINGS = { time: 30, trackLength: 12, sound: true, animations: true };
 const object = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);
@@ -12,7 +12,7 @@ function validateRobot(r) {
   if (r === undefined) return {};
   if (!object(r)) fail('Robot ma’lumoti formati noto‘g‘ri');
   const out = {};
-  for (const game of ROBOT_GAMES) {
+  for (const game of ROBOT_PART_IDS) {
     if (r[game] === undefined) continue;
     const stars = r[game]?.stars ?? {};
     if (!object(r[game]) || !object(stars)) fail('Robot ma’lumoti formati noto‘g‘ri');
@@ -22,7 +22,7 @@ function validateRobot(r) {
   return out;
 }
 function validateRobotResult(h) {
-  if (!ROBOT_GAMES.includes(h.game)) fail('Robot o‘yini noma’lum');
+  if (!ROBOT_GAME_IDS.includes(h.game)) fail('Robot o‘yini noma’lum');
   return {id:h.id,kind:'robot',game:h.game,date:text(h.date),setName:text(h.setName),rounds:number(h.rounds),maxScore:number(h.maxScore),winner:h.winner == null ? null : text(h.winner),teams:h.teams.map(t=>{
     if (!object(t)) fail('Jamoa formati noto‘g‘ri');
     return {name:text(t.name),color:text(t.color),hero:text(t.hero),score:number(t.score),solved:number(t.solved)};

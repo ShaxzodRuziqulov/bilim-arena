@@ -293,3 +293,21 @@ Muammo: “Sinf himoyasi” yoqilganda dastur alohida sinf ekranidan (`Home.jsx`
 - PIN va Sozlamalar oqimi uchun avtomatik test yo‘q.
 - `platforma` branchi `main`ga qo‘shilmagan va GitHub’ga push qilinmagan.
 - Qarorlar kutilmoqda: platforma nomi, Robo Kod mustaqil loyihasi, Kodbuzar/Soya manbalarini yagona qilish.
+
+## 2026-11-19 — Robo Kod va Java Robot bitta zinapoyada: Robot dasturlash
+Muammo: zalda ikkita deyarli bir xil afisha bor edi — ikkalasi ham bir xil robot dunyosi, faqat buyruq berish usuli (bloklar / Java) va yosh farq qilardi.
+
+### Qaror
+- Bitta o‘yin **Robot dasturlash** (`id: robot`), 16 daraja: 1–10 — Bloklar (avvalgi Robo Kod), 11–16 — Java (avvalgi Java Robot). Har daraja o‘z qismining ish maydonida ochiladi va o‘z yulduz qoidasini saqlaydi.
+- Mashqda darajalar erkin tanlanadi (8–11-sinf o‘qituvchisi to‘g‘ridan-to‘g‘ri Java’dan boshlay oladi); ochilganda birinchi yechilmagan daraja tanlanadi, “Keyingi daraja” 10-dan 11-ga o‘tadi.
+- **Saqlash formati o‘zgarmadi:** mashq yulduzlari avvalgidek `data.robot.kod` / `data.robot.java` da, zinapoya ularni o‘qiydi va yozadi (`src/lib/robot/games.js` — `ROBOT_LADDER`, `ladderStars`, `withLadderStars`). Eski yulduzlar joyida qoladi, migratsiya kerak emas.
+- Yangi jamoaviy natijalar `game: 'robot'` bilan saqlanadi; eski `kod` / `java` natijalari qabul qilinadi va Robot dasturlash natijalarida ko‘rinadi. Eslatma: 0.7.0 dan keyingi zaxira faylini 0.6.0 yoki eskiroq versiyaga tiklab bo‘lmaydi, agar unda yangi robot natijasi bo‘lsa.
+- Zal: 4 ta afisha; yangi “Robot dasturlash” rasmi (bloklar → Java kodi). Eski “oxirgi o‘yin” (`kod` / `java`) Robot dasturlashga yo‘naltiriladi.
+- Jamoaviy tayyorgarlik: “🧩 Bloklar”, “☕ Java”, “🤖 Butun zinapoya” tez tanlash tugmalari; navbat vaqti tanlanmaguncha oraliqda Java bo‘lsa 5 daqiqa, aks holda 3 daqiqa; qoidalar matni oraliqdagi qismlarga mos.
+- Sozlamalar → O‘yinlar: bitta “Robot dasturlash” paneli (har qism bo‘yicha yechilganlar, umumiy natijalar, mashqni tozalash).
+
+### Tekshiruv
+- `npm test` — 59/59 (yangi: zinapoya tartibi, yulduzlarni eski formatda o‘qish/yozish, eski va yangi natija ID lari).
+- `npm run build` — muvaffaqiyatli. `BILIM_ARENA_TEST_SHOW=1 npm run smoke:electron` — 12/12 (zal 4 afisha; Robot dasturlash 16 daraja, Java qismi ochiladi, zalga qaytadi).
+- Brauzerda eski formatdagi ma’lumot bilan: zal ★ 8/48 va “Robot dasturlash: davom etish” (eski `kod`); mashq 3-darajadan ochildi; 4-daraja (Bloklar) yechildi → `kod.stars[3]`, 12-daraja (Java) yechildi → `java.stars[1]`; jamoaviy o‘yin 10 (Bloklar) → 11 (Java) raundlari, natijalar; Sozlamalar paneli “Bloklar: 3/10, Java: 2/6”, natijalarda eski Java Robot va Robo Kod yozuvlari ham bor. Konsolda xato yo‘q.
+- Haqiqiy doskada sinalmagan.

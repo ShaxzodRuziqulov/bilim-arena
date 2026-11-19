@@ -7,6 +7,7 @@ import ConfirmButton from '../components/ConfirmButton.jsx';
 import PinModal from '../components/PinModal.jsx';
 import BackupPanel from '../components/BackupPanel.jsx';
 import { validateQuestion } from '../../shared/data-schema.mjs';
+import { ROBOT_GAMES, ROBOT_PARTS, ladderSolved, ladderStars } from '../lib/robot/games.js';
 import { GAMES, gameIdOfResult, gameOfResult, gamesOfFamily, SOLO_GAMES } from '../games/registry.jsx';
 import { reloadSave as reloadSoyaSave } from '../games/soya/engine/save.js';
 
@@ -246,15 +247,19 @@ function GamesTab({ data, update, goSets, goHistory }) {
           )}
         </div>
         {gamesOfFamily('robot').map(({ id, ...g }) => {
-          const solved = Object.keys(data.robot?.[id]?.stars || {}).length;
+          const solved = ladderSolved(data.robot);
+          const part = (p) => g.levels.filter((st, i) => st.part === p && ladderStars(data.robot, i)).length;
           return (
             <div key={id} className="panel">
               <h3>{g.title}</h3>
-              <p className="note">Mashqda yechilgan: {solved} / {g.levels.length} daraja. Jamoaviy o‘yin sozlamalari o‘yin boshlanishida tanlanadi.</p>
+              <p className="note">
+                Mashqda yechilgan: {solved} / {g.levels.length} daraja ({ROBOT_PARTS.map((p) => `${ROBOT_GAMES[p].part}: ${part(p)}/${ROBOT_GAMES[p].levels.length}`).join(', ')}).
+                Jamoaviy o‘yin sozlamalari o‘yin boshlanishida tanlanadi.
+              </p>
               <div className="row-buttons">
                 <button className="btn" onClick={() => goHistory(id)}>Natijalar ({played(id)})</button>
                 {solved > 0 && (
-                  <ConfirmButton onConfirm={() => update((d) => ({ ...d, robot: { ...d.robot, [id]: {} } }))}>↺ Mashqni tozalash</ConfirmButton>
+                  <ConfirmButton onConfirm={() => update((d) => ({ ...d, robot: {} }))}>↺ Mashqni tozalash</ConfirmButton>
                 )}
               </div>
             </div>
@@ -400,7 +405,7 @@ function GeneralTab({ data, update, askPin, onRestore, updateStatus }) {
           <label className="check">
             <input type="checkbox" checked={s.animations} onChange={(e) => set({ animations: e.target.checked })} /> Animatsiyalar
           </label>
-          <p className="note">Kodbuzar, Soya, Robo Kod, Java Robot va Xazina poygasiga birdek ta’sir qiladi. Kompyuter yoki doska sekin ishlasa, animatsiyalarni o‘chiring.</p>
+          <p className="note">Kodbuzar, Soya, Robot dasturlash va Xazina poygasiga birdek ta’sir qiladi. Kompyuter yoki doska sekin ishlasa, animatsiyalarni o‘chiring.</p>
         </div>
         <div className="panel">
           <h3>PIN</h3>

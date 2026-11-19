@@ -58,6 +58,10 @@
 }
 .robo-lv.on { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
 .robo-lv i { position: absolute; top: -.55em; right: -.35em; font-style: normal; color: var(--gold); font-size: .85em; }
+/* Zinapoya: Java qismi boshqa rangli chegara bilan, qismlar orasida bo'shliq va belgi. */
+.robo-lv-java:not(.on) { border-color: #7c4a1e; background: #1c1008; }
+.robo-lv-part { margin-left: 1.6em; }
+.robo-lv-part::before { content: '☕'; position: absolute; left: -1.45em; top: 50%; transform: translateY(-50%); font-size: .9em; }
 .robo-hud-right { display: flex; align-items: center; gap: .8em; margin-left: auto; }
 .robo-tries { display: flex; gap: .3em; }
 .robo-tries i { width: .9em; height: .9em; border-radius: 50%; background: var(--accent); box-shadow: 0 0 .5em #58edb088; }

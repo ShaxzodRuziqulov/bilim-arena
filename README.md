@@ -4,7 +4,7 @@ Ta'limiy o'yinlar platformasi: sensorli elektron doskada jamoaviy o'yinlar va ya
 
 ## Hozir nimalar bor
 
-- **O‘yinlar zali** — dastur har doim shu yerdan ochiladi. Beshala o‘yin bir xil afishada: Kodbuzar, Soya (yakka), Robo Kod, Java Robot (yakka yoki jamoa), Xazina poygasi (2–4 jamoa). Har o‘yindan chiqqanda zalga qaytiladi; oxirgi o‘ynalgan o‘yinni davom ettirish qatori bor.
+- **O‘yinlar zali** — dastur har doim shu yerdan ochiladi. To‘rtala o‘yin bir xil afishada: Kodbuzar, Soya (yakka), Robot dasturlash (yakka yoki jamoa), Xazina poygasi (2–4 jamoa). Har o‘yindan chiqqanda zalga qaytiladi; oxirgi o‘ynalgan o‘yinni davom ettirish qatori bor.
 - **Kodbuzar** — 2 xonali rangli seyflardagi kodni topish (“Buqa va sigir” mantig‘i), darajalar va kunlik kod.
 - **Soya** — platformer-jumboq: harakatlaringizni yozing, soyangiz ularni takrorlaydi. 15 daraja, 3 dunyo.
 - **Sozlamalar** (zaldagi ⚙) — ikki bo‘lim: **Umumiy** (ovoz va musiqa, animatsiyalar, PIN, yangilanishlar, zaxira — barcha o‘yinlar uchun) va **O‘yinlar** (har o‘yinning o‘z sozlamalari, natijalari; Xazina poygasining savol to‘plamlari).
@@ -22,12 +22,13 @@ Ta'limiy o'yinlar platformasi: sensorli elektron doskada jamoaviy o'yinlar va ya
   va dastur yopilganda o‘rnatadi (Sozlamalar → Yangilanishlar).
 - **Xazina poygasi** — 2–4 jamoa navbat bilan doskaga chiqib javob beradi. To‘g‘ri javob — 1 qadam oldinga,
   ⭐ bonus katak (+1), 🌀 girdob (−1). Bir jamoa xazinaga yetgach, davra oxirigacha navbatlar tenglashtiriladi. Qadamlar, keyin to‘g‘ri javoblar soni solishtiriladi; teng natija — durang.
-- **Robot dasturlash** (zaldagi Robo Kod va Java Robot afishalari) — savol to‘plami kerak emas:
-  - *Robo Kod* (5–7-sinf) — tugmalar bilan buyruqlar, P funksiyasi va rekursiya, 10 ta daraja;
-  - *Java Robot* (8–11-sinf) — haqiqiy Java kodi (metod, int, for, while, if), 6 ta dars,
-    xatolar o‘zbekcha va qator raqami bilan; doskada yozish uchun tayyor bo‘laklar va ekran tugmalari.
-  Jamoaviy rejimda har daraja — raund, jamoalar navbat bilan yechib yulduz yig‘adi; mashq rejimida daraja erkin tanlanadi.
-  Ikkalasida ham qadam-baqadam bajarish va tezlikni tanlash bor.
+- **Robot dasturlash** — bitta zinapoya, 16 daraja, savol to‘plami kerak emas:
+  - *1–10: Bloklar* (5–7-sinf) — tugmalar bilan buyruqlar, P funksiyasi va rekursiya; kam buyruq bilan yechilsa ko‘proq yulduz;
+  - *11–16: Java* (8–11-sinf) — haqiqiy Java kodi (metod, int, for, while, if), xatolar o‘zbekcha va qator raqami bilan;
+    doskada yozish uchun tayyor bo‘laklar va ekran tugmalari; birinchi urinishda yechilsa 3 yulduz.
+  Mashq rejimida daraja erkin tanlanadi (yuqoridagi 1–16 tugmalari, Java qismi ☕ belgisi bilan ajratilgan).
+  Jamoaviy rejimda har daraja — raund; tayyorgarlikda “Bloklar”, “Java” yoki “Butun zinapoya” tez tanlanadi, istalgan oraliqni ham olish mumkin.
+  Qadam-baqadam bajarish va tezlikni tanlash bor.
 - **Natijalar** — reyting, aniqlik foizi, ko‘p xato qilingan savollar; o‘yinlar tarixi saqlanadi.
 - To‘plamlarni `.json` fayl sifatida eksport / import qilish.
 - **To‘liq zaxira va tiklash** — Sozlamalar → Zaxira va tiklash. Avtomatik oldingi nusxa va saqlash xatosidan keyin qayta urinish mavjud.

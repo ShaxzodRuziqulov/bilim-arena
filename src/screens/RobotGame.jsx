@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { uid } from '../lib/util.js';
 import { play } from '../lib/sound.js';
-import { ROBOT_GAMES } from '../lib/robot/games.js';
+import { ROBOT_GAMES, ROBOT_LADDER, ladderStars } from '../lib/robot/games.js';
 import RoboKodWorkspace from '../components/RoboKodWorkspace.jsx';
 import JavaWorkspace from '../components/JavaWorkspace.jsx';
 
@@ -16,14 +16,16 @@ const Stars = ({ n, of = 3 }) => (
   </span>
 );
 
-// Robot o'yinlari qobig'i: mashq rejimi (erkin daraja tanlash) yoki jamoaviy musobaqa (raundlar, navbat, ball).
-export default function RobotGame({ config, progress, onProgress, askPin, onFinish, onExit, exitLabel = 'Sozlamalarga qaytish' }) {
-  const g = ROBOT_GAMES[config.game];
-  const Workspace = WORKSPACES[config.game];
+// Robot dasturlash qobig'i: bitta zinapoya (avval bloklar, keyin Java). Mashq rejimi (erkin daraja tanlash)
+// yoki jamoaviy musobaqa (raundlar, navbat, ball). Har qadam o'z qismining ish maydonida ochiladi.
+export default function RobotGame({ config, robot, onProgress, askPin, onFinish, onExit, exitLabel = 'Sozlamalarga qaytish' }) {
+  const g = ROBOT_LADDER;
+  const steps = g.steps;
+  const starsOf = (i) => ladderStars(robot, i);
   const team = config.mode === 'team';
 
   // Mashq rejimi
-  const firstUnsolved = g.levels.findIndex((_, i) => !progress.stars?.[i]);
+  const firstUnsolved = steps.findIndex((_, i) => !starsOf(i));
   const [practiceIdx, setPracticeIdx] = useState(firstUnsolved < 0 ? 0 : firstUnsolved);
   const [practiceKey, setPracticeKey] = useState(0);
 
@@ -47,7 +49,9 @@ export default function RobotGame({ config, progress, onProgress, askPin, onFini
   const teamIdx = team ? (round + turnNo) % n : 0;
   const current = team ? config.teams[teamIdx] : null;
   const levelIdx = team ? config.levels[round] : practiceIdx;
-  const level = g.levels[levelIdx];
+  const step = steps[levelIdx];
+  const level = step.level;
+  const Workspace = WORKSPACES[step.part];
 
   const endTurn = (points, solved, reason) => {
     setScores((s) => s.map((x, i) => (i === teamIdx ? { score: x.score + points, solved: x.solved + (solved ? 1 : 0) } : x)));
@@ -73,7 +77,7 @@ export default function RobotGame({ config, progress, onProgress, askPin, onFini
 
   const onAttempt = ({ ok, stars }) => {
     if (!team) {
-      if (ok && stars > (progress.stars?.[practiceIdx] || 0)) onProgress(practiceIdx, stars);
+      if (ok && stars > starsOf(practiceIdx)) onProgress(practiceIdx, stars);
       return;
     }
     if (phase !== 'play') return;
@@ -97,7 +101,7 @@ export default function RobotGame({ config, progress, onProgress, askPin, onFini
     onFinish({
       id: uid(),
       kind: 'robot',
-      game: config.game,
+      game: g.id,
       date: new Date().toISOString(),
       setName: g.title,
       rounds: round + 1,
@@ -151,7 +155,9 @@ export default function RobotGame({ config, progress, onProgress, askPin, onFini
           <b>
             {g.icon} {g.title}
           </b>
-          <small>{team ? `Raund ${round + 1}/${config.levels.length}` : 'Mashq rejimi'}</small>
+          <small>
+            {team ? `Raund ${round + 1}/${config.levels.length}` : 'Mashq rejimi'} · {ROBOT_GAMES[step.part].icon} {ROBOT_GAMES[step.part].part}
+          </small>
         </div>
 
         {team ? (
@@ -168,18 +174,18 @@ export default function RobotGame({ config, progress, onProgress, askPin, onFini
           </div>
         ) : (
           <div className="robo-levels">
-            {g.levels.map((l, i) => (
+            {steps.map((s, i) => (
               <button
                 key={i}
-                className={`robo-lv ${i === practiceIdx ? 'on' : ''}`}
-                title={g.levelLabel(l, i)}
+                className={`robo-lv robo-lv-${s.part} ${i === practiceIdx ? 'on' : ''} ${i > 0 && s.part !== steps[i - 1].part ? 'robo-lv-part' : ''}`}
+                title={g.levelLabel(i)}
                 onClick={() => {
                   setPracticeIdx(i);
                   setPracticeKey((k) => k + 1);
                 }}
               >
                 {i + 1}
-                {progress.stars?.[i] > 0 && <i>★</i>}
+                {starsOf(i) > 0 && <i>★</i>}
               </button>
             ))}
           </div>
@@ -209,7 +215,7 @@ export default function RobotGame({ config, progress, onProgress, askPin, onFini
         locked={phase !== 'play' || menu}
         practice={!team}
         onAttempt={onAttempt}
-        onNext={!team && practiceIdx < g.levels.length - 1 ? () => setPracticeIdx((i) => i + 1) : null}
+        onNext={!team && practiceIdx < steps.length - 1 ? () => setPracticeIdx((i) => i + 1) : null}
       />
 
       {team && phase === 'ready' && (
@@ -218,7 +224,7 @@ export default function RobotGame({ config, progress, onProgress, askPin, onFini
             <div className="robo-card-hero">{current.hero}</div>
             <h1>{current.name} navbati</h1>
             <p>
-              {g.levelLabel(level, levelIdx)} · {config.attempts} ta urinish
+              {g.levelLabel(levelIdx)} · {config.attempts} ta urinish
               {config.turnTime > 0 && ` · ${fmtTime(config.turnTime)}`}
             </p>
             <button
