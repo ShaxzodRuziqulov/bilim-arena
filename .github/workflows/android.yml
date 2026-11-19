@@ -36,7 +36,7 @@ jobs:
         with:
           distribution: temurin
           java-version: 21
-      - uses: android-actions/setup-android@v3
+      # Android SDK GitHub ubuntu serverida oldindan o‘rnatilgan (ANDROID_HOME); alohida o‘rnatish shart emas.
 
       - run: npm ci
       - run: npm run build
