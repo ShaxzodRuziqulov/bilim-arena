@@ -1,7 +1,7 @@
 {
   "name": "bilim-arena",
   "productName": "Bilim Arena",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "Sensorli elektron doska uchun jamoaviy ta'limiy o'yinlar",
   "author": "Bilim Arena",
   "private": true,
@@ -54,7 +54,8 @@
     },
     "nsis": {
       "oneClick": false,
-      "allowToChangeInstallationDirectory": true
+      "allowToChangeInstallationDirectory": true,
+      "artifactName": "Bilim-Arena-Setup.${ext}"
     },
     "publish": [
       {
@@ -64,6 +65,17 @@
         "releaseType": "draft"
       }
     ],
-    "electronDist": "node_modules/electron/dist"
-  }
+    "electronDist": "node_modules/electron/dist",
+    "extraResources": [
+      {
+        "from": "LICENSE.md",
+        "to": "LICENSE.md"
+      },
+      {
+        "from": "THIRD_PARTY_LICENSES.md",
+        "to": "THIRD_PARTY_LICENSES.md"
+      }
+    ]
+  },
+  "license": "SEE LICENSE IN LICENSE.md"
 }

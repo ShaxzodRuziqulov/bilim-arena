@@ -27,7 +27,7 @@ jobs:
       # parallel yuklayotganda bir teg uchun ikkita Release yaratib qo'yadi.
       - name: Qoralama Release yaratish
         shell: bash
-        run: gh release create "$TAG" --draft --title "${TAG#v}" --notes "Bilim Arena ${TAG#v}" --verify-tag
+        run: gh release create "$TAG" --draft --title "Bilim Arena ${TAG#v}" --notes-file .github/release-notes.md --verify-tag
 
       - run: npm run release
 

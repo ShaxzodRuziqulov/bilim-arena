@@ -340,3 +340,11 @@ Solishtiruv: Kodbuzar va Soyada o‘z kirish ekrani bor edi; Robot dasturlash to
 - `npm test` — 61/61 (yangi: yakka yulduzlar), `npm run build` — muvaffaqiyatli.
 - `BILIM_ARENA_TEST_SHOW=1 npm run smoke:electron` — 12/12 (yangilangan: Robot bosh ekrani, 16 tugun, menyuga va zalga qaytish). Bir urinishda Soya qadami avvaldan ma’lum vaqt muammosi bilan o‘tmadi, keyingi ikki urinish 12/12.
 - Brauzerda: yakka Xazina poygasi boshidan oxirigacha (g‘alaba kartasi, natija ekrani), Robot bosh ekrani → 12-daraja → menyu → zal, Xazina tayyorgarligi, Soya. Konsolda xato yo‘q.
+
+## 2026-11-19 — Bepul tarqatish va 0.7.0
+- Qaror: dastur hozircha bepul; keyin pullik qo‘shimchalar qo‘shish huquqi saqlanadi. `LICENSE.md` — bepul foydalanish va o‘zgartirmasdan ulashish ruxsat, sotish va o‘z nomidan tarqatish taqiqlangan (ochiq kodli litsenziya emas).
+- `THIRD_PARTY_LICENSES.md` — dasturga kiradigan kutubxonalar va litsenziya matnlari (`node scripts/third-party-licenses.mjs` bilan yaratiladi; yangi kutubxonadan keyin qayta ishga tushirish). Ikkala fayl o‘rnatuvchi ichida (`resources/`).
+- O‘rnatuvchi nomi versiyasiz: `Bilim-Arena-Setup.exe`. Doimiy havola: https://github.com/ShaxzodRuziqulov/bilim-arena/releases/latest/download/Bilim-Arena-Setup.exe
+- Release sahifasi matni `.github/release-notes.md` dan (yuklab olish, SmartScreen ogohlantirishi, ulashish shartlari, zaxira).
+- README boshida “Yuklab olish” bo‘limi.
+- Tekshiruv: `npm run dist` mahalliy yig‘ildi — `release/Bilim-Arena-Setup.exe`, `latest.yml` shu nomni ko‘rsatadi, `resources/` da ikkala litsenziya fayli bor.

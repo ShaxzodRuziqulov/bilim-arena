@@ -1,0 +1,18 @@
+## Bilim Arena — bepul ta’limiy o‘yinlar (Windows)
+
+Sensorli doska va oddiy kompyuter uchun: **Kodbuzar**, **Soya**, **Robot dasturlash** (bloklardan Java’gacha) va **Xazina poygasi** (yakka yoki 2–4 jamoa). Internet kerak emas.
+
+### Yuklab olish
+⬇ **[Bilim-Arena-Setup.exe](https://github.com/ShaxzodRuziqulov/bilim-arena/releases/latest/download/Bilim-Arena-Setup.exe)** — pastdagi “Assets” bo‘limida ham bor.
+
+### O‘rnatish
+1. `Bilim-Arena-Setup.exe` faylini ishga tushiring.
+2. Windows “Windows protected your PC” / “Компьютер защищен” oynasini ko‘rsatsa: **More info / Подробнее** → **Run anyway / Выполнить в любом случае**. Dastur hali raqamli imzolanmagani uchun shunday chiqadi.
+3. O‘rnatish papkasini tanlang va **Install** bosing.
+
+Keyingi versiyalar dastur ochilganda o‘zi yuklanadi va dastur yopilganda o‘rnatiladi.
+
+### Muhim
+- Dastur **bepul**. Rasmiy faylni o‘zgartirmasdan boshqalarga bemalol ulashing. Shartlar: [LICENSE.md](https://github.com/ShaxzodRuziqulov/bilim-arena/blob/main/LICENSE.md).
+- Savollar va natijalaringiz faqat sizning kompyuteringizda saqlanadi. Vaqti-vaqti bilan **⚙ Sozlamalar → Umumiy → Zaxira va tiklash** orqali nusxa oling.
+- Xato yoki taklif: [Issues](https://github.com/ShaxzodRuziqulov/bilim-arena/issues).

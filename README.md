@@ -2,9 +2,17 @@
 
 Ta'limiy o'yinlar platformasi: sensorli elektron doskada jamoaviy o'yinlar va yakka o'yinlar (birinchi fan — Informatika, 5–11-sinflar).
 
+## Yuklab olish (bepul, Windows)
+
+⬇ **[Bilim-Arena-Setup.exe](https://github.com/ShaxzodRuziqulov/bilim-arena/releases/latest/download/Bilim-Arena-Setup.exe)** — har doim eng yangi versiya.
+
+Windows “Windows protected your PC” deb ogohlantirsa: **More info → Run anyway** (dastur hali raqamli imzolanmagan). Keyingi versiyalar o‘zi yangilanadi.
+
+Dastur bepul; rasmiy faylni o‘zgartirmasdan ulashish mumkin, sotish mumkin emas — [LICENSE.md](LICENSE.md). Kutubxonalar: [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md).
+
 ## Hozir nimalar bor
 
-- **O‘yinlar zali** — dastur har doim shu yerdan ochiladi. To‘rtala o‘yin bir xil afishada: Kodbuzar, Soya (yakka), Robot dasturlash (yakka yoki jamoa), Xazina poygasi (2–4 jamoa). Har o‘yindan chiqqanda zalga qaytiladi; oxirgi o‘ynalgan o‘yinni davom ettirish qatori bor.
+- **O‘yinlar zali** — dastur har doim shu yerdan ochiladi. To‘rtala o‘yin bir xil afishada: Kodbuzar, Soya (yakka), Robot dasturlash (yakka yoki jamoa), Xazina poygasi (yakka yoki 2–4 jamoa). Har o‘yindan chiqqanda zalga qaytiladi; oxirgi o‘ynalgan o‘yinni davom ettirish qatori bor.
 - **Kodbuzar** — 2 xonali rangli seyflardagi kodni topish (“Buqa va sigir” mantig‘i), darajalar va kunlik kod.
 - **Soya** — platformer-jumboq: harakatlaringizni yozing, soyangiz ularni takrorlaydi. 15 daraja, 3 dunyo.
 - **Sozlamalar** (zaldagi ⚙) — ikki bo‘lim: **Umumiy** (ovoz va musiqa, animatsiyalar, PIN, yangilanishlar, zaxira — barcha o‘yinlar uchun) va **O‘yinlar** (har o‘yinning o‘z sozlamalari, natijalari; Xazina poygasining savol to‘plamlari).
