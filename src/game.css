@@ -231,3 +231,17 @@
 @media (prefers-reduced-motion: reduce) {
   .turn-banner, .sparkles, .land-ring, .win-rays, .confetti, .floaters, .stage::after { display: none; }
 }
+
+/* ---------- Telefon tik turganda: yon tomonga burish eslatmasi ---------- */
+.race-rotate {
+  display: none; position: fixed; inset: 0; z-index: 50;
+  flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 24px; text-align: center;
+  background: radial-gradient(ellipse at 50% 30%, #0e5266 0, #072230 60%, #051a26 100%); color: #fff4d6;
+}
+.race-rotate b { font-size: 20px; }
+.race-rotate small { color: #9be3f0; font-size: 15px; }
+.race-rotate .btn { margin-top: 10px; font-size: 16px; padding: 12px 20px; min-height: 44px; border-radius: 12px; }
+.race-rotate .phone { width: 44px; height: 76px; border: 3px solid #ffcf4a; border-radius: 10px; animation: race-turn 1.8s ease-in-out infinite; }
+@keyframes race-turn { 0%, 30% { transform: rotate(0); } 60%, 100% { transform: rotate(-90deg); } }
+@media (orientation: portrait) and (max-width: 700px) { .race-rotate { display: flex; } }
+:root.reduce-motion .race-rotate .phone { animation: none; transform: rotate(-90deg); }

@@ -1,6 +1,7 @@
 import { Fragment, Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import { loadData, saveData, quitApp, isDesktop, getSaveStatus, subscribeSaveStatus, flushData, dismissRecovery } from './lib/store.js';
 import { setSoundEnabled } from './lib/sound.js';
+import { onBackButton } from './lib/platform.js';
 import { uid } from './lib/util.js';
 import PinModal from './components/PinModal.jsx';
 import Admin from './screens/Admin.jsx';
@@ -74,6 +75,22 @@ export default function App() {
     if (!isDesktop) return;
     return window.api.onCloseRequested(() => guard('Dasturdan chiqish', quitApp));
   }, [guard]);
+
+  // Android "Orqaga" tugmasi: zalda — saqlab chiqish; o'yin ichida — e'tiborsiz (tasodifan bosilsa o'yin yo'qolmasin,
+  // har o'yinning o'z ⏸ / ← tugmasi bor); boshqa ekranlarda — zalga qaytish.
+  const screenRef = useRef(screen);
+  screenRef.current = screen;
+  useEffect(
+    () =>
+      onBackButton(() => {
+        const s = screenRef.current;
+        if (s.name === 'hall') return flushData().then(() => false);
+        if (s.name === 'play' || s.name === 'solo') return true;
+        setScreen({ name: 'hall' });
+        return true;
+      }),
+    [],
+  );
 
   const restored = (next) => {
     setData(next); setLoadError(''); pinUnlocked.current = true;

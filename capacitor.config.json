@@ -1,0 +1,8 @@
+{
+  "appId": "uz.bilimarena.app",
+  "appName": "Bilim Arena",
+  "webDir": "dist",
+  "android": {
+    "backgroundColor": "#070d21"
+  }
+}

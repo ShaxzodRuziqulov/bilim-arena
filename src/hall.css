@@ -104,6 +104,10 @@
 @media (max-width: 560px) {
   .hall { padding-top: 18px; gap: 22px; }
   .hall-brand h1 { font-size: 1.3rem; }
+  .hall-brand h1 { white-space: nowrap; }
+  .hall-brand p { display: none; }
+  .hall-brand img { width: 44px; height: 44px; }
+  .hall-top { gap: 10px; }
   .poster-title { font-size: 1.45rem; }
 }
 @media (prefers-reduced-motion: reduce) {

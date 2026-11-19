@@ -1,3 +1,4 @@
+import { isNativeApp } from '../lib/platform.js';
 import { useEffect, useRef, useState } from 'react';
 import { isDesktop, quitApp } from '../lib/store.js';
 import { downloadJson, formatDate, newSet, normalizeQuestion, playableQuestions, uid } from '../lib/util.js';
@@ -345,7 +346,9 @@ function HistoryTab({ data, update, game }) {
 function UpdatePanel({ state, version }) {
   const { status } = state;
   const text = {
-    web: 'Brauzer rejimida yangilanish yo‘q — bu faqat o‘rnatilgan dasturda ishlaydi.',
+    web: isNativeApp
+      ? 'Android ilovasi: yangi versiya chiqqanda GitHub sahifasidan yangi APK faylni yuklab, ustidan o‘rnating — ma’lumotlar saqlanib qoladi.'
+      : 'Brauzer rejimida yangilanish yo‘q — bu faqat o‘rnatilgan dasturda ishlaydi.',
     dev: 'Ishlab chiqish rejimida yangilanish tekshirilmaydi.',
     idle: 'Hali tekshirilmadi.',
     checking: 'Tekshirilmoqda…',

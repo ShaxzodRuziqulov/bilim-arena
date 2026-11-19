@@ -34,3 +34,11 @@ jobs:
       - name: Release'ni e'lon qilish
         shell: bash
         run: gh release edit "$TAG" --draft=false --latest
+
+  # Windows o'rnatuvchisi Release'ni e'lon qilgach, Android APK ham shu Release'ga qo'shiladi.
+  android:
+    needs: windows
+    uses: ./.github/workflows/android.yml
+    with:
+      tag: ${{ github.ref_name }}
+    secrets: inherit

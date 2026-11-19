@@ -1,3 +1,4 @@
+import { saveBlob } from './platform.js';
 export const uid = () =>
   Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
 
@@ -109,14 +110,10 @@ export function resizeImage(file, max = 900) {
   });
 }
 
+// Brauzer/Electron'da yuklab olinadi, Android ilovasida "Ulashish" oynasi ochiladi (src/lib/platform.js).
 export function downloadJson(filename, data) {
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  a.click();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  return saveBlob(filename, blob);
 }
 
 export const formatDate = (iso) =>

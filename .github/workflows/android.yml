@@ -1,0 +1,75 @@
+# Android APK yig'ish (Capacitor). Kompyuterda Android SDK kerak emas — hammasi GitHub serverida.
+# - release.yml dan chaqiriladi (v* teg): tayyor APK Release'ga "Bilim-Arena.apk" nomi bilan qo'shiladi;
+# - "android-*" branchga push yoki qo'lda ishga tushirish: APK faqat Actions "Artifacts" bo'limida (sinov uchun).
+# Imzolash: BILIM_KEYSTORE_BASE64 / BILIM_KEYSTORE_PASSWORD / BILIM_KEY_ALIAS maxfiy sozlamalari bo'lsa — release APK
+# shu kalit bilan imzolanadi (keyingi versiyalarni ustidan o'rnatish uchun kalit doim bir xil bo'lishi shart).
+# Bo'lmasa — sinov uchun debug APK yig'iladi.
+name: Android
+
+on:
+  workflow_call:
+    inputs:
+      tag:
+        type: string
+        required: true
+  workflow_dispatch:
+  push:
+    branches: ['android-*']
+
+permissions:
+  contents: write
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    env:
+      ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      HAS_KEY: ${{ secrets.BILIM_KEYSTORE_BASE64 != '' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: android-actions/setup-android@v3
+
+      - run: npm ci
+      - run: npm run build
+      - run: npx cap sync android
+
+      - name: Imzolash kalitini tiklash
+        if: env.HAS_KEY == 'true'
+        shell: bash
+        run: echo "${{ secrets.BILIM_KEYSTORE_BASE64 }}" | base64 -d > "$RUNNER_TEMP/bilim.p12"
+
+      - name: APK yig'ish
+        shell: bash
+        working-directory: android
+        env:
+          BILIM_KEYSTORE_PASSWORD: ${{ secrets.BILIM_KEYSTORE_PASSWORD }}
+          BILIM_KEY_ALIAS: ${{ secrets.BILIM_KEY_ALIAS }}
+        run: |
+          chmod +x gradlew
+          if [ "$HAS_KEY" = "true" ]; then
+            export BILIM_KEYSTORE="$RUNNER_TEMP/bilim.p12"
+            ./gradlew --no-daemon assembleRelease
+            cp app/build/outputs/apk/release/app-release.apk ../Bilim-Arena.apk
+          else
+            ./gradlew --no-daemon assembleDebug
+            cp app/build/outputs/apk/debug/app-debug.apk ../Bilim-Arena.apk
+          fi
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Bilim-Arena-apk
+          path: Bilim-Arena.apk
+
+      - name: Release'ga qo'shish
+        if: inputs.tag != ''
+        shell: bash
+        run: gh release upload "${{ inputs.tag }}" Bilim-Arena.apk --clobber

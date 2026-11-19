@@ -362,6 +362,14 @@ export default function Race({ config, askPin, onFinish, onExit, exitLabel = 'So
           </div>
         )}
 
+        {/* Telefon tik turganda taxta va savollar juda mayda — yon tomonga burishni so'raymiz (Soyadagidek). */}
+        <div className="race-rotate" role="alert">
+          <div className="phone" aria-hidden="true" />
+          <b>Telefonni yon tomonga burang</b>
+          <small>Xazina poygasi keng ekranda o‘ynaladi</small>
+          <button className="btn" onClick={onExit}>← {exitLabel}</button>
+        </div>
+
         {menu && (
           <div className="overlay">
             <div className="menu-card">
