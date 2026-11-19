@@ -1,8 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import './soya.css';
+import { useLandscape } from '../../lib/platform.js';
 
 /** Soya platforma ichida: Phaser o'yini butun oynani egallaydi, chap yuqorida zalga qaytish tugmasi turadi. */
 export default function SoyaGame({ onExit, soundOn = true }) {
+  // Android ilovasida ekran o'zi yon tomonga o'tadi.
+  useLandscape();
   const host = useRef(null);
   const [state, setState] = useState('loading');
   const [playing, setPlaying] = useState(false);

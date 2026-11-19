@@ -245,3 +245,10 @@
 @keyframes race-turn { 0%, 30% { transform: rotate(0); } 60%, 100% { transform: rotate(-90deg); } }
 @media (orientation: portrait) and (max-width: 700px) { .race-rotate { display: flex; } }
 :root.reduce-motion .race-rotate .phone { animation: none; transform: rotate(-90deg); }
+
+/* ---------- Telefon (yon tomonda, past ekran): sahna butun ekranni egallaydi, savol — to'liq ekranda ---------- */
+@media (max-height: 500px) and (orientation: landscape) {
+  .race-wrap .stage { width: 100vw; height: 100vh; font-size: 2.6cqh; }
+  .question-overlay { top: 0; }
+  .question-overlay .question-card { width: 97%; height: 95%; padding: 2.2cqh 2cqw; }
+}

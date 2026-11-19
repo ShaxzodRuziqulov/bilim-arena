@@ -6,6 +6,7 @@ import OrderAnswer from '../components/OrderAnswer.jsx';
 import MatchAnswer from '../components/MatchAnswer.jsx';
 
 import { isSolo, raceWinner, roundFinished, soloStars } from '../lib/race-rules.js';
+import { useLandscape } from '../lib/platform.js';
 
 const GEMS = ['◆', '●', '▲', '■'];
 const STEP_MS = 550;
@@ -62,6 +63,8 @@ export function prepare(q) {
 }
 
 export default function Race({ config, askPin, onFinish, onExit, exitLabel = 'Sozlamalarga qaytish' }) {
+  // Android ilovasida taxta va savollar keng ekranda: ekran o'zi yon tomonga o'tadi.
+  useLandscape();
   const N = config.trackLength;
   // Yakka rejim: bitta o'yinchi savollarga ketma-ket javob beradi, xazinaga yetganda aniqlik bo'yicha yulduz oladi.
   const solo = isSolo(config.teams);

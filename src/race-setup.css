@@ -55,8 +55,25 @@
 .race-setup .panel h3 { color: #ffe08a; }
 .race-setup .rules { background: #0a2530; border-color: #ffcf4a33; }
 .race-setup .segmented button.active { background: var(--gold); color: #3a2400; border-color: var(--gold); }
-.race-setup .btn.primary { background: linear-gradient(180deg, #ffd85a, #f0a417); color: #3a2400; border-color: #f0a417; box-shadow: 0 .3em 0 #9a5f06; font-weight: 900; }
+.race-setup .btn.primary, .race-setup .setup-start .btn.primary { background: linear-gradient(180deg, #ffd85a, #f0a417); color: #3a2400; border-color: #f0a417; box-shadow: 0 .3em 0 #9a5f06; font-weight: 900; }
 .race-setup .btn.primary:active { transform: translateY(.2em); box-shadow: 0 .1em 0 #9a5f06; }
 .race-setup .theme-picker button.selected { background: #133f4d; border-color: var(--gold); }
 
 :root.reduce-motion .race-setup *, :root.reduce-motion .rs-sea i { animation: none !important; }
+
+/* Telefon: sarlavha ixcham — sozlamalar va pastdagi "O'yinni boshlash" tugmasi tezroq ko'rinadi. */
+@media (max-width: 700px), (max-height: 500px) {
+  .rs-hero { margin: -2.6em 0 .2em; }
+  .rs-island { width: 84px; }
+  .rs-logo span { font-size: 40px; }
+  .rs-logo small { font-size: 15px; }
+  .rs-tag { font-size: 14px; padding: 0 16px; }
+  .race-setup .btn.primary { box-shadow: 0 .2em 0 #9a5f06; }
+}
+@media (max-height: 500px) and (orientation: landscape) {
+  .rs-island { display: none; }
+  .rs-hero { flex-direction: row; justify-content: center; gap: 14px; margin-top: -2.4em; }
+  .rs-logo { flex-direction: row; align-items: baseline; gap: 10px; }
+  .rs-logo small { margin: 0; }
+  .rs-tag { display: none; }
+}

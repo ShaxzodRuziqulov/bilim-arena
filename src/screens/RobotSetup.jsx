@@ -123,9 +123,11 @@ export default function RobotSetup({ go }) {
         <div className="panel">
           <h3>3. Jamoalar</h3>
           <TeamPicker count={count} setCount={setCount} teams={teams} setTeams={setTeams} />
-          <button className="btn primary big full" onClick={start}>
-            ▶ O‘yinni boshlash
-          </button>
+          <div className="setup-start">
+            <button className="btn primary big full" onClick={start}>
+              ▶ O‘yinni boshlash
+            </button>
+          </div>
         </div>
       </main>
     </div>

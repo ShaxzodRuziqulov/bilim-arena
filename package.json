@@ -29,6 +29,7 @@
     "@capacitor/cli": "8.6.0",
     "@capacitor/core": "8.6.0",
     "@capacitor/filesystem": "8.1.5",
+    "@capacitor/screen-orientation": "8.0.2",
     "@capacitor/share": "8.0.3",
     "@fontsource-variable/nunito": "^5.3.0",
     "@vitejs/plugin-react": "^6.1.2",

@@ -365,3 +365,14 @@ Solishtiruv: Kodbuzar va Soyada o‘z kirish ekrani bor edi; Robot dasturlash to
 - `npm test` — 61/61, `npm run build` — muvaffaqiyatli, Electron smoke — 12/12.
 - Brauzerda telefon o‘lchamida: Robot (Bloklar va Java, tik va yon), Robot bosh ekrani, Xazina eslatmasi, zal — gorizontal toshish yo‘q.
 - GitHub Actions: debug APK yig‘ildi (5,2 MB, `assets/public` ichida o‘yin fayllari). Haqiqiy telefonda hali sinalmagan.
+
+## 2026-11-19 — Telefonda sinovdan keyingi tuzatishlar
+Foydalanuvchi telefonda sinadi: yon tomonga buriladigan o‘yinlar kichik, boshlash tugmalari va sozlamalar noqulay. O‘lchov (752×336 — tizim panellarisiz telefon): Soya ekran kengligining 64%, Xazina 79% (savol kartasi 517×258); zal va tayyorgarlikda “Boshlash”gacha 2 ekran surish; sozlamalarda tugmalar 12px.
+- **To‘liq ekran (APK):** `MainActivity.java` — holat va navigatsiya panellari yashirinadi (chetdan surilsa vaqtincha chiqadi).
+- **Avtomatik burilish:** `@capacitor/screen-orientation@8.0.2`, `useLandscape()` (`src/lib/platform.js`) — Soya va Xazina o‘yini ochilganda ekran yon tomonga qulflanadi, chiqqanda bo‘shatiladi.
+- **Xazina poygasi:** past ekranda (≤ 500px, yon tomon) 16:9 qulfi yo‘q — taxta butun ekranni egallaydi, savol to‘liq ekranda (729×319). Barcha savol turlari sig‘ishi tekshirildi.
+- **Soya — keng rejim** (`layout.js` WIDE: sensorli va nisbat ≥ 1,8): HUD ikki yon ustunda (chap: ☰ ↻, daraja, holat, yo‘riqnoma, ◀ ▶; o‘ng: yozish, yulduz shartlari, ↶ ● ▲), maydon ekran balandligini to‘liq egallaydi (taxminan 24% kattaroq); menyu va darajalar oynasi `fitDesign()` bilan kamera orqali sig‘diriladi. Kompyuter va planshetda o‘zgarish yo‘q.
+- **Zal (telefon):** ixcham ro‘yxat — kichik rasm, nom, natija, katta tugmalar; kartaning istalgan joyini bosish asosiy amalni boshlaydi; tik holatda 1 ustun, yon tomonda 2 ustun — to‘rtala o‘yin birinchi ekranda.
+- **Tayyorgarlik (Xazina, Robot jamoa):** telefonda “O‘yinni boshlash” ekran pastiga mahkamlangan; Xazina sarlavhasi ixcham.
+- **Sozlamalar:** kataklar o‘rniga yoqish/o‘chirish kalitlari (52×30); telefonda bo‘lim tugmalari butun kenglikda 48px; tugma va tanlovlar ≥ 48px.
+- Tekshiruv: `npm test` 61/61, build, Electron smoke 12/12; brauzerda 375×812 va 752×336 (sensorli) — zal, Xazina (tayyorgarlik, taxta, 10 ta savol), Soya (menyu, 1-1 va eng uzun yo‘riqnomali 2-5), Sozlamalar. Kompyuter ko‘rinishi o‘zgarmagan. To‘liq ekran va avtomatik burilish faqat APK’da — telefonda sinash kerak.

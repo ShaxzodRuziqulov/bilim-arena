@@ -122,9 +122,12 @@ export default function GameSetup({ data, setId, solo = false, go }) {
         <div className="panel">
           <h3>3. Kim o‘ynaydi</h3>
           <TeamPicker count={count} setCount={setCount} teams={teams} setTeams={setTeams} allowSolo />
-          <button className="btn primary big full" disabled={questions.length === 0} onClick={start}>
-            ▶ O‘yinni boshlash
-          </button>
+          {/* Telefonda bu tugma ekran pastiga mahkamlanadi (setup-start) — sozlamalarni surib o'tirish shart emas. */}
+          <div className="setup-start">
+            <button className="btn primary big full" disabled={questions.length === 0} onClick={start}>
+              ▶ O‘yinni boshlash
+            </button>
+          </div>
         </div>
       </main>
     </div>

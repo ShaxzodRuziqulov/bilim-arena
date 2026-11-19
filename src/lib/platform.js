@@ -1,4 +1,5 @@
 // Platformaga bog'liq kichik yordamchilar: Electron (Windows), brauzer yoki Android ilova (Capacitor).
+import { useEffect } from 'react';
 import { Capacitor } from '@capacitor/core';
 
 /** Android ilovasi ichida ishlayaptimi (Capacitor WebView). */
@@ -52,4 +53,24 @@ export function onBackButton(handler) {
     cancelled = true;
     remove?.remove();
   };
+}
+
+/**
+ * Android ilovasida o'yin ochiq turganda ekranni yon tomonga (landshaft) qulflaydi, chiqqanda qulfni yechadi.
+ * Soya va Xazina poygasi keng ekranda o'ynaladi — foydalanuvchi telefonni o'zi burishi shart emas.
+ * Brauzer va Electron'da hech narsa qilmaydi.
+ */
+export function useLandscape(active = true) {
+  useEffect(() => {
+    if (!isNativeApp || !active) return undefined;
+    let left = false;
+    const plugin = import('@capacitor/screen-orientation');
+    plugin.then(({ ScreenOrientation }) => {
+      if (!left) ScreenOrientation.lock({ orientation: 'landscape' }).catch(() => {});
+    });
+    return () => {
+      left = true;
+      plugin.then(({ ScreenOrientation }) => ScreenOrientation.unlock().catch(() => {}));
+    };
+  }, [active]);
 }

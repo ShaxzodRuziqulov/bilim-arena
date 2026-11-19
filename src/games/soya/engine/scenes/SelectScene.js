@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { LEVELS, WORLDS } from '../levels.js';
-import { FONT, GAME_H, GAME_W, INV } from '../layout.js';
-import { backdrop, button, go, roundedTexture, setupCamera } from '../ui.js';
+import { DESIGN_H as GAME_H, DESIGN_W as GAME_W, FONT, INV } from '../layout.js';
+import { backdrop, button, go, roundedTexture, fitDesign, setupCamera } from '../ui.js';
 import { isUnlocked, levelResult, totalStars } from '../save.js';
 import { sfx } from '../audio.js';
 import { playMusic } from '../music.js';
@@ -16,7 +16,7 @@ export default class SelectScene extends Phaser.Scene {
   }
 
   create() {
-    setupCamera(this).fadeIn(250, 11, 13, 23);
+    fitDesign(setupCamera(this)).fadeIn(250, 11, 13, 23);
     playMusic('menu');
     backdrop(this, GAME_W, GAME_H, 3);
     button(this, 90, 40, 140, 44, '← Menyu', () => go(this, 'menu'));

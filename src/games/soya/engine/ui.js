@@ -1,4 +1,4 @@
-import { FONT, INV, RES, TEX } from './layout.js';
+import { DESIGN_H, DESIGN_W, FONT, GAME_H, GAME_W, INV, RES, TEX, WIDE } from './layout.js';
 import { sfx } from './audio.js';
 import { BG, UI, reducedMotion } from './theme.js';
 
@@ -33,6 +33,16 @@ export function roundedTexture(scene, w, h, fill, edge, { radius = RADIUS, edgeW
  */
 export function setupCamera(scene) {
   return scene.cameras.main.setOrigin(0, 0).setZoom(RES);
+}
+
+/**
+ * Menyu va darajalar oynasi DESIGN_W × DESIGN_H da chizilgan. Keng rejimda (telefon) o'yin oynasi pastroq va kengroq —
+ * shu sahnalarni kichraytirib, markazga qo'yamiz. Oddiy rejimda hech narsa o'zgarmaydi.
+ */
+export function fitDesign(camera) {
+  if (!WIDE) return camera;
+  const k = Math.min(GAME_H / DESIGN_H, GAME_W / DESIGN_W);
+  return camera.setZoom(RES * k).setScroll(DESIGN_W / 2 - GAME_W / k / 2, DESIGN_H / 2 - GAME_H / k / 2);
 }
 
 /** Statik Graphics'ni RenderTexture'ga ko'chiradi va Graphics'ni o'chiradi. */
