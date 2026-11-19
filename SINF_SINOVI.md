@@ -6,7 +6,7 @@ Tayyorlangan sana: 2026-10-25. Ushbu sinov rejasi tayyor; haqiqiy sinf sinovi ha
 - Sozlamalar → Zaxira va tiklash → To‘liq zaxira olish. JSON nusxasini boshqa qurilma yoki fleshkada ham saqlang.
 - Fan va sinfga mos 12–20 ta savol tayyorlang; javob va izohlarini tekshiring.
 - Doska o‘lchami va Windows masshtabini yozing. Eng orqa qatordan savol va javoblar o‘qilishini ko‘ring.
-- Internetni uzib ishga tushirishni sinang. Sinf himoyasini ishlatsangiz PINni oldindan tekshiring.
+- Internetni uzib ishga tushirishni sinang. PIN o‘rnatsangiz, uni oldindan tekshiring.
 - Birinchi sinovda 2 jamoa, 8 qadam va 30 yoki 45 soniyadan boshlang. Bu tavsiya etilgan sinov sozlamasi, ideal deb o‘lchangan natija emas.
 
 ## 15–20 daqiqalik ssenariy
@@ -23,7 +23,7 @@ Tayyorlangan sana: 2026-10-25. Ushbu sinov rejasi tayyor; haqiqiy sinf sinovi ha
 | Doskadagi savol | Orqa qatordan o‘qiladi | To‘ldirilmagan |
 | Sensorli tugmalar | Bir bosishda to‘g‘ri tanlanadi | To‘ldirilmagan |
 | Pauza va davom etish | PINsiz ishlaydi, savol vaqti pauzada kamaymaydi | To‘ldirilmagan |
-| Sinf himoyasi | Boshqaruvga qaytishda bir marta PIN kerak | To‘ldirilmagan |
+| PIN | O‘quvchi o‘yinni yakunlab zalga qaytadi, lekin Sozlamalarni ochish va dasturni yopish PIN so‘raydi | To‘ldirilmagan |
 | Xazinaga yetish | Oxirgi davrada navbatlar tenglashtiriladi | To‘ldirilmagan |
 | Xatolarni takrorlash | Vaqt cheklanmaydi, musobaqa natijasi o‘zgarmaydi | To‘ldirilmagan |
 | Qayta ishga tushirish | Savol va natijalar joyida | To‘ldirilmagan |

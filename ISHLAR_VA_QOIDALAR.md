@@ -273,3 +273,23 @@ Muammo: ⚙ “Boshqaruv”ni ochardi, ichida yana “⚙️ Sozlamalar” bo‘
 ### Tekshiruv
 - `npm test` — 57/57, `npm run build` — muvaffaqiyatli.
 - Brauzerda: 2 ta bo‘lim, Qulflash yo‘q; Xazina poygasi → Savollar (yuqorida “O‘yinlar” belgili) → ← O‘yinlar; Robo Kod → Natijalar (Xazina poygasi yozuvlari ko‘rinmaydi); Xazina poygasi → Natijalar (2 ta yozuv).
+
+## 2026-11-18/19 — Sinf himoyasi olib tashlandi, PIN sessiyada bir marta
+Muammo: “Sinf himoyasi” yoqilganda dastur alohida sinf ekranidan (`Home.jsx`) ochilar va o‘yindan chiqishda PIN so‘rardi — zal bilan bir platforma tuyg‘usini buzardi, Qulflash tugmasi esa avvalroq olib tashlangan edi.
+
+### Bajarilgan ishlar
+- `src/screens/Home.jsx` (sinf ekrani) o‘chirildi; dastur har doim O‘yinlar zalidan ochiladi.
+- PIN o‘rnatilgan bo‘lsa faqat ⚙ Sozlamalarni ochish va dasturdan chiqishda so‘raladi, dastur yopilguncha bir marta (`guard` / `pinUnlocked` — `App.jsx`). PINni almashtirish va zaxiradan tiklash har safar so‘raydi. O‘yin ichidagi yakunlash/zalga qaytish PINsiz.
+- Sozlamalar → Umumiy → PIN bo‘limi matni yangi tartibga moslandi; zaxiradan tiklagach Umumiy bo‘lim ochiladi.
+- `classroomLock` sozlamasi `DEFAULT_SETTINGS`, normallashtirilgan ma’lumot va zaxira tiklashdan olib tashlandi. Eski fayllardagi maydon xato bermaydi, e’tiborsiz qoldiriladi.
+- README, MAHSULOT_QARORLARI (PIN jadvali, bosh sahifa qarori) va SINF_SINOVI yangi tartibga moslandi.
+
+### Tekshiruv
+- `npm test` — 57/57, `npm run build` — muvaffaqiyatli.
+- `BILIM_ARENA_TEST_SHOW=1 npm run smoke:electron` — 12/12.
+- Brauzerda: PIN yaratish (ikki marta) → qayta ochish → ⚙ PIN so‘radi → noto‘g‘ri PIN “PIN noto‘g‘ri” → to‘g‘ri PIN → ⚙ ikkinchi marta PINsiz. Xazina poygasi: tayyorgarlik → o‘yin → pauza → yakunlash (PINsiz) → natijalar → zal. Java mashqi → pauza → zal. Sozlamalar → O‘yinlar: 5 ta o‘yin paneli, Xazina poygasi Savollar va Natijalar. Konsolda xato yo‘q.
+
+### Qolgan ishlar
+- PIN va Sozlamalar oqimi uchun avtomatik test yo‘q.
+- `platforma` branchi `main`ga qo‘shilmagan va GitHub’ga push qilinmagan.
+- Qarorlar kutilmoqda: platforma nomi, Robo Kod mustaqil loyihasi, Kodbuzar/Soya manbalarini yagona qilish.

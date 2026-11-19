@@ -5,7 +5,7 @@
 // Modul maydonlari:
 //   id, title, icon, grades, about   — kartochka va sarlavhalar uchun
 //   family                           — 'quiz' (savol to'plami bilan) yoki 'robot' (o'z darajalari bilan)
-//   adminTab                         — o'yindan chiqqanda qaytiladigan studiya bo'limi
+//   adminTab                         — Sozlamalardagi o'yin bo'limi (games)
 //   renderSetup({ data, go, screen })                                    — tayyorgarlik ekrani
 //   renderPlay({ config, data, update, askPin, onExit, onFinish })       — o'yin ekrani
 //   ranking: [asosiy, qo'shimcha]    — natija jadvalidagi tartib maydonlari

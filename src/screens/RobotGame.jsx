@@ -123,7 +123,7 @@ export default function RobotGame({ config, progress, onProgress, askPin, onFini
     setPhase('ready');
   };
 
-  // Pauza PINsiz; yakunlash, navbatni o'tkazish va chiqish Sinf himoyasi yoqilgan bo'lsa PIN so'raydi.
+  // Pauza, yakunlash, navbatni o'tkazish va chiqish PINsiz (PIN faqat Sozlamalar va dasturdan chiqish uchun).
   const openMenu = () => {
     setPaused(true);
     setMenu(true);

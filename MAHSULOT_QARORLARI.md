@@ -6,29 +6,29 @@ Sana: 2026-10-24. Bu hujjat amalga oshirilgan imkoniyatlarni takliflardan ajrata
 5–11-sinflar uchun o‘qituvchi boshqaradigan, internet bo‘lmasa ham ishlaydigan jamoaviy bilim o‘yini. Xaridor — o‘qituvchi yoki maktab; asosiy ishtirokchilar — o‘quvchilar. O‘qituvchi darsni tez tayyorlaydi, bolalar navbat bilan javob beradi, yakunda xatolar muhokama qilinadi.
 
 ## Qabul qilingan dizayn qarorlari
-- O‘qituvchining bosh sahifasi endi Dars studiyasi. Birinchi harakat parol kiritish emas, to‘plam tanlash yoki darsni boshlash.
-- Studiyada och fon, yashil urg‘u, aniq kartalar va yordamchi amallardan ajralgan asosiy boshlash tugmasi ishlatiladi.
+- 2026-11-18 dan bosh sahifa — O‘yinlar zali (avval Dars studiyasi edi). Birinchi harakat parol kiritish emas, o‘yinni tanlash. Savollar, natijalar va sozlamalar zaldagi kichik ⚙ orqali ochiladi.
+- Zal, Sozlamalar, tayyorgarlik va natijalar bitta to‘q mavzuda (avvalgi och yashil “studiya” mavzusi olib tashlandi).
 - Namuna HTMLdagi och muharrir va sarguzasht kayfiyati olindi. Platformer mexanikasi, tashqi kod, audio va resurslar ko‘chirilmadi.
 - O‘yin hamma sinfga bir xil multfilm muhitini majburlamaydi: Sarguzasht va sokinroq Bilim maydoni tanlanadi. Bular ikkita vizual mavzu; alohida o‘yin rejimlari emas.
 - Savol o‘qilishi animatsiyadan ustun. Savol oynasida katta matn, rang orqali farqlanadigan javoblar va doim ochiq pauza boshqaruvi bor.
 - Mavjud qahramonlar emoji ko‘rinishida qoldi. Sotuvdan oldin yagona mualliflik grafik uslubi kerak; bu hozircha bajarilmagan.
 - Mobil qurilmada studiya moslashadi. O‘yinning asosiy nishoni gorizontal sensorli doska; telefon uchun multiplayer hali yo‘q.
 
-## PIN va kirish tartibi — amaldagi qoidalar
+## PIN va kirish tartibi — amaldagi qoidalar (2026-11-18 dan)
+“Sinf himoyasi”, “Qulflash” tugmasi va alohida sinf ekrani olib tashlandi. Dastur har doim O‘yinlar zalidan ochiladi.
+
 | Vaziyat | Natija |
 | --- | --- |
-| Birinchi ochilish, PIN yo‘q | Studiyaga to‘g‘ridan-to‘g‘ri kiradi |
-| PIN bor, Sinf himoyasi o‘chiq | Oddiy ishlar parolsiz davom etadi |
+| PIN yo‘q | Hamma narsa parolsiz, Sozlamalar ham |
 | Sozlamalarda PIN yaratish | Ikki marta kiritiladi, xesh saqlanadi |
-| Mavjud PINni almashtirish | Joriy PIN tasdiqlanadi |
-| Qo‘lda Qulflash | Sinf ekrani ochiladi, studiyaga qaytish PIN bilan |
-| Sinf himoyasi yoqilgan yangi o‘yin | O‘qituvchi sessiyasi yopiladi |
-| Pauza yoki davom etish | PIN so‘ralmaydi |
-| Himoyalangan o‘yinni yakunlash/studiyaga qaytish | Bir marta PIN kerak |
-| PIN to‘g‘ri tasdiqlandi | Yangi qulflash/yangi himoyalangan o‘yingacha qayta so‘ralmaydi |
-| Himoya yoqilgan dastur qayta ochildi | Sinf ekrani ochiladi |
+| PIN bor, ⚙ Sozlamalarni ochish | PIN so‘raladi |
+| PIN bor, dasturdan chiqish (oynani yopish) | PIN so‘raladi |
+| PIN to‘g‘ri tasdiqlandi | Dastur yopilguncha qayta so‘ralmaydi |
+| Mavjud PINni almashtirish, zaxiradan tiklash | Har safar joriy PIN tasdiqlanadi |
+| O‘yinni boshlash, pauza, yakunlash, zalga qaytish | PIN so‘ralmaydi |
+| Dastur qayta ochildi | Zal ochiladi; Sozlamalar uchun PIN yana bir marta so‘raladi |
 
-PIN sinfdagi tasodifiy aralashuvdan saqlaydi. Bu Windows hisob himoyasi yoki majburiy kiosk emas. Oddiy oynani operatsion tizim vositalari bilan boshqarish mumkin. PIN yo‘q bo‘lsa Qulflash va Sinf himoyasi faol emas; avval PIN yaratiladi.
+PIN sinfdagi tasodifiy aralashuvdan (savollar, sozlamalar, natijalarni o‘chirish, dasturni yopish) saqlaydi. Bu Windows hisob himoyasi yoki majburiy kiosk emas. O‘quvchilar o‘yinni o‘zlari yakunlab zalga qaytishi mumkin — bu ataylab qabul qilingan. Eski versiyalardagi `classroomLock` sozlamasi ma’lumot faylida qolgan bo‘lsa, e’tiborsiz qoldiriladi.
 
 ## Boshqa fanlarga tayyorgarlik — bajarilgan
 - To‘plamning fan nomi erkin tahrirlanadi; sinflar 5–11 va Aralash.

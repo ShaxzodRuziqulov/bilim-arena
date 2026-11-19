@@ -37,8 +37,8 @@ export default function BackupPanel({ data, onRestore, askPin }) {
   const restore=async()=>{
     setBusy(true); setError('');
     try {
-      // Ishlayotgan qurilmaning PINi va himoya tanlovi saqlanadi.
-      const next=data ? {...candidate,pinHash:data.pinHash,settings:{...candidate.settings,classroomLock:data.settings.classroomLock}} : candidate;
+      // Ishlayotgan qurilmaning PINi saqlanadi.
+      const next=data ? {...candidate,pinHash:data.pinHash} : candidate;
       const saved=await replaceData(next);
       // Asosiy ma'lumot yozilgandan keyingina o'yin natijalari tiklanadi. Ular yozilmasa ham onRestore chaqiriladi —
       // aks holda ilova eski ma'lumotda qolib, keyingi avtosaqlash tiklangan nusxaning ustiga yozib yuborardi.
@@ -59,7 +59,7 @@ export default function BackupPanel({ data, onRestore, askPin }) {
     {busy && <div className="overlay pin-overlay" role="status"><div className="pin-card"><h2>Tiklanmoqda…</h2><p>Ma’lumotlar yozib bo‘linguncha kuting.</p></div></div>}
     {error && <p className="backup-error" role="alert">{error}</p>}
     {candidate && <div className="restore-preview"><h4>Tiklanadigan nusxa</h4><p>{candidate.sets.length} ta to‘plam · {candidate.sets.reduce((sum,s)=>sum+s.questions.length,0)} ta savol · {candidate.history.length} ta natija{gameList ? ` · o‘yinlar: ${gameList}` : ''}</p>
-    <p className="note">Bu amal joriy to‘plamlar, sozlamalar va tarixni almashtiradi.{gameList ? ` ${gameList} natijalari ham fayldagisi bilan almashtiriladi; faylda yo‘q o‘yinlarning natijasiga tegilmaydi.` : ''} {data ? 'Joriy PIN va sinf himoyasi saqlanadi; almashtirish oldidan mavjud ma’lumot avtomatik zaxiraga yoziladi.' : 'Fayldagi PIN va himoya sozlamalari ham tiklanadi.'}</p>
+    <p className="note">Bu amal joriy to‘plamlar, sozlamalar va tarixni almashtiradi.{gameList ? ` ${gameList} natijalari ham fayldagisi bilan almashtiriladi; faylda yo‘q o‘yinlarning natijasiga tegilmaydi.` : ''} {data ? 'Joriy PIN saqlanadi; almashtirish oldidan mavjud ma’lumot avtomatik zaxiraga yoziladi.' : 'Fayldagi PIN ham tiklanadi.'}</p>
     <div className="row-buttons"><button className="btn primary" disabled={busy} onClick={()=>askPin ? askPin('Ma’lumotlarni tiklash',restore,undefined,true) : restore()}>{busy?'Tiklanmoqda…':'Tasdiqlash va tiklash'}</button><button className="btn" disabled={busy} onClick={()=>{setCandidate(null);setGames({});}}>Bekor qilish</button></div></div>}
   </div>;
 }

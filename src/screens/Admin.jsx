@@ -403,10 +403,12 @@ function GeneralTab({ data, update, askPin, onRestore, updateStatus }) {
           <p className="note">Kodbuzar, Soya, Robo Kod, Java Robot va Xazina poygasiga birdek ta’sir qiladi. Kompyuter yoki doska sekin ishlasa, animatsiyalarni o‘chiring.</p>
         </div>
         <div className="panel">
-          <h3>Xavfsizlik</h3>
-          <p className="note">Oddiy rejimda darsni parolsiz boshqaring. Sinf himoyasi yoqilsa, o‘yin boshlanganidan keyin boshqaruv uchun bir marta PIN so‘raladi. Pauza va davom etish erkin.</p>
-          <label className="check"><input type="checkbox" disabled={!data.pinHash} checked={!!s.classroomLock} onChange={(e) => set({ classroomLock: e.target.checked })} /> Sinf himoyasi</label>
-          {!data.pinHash && <p className="note">Himoyani yoqish uchun avval PIN yarating.</p>}
+          <h3>PIN</h3>
+          <p className="note">
+            {data.pinHash
+              ? 'PIN o‘rnatilgan: Sozlamalarni ochish va dasturdan chiqishda har safar ishga tushirilganda bir marta so‘raladi. O‘yinlar PINsiz o‘ynaladi.'
+              : 'PIN yo‘q: Sozlamalar hammaga ochiq. PIN yaratsangiz, Sozlamalar va dasturdan chiqish himoyalanadi.'}
+          </p>
           <button className="btn" onClick={() => askPin('Joriy PINni tasdiqlang', () => setChangingPin(true), undefined, true)}>
             🔑 {data.pinHash ? 'PINni almashtirish' : 'PIN yaratish'}
           </button>
