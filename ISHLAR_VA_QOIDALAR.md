@@ -348,3 +348,20 @@ Solishtiruv: Kodbuzar va Soyada o‘z kirish ekrani bor edi; Robot dasturlash to
 - Release sahifasi matni `.github/release-notes.md` dan (yuklab olish, SmartScreen ogohlantirishi, ulashish shartlari, zaxira).
 - README boshida “Yuklab olish” bo‘limi.
 - Tekshiruv: `npm run dist` mahalliy yig‘ildi — `release/Bilim-Arena-Setup.exe`, `latest.yml` shu nomni ko‘rsatadi, `resources/` da ikkala litsenziya fayli bor.
+
+## 2026-11-19 — Telefon uchun joylashuv va Android ilova (APK)
+### Telefonda tekshiruv (375×812 va 812×375)
+- Kodbuzar — to‘liq mos. Soya — tik holatda “yon tomonga burang”, yon tomonda sensorli boshqaruv bilan ishlaydi.
+- Robot dasturlash — buzilgan edi (daraja tugmalari ustun bo‘lib ekranni egallardi, maydon dastur paneli ustiga chiqardi). Xazina poygasi — tik holatda juda mayda.
+### Bajarilgan ishlar
+- Robot (≤ 900px): daraja tugmalari bitta suriladigan qator, HUD yuqorida yopishib turadi, maydon va dastur ustma-ust (yon tomonda yonma-yon), Java kodi sahifani kengaytirmaydi; robot yura boshlaganda maydon ekrandan chiqib qolgan bo‘lsa, avtomatik ko‘rinadigan joyga suriladi (`RobotBoard.jsx`).
+- Xazina poygasi: telefon tik turganda “Telefonni yon tomonga burang” va zalga qaytish tugmasi. Zal sarlavhasi telefonda ixcham.
+- **Android ilova (Capacitor 8.6.0):** `capacitor.config.json`, `android/` loyiha; ilova belgisi `build/icon.png` dan (`npx electron scripts/android-icons.cjs`), ochilish ekrani o‘z belgisi bilan. Capacitor paketlari `devDependencies` da (Electron o‘rnatuvchisiga kirmaydi).
+- `src/lib/platform.js`: Android’da zaxira va Excel eksport “Ulashish” oynasi orqali (brauzer yuklab olishi WebView’da ishlamaydi); Android “Orqaga” tugmasi — zalda saqlab chiqish, o‘yin ichida e’tiborsiz, boshqa ekranlarda zalga.
+- Versiya `package.json` dan (`versionCode = major·100000 + minor·100 + patch`).
+- **APK yig‘ish GitHub Actions’da** (`.github/workflows/android.yml`) — kompyuterda Android SDK kerak emas. `android-*` branchga push yoki qo‘lda — sinov APK “Artifacts”da; `v*` teg — `release.yml` Windows’dan keyin APK’ni Release’ga `Bilim-Arena.apk` nomi bilan qo‘shadi.
+- Imzolash: `BILIM_KEYSTORE_BASE64`, `BILIM_KEYSTORE_PASSWORD`, `BILIM_KEY_ALIAS` maxfiy sozlamalari bo‘lsa — release APK; bo‘lmasa — debug APK (har yig‘ishda boshqa kalit, ustidan yangilab bo‘lmaydi).
+### Tekshiruv
+- `npm test` — 61/61, `npm run build` — muvaffaqiyatli, Electron smoke — 12/12.
+- Brauzerda telefon o‘lchamida: Robot (Bloklar va Java, tik va yon), Robot bosh ekrani, Xazina eslatmasi, zal — gorizontal toshish yo‘q.
+- GitHub Actions: debug APK yig‘ildi (5,2 MB, `assets/public` ichida o‘yin fayllari). Haqiqiy telefonda hali sinalmagan.

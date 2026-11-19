@@ -8,6 +8,8 @@ Ta'limiy o'yinlar platformasi: sensorli elektron doskada jamoaviy o'yinlar va ya
 
 Windows “Windows protected your PC” deb ogohlantirsa: **More info → Run anyway** (dastur hali raqamli imzolanmagan). Keyingi versiyalar o‘zi yangilanadi.
 
+📱 **Android:** [Bilim-Arena.apk](https://github.com/ShaxzodRuziqulov/bilim-arena/releases/latest/download/Bilim-Arena.apk) — telefonda oching va o‘rnating (“noma’lum manbalar”ga ruxsat so‘rasa, bering). Soya va Xazina poygasi telefonda yon tomonga burib o‘ynaladi.
+
 Dastur bepul; rasmiy faylni o‘zgartirmasdan ulashish mumkin, sotish mumkin emas — [LICENSE.md](LICENSE.md). Kutubxonalar: [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md).
 
 ## Hozir nimalar bor
