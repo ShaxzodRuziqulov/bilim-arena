@@ -1,7 +1,7 @@
 {
   "name": "bilim-arena",
   "productName": "Bilim Arena",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "description": "Sensorli elektron doska uchun jamoaviy ta'limiy o'yinlar",
   "author": "Bilim Arena",
   "private": true,
