@@ -502,3 +502,9 @@ Foydalanuvchi rejani tasdiqladi. Jonlar haqida javob bermagani uchun ular standa
 - `npm test` — 84/84. Yangi testlar: nominatsiya limiti va girdobning boshida turmasligi.
 - `npm run build` — muvaffaqiyatli. `npm run smoke:electron` — 12/12.
 - Tekshirilmagan: musiqaning to‘xtashi quloq bilan eshitib ko‘rilmadi (faqat kodda), haqiqiy doska va telefon, yarim tunda kunlik xaritaning almashishi.
+
+## 2026-11-20 — 0.9.0: Xazina poygasining yangi versiyasi
+- Xazina poygasi yangilandi: orol xaritasi, yangi kataklar va mexanikalar, g‘alaba marosimi, nominatsiyalar, yakka rejimda jonlar va kunlik sarguzasht. Batafsil — yuqoridagi 1–4-faza yozuvlarida.
+- Versiya 0.8.0 → 0.9.0. Bu “minor” versiya, chunki yangi imkoniyatlar qo‘shildi.
+- `v0.9.0` tegi push qilinsa, GitHub Actions Windows o‘rnatuvchisini va imzolangan APK’ni Release’ga joylaydi. O‘rnatilgan dasturlar yangilanishni o‘zi yuklab oladi.
+- Eski natijalar va savollar yangi versiyada o‘qiladi: tanga va nominatsiyalar ixtiyoriy maydon, eski natijalarda yo‘q bo‘lsa 0 deb olinadi (test bilan tekshirilgan).
