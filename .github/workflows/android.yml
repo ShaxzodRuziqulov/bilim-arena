@@ -27,12 +27,12 @@ jobs:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       HAS_KEY: ${{ secrets.BILIM_KEYSTORE_BASE64 != '' }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: npm
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: 21
@@ -64,7 +64,7 @@ jobs:
             cp app/build/outputs/apk/debug/app-debug.apk ../Bilim-Arena.apk
           fi
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: Bilim-Arena-apk
           path: Bilim-Arena.apk
