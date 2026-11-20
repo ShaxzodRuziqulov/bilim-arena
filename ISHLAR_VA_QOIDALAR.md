@@ -515,3 +515,14 @@ Foydalanuvchi rejani tasdiqladi. Jonlar haqida javob bermagani uchun ular standa
 - Reliz eslatmalari ko‘rib chiqildi: biz uchun mos kelmaydigan o‘zgarish yo‘q. `setup-node` v5 dan boshlab keshni o‘zi yoqadi, lekin bizda `cache: npm` aniq yozilgan.
 - Sinov: `android-actions-yangilash` branch’ida Android workflow’i o‘tdi (APK yig‘ildi va artefakt sifatida joylandi, Release’ga hech narsa yuborilmadi). Node 20 ogohlantirishi chiqmadi.
 - Windows o‘rnatuvchisi faqat `v*` tegida yig‘iladi, u keyingi relizda tekshiriladi. U ham xuddi shu `checkout@v7` va `setup-node@v7` dan foydalanadi.
+
+## 2026-11-20 — Xatolar ro‘yxati
+Foydalanuvchi tayyorgarlik ekranidagi buzilgan logotipni topdi. Uni hozir tuzatmasdan yozib qo‘yish va boshqa xatolarni ham qidirish so‘raldi. Topilgan barcha muammolar alohida faylda: [XATOLAR.md](XATOLAR.md) (X-1 … X-10, muhimlik darajasi va tuzatish rejasi bilan). Kodga tegilmadi.
+
+## 2026-11-20 — 0.9.1: X-1, X-2 tuzatildi; Google Play’ga tayyorgarlik
+- **X-1, X-2** tuzatildi (batafsil — XATOLAR.md).
+- **AAB:** `android.yml` imzolangan yig‘ishda `bundleRelease` ham bajaradi; `Bilim-Arena.aab` faqat Actions “Artifacts”da (`Bilim-Arena-aab-play-market`), Release sahifasida emas.
+- **Maxfiylik siyosati:** `PRIVACY.md` (uz/en/ru) — hech qanday ma’lumot yig‘ilmaydi; Play uchun havola: github.com/ShaxzodRuziqulov/bilim-arena/blob/main/PRIVACY.md.
+- **Do‘kon rasmlari:** `npm run store-assets` (`scripts/store-assets/capture.cjs`) → `store/play/`: belgi 512, sarlavha 1024×500, 8 telefon (1080×1920 va 2160×1080, sensorli taqlid — Soya keng rejimda) va 3 planshet (1920×1200) skrinshoti.
+- **Qo‘llanma:** `store/PLAY_MARKET.md` — hisob, AAB, tavsiflar (uz/ru/en), Data safety, kontent reytingi, Families ro‘yxati, yopiq sinov (12 sinovchi, 14 kun).
+- Hisob ochish (~$25, shaxsni tasdiqlash) va yopiq sinov — foydalanuvchi qiladi.

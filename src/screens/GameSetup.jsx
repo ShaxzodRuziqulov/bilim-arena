@@ -1,15 +1,27 @@
 import { useState } from 'react';
 import { playableQuestions, uid } from '../lib/util.js';
-import TeamPicker, { freshTeams, pickTeams } from '../components/TeamPicker.jsx';
+import TeamPicker, { TEAM_PRESETS, freshTeams, pickTeams } from '../components/TeamPicker.jsx';
 import { DEFAULT_MECH, MECHANICS, dailySeed, dayKey, questionsFingerprint } from '../lib/race-rules.js';
 import { dailyRecord, dailyStorage, dayStreak } from '../lib/race-daily.js';
 import '../race-setup.css';
+
+const SOLO_NAME = 'O‘yinchi';
 
 export default function GameSetup({ data, setId, solo = false, go }) {
   const [currentSetId, setCurrentSetId] = useState(setId ?? data.sets[0]?.id);
   const [count, setCount] = useState(solo ? 1 : 2);
   // Yakka o'yinchi uchun standart ism "O‘yinchi" (jamoa nomi emas).
-  const [teams, setTeams] = useState(() => freshTeams().map((t, i) => (i === 0 && solo ? { ...t, name: 'O‘yinchi' } : t)));
+  const [teams, setTeams] = useState(() => freshTeams().map((t, i) => (i === 0 && solo ? { ...t, name: SOLO_NAME } : t)));
+  // Yakka ↔ jamoa o'tishida 1-o'rindagi standart nom ham almashadi (foydalanuvchi o'z nomini yozgan bo'lsa — tegilmaydi).
+  const changeCount = (n) => {
+    setCount(n);
+    setTeams((ts) => ts.map((t, i) => {
+      if (i !== 0) return t;
+      if (n > 1 && t.name === SOLO_NAME) return { ...t, name: TEAM_PRESETS[0].name };
+      if (n === 1 && t.name === TEAM_PRESETS[0].name) return { ...t, name: SOLO_NAME };
+      return t;
+    }));
+  };
   const isSolo = count === 1;
   const [time, setTime] = useState(data.settings.time);
   const [trackLength, setTrackLength] = useState(data.settings.trackLength);
@@ -150,7 +162,7 @@ export default function GameSetup({ data, setId, solo = false, go }) {
 
         <div className="panel">
           <h3>3. Kim o‘ynaydi</h3>
-          <TeamPicker count={count} setCount={setCount} teams={teams} setTeams={setTeams} allowSolo />
+          <TeamPicker count={count} setCount={changeCount} teams={teams} setTeams={setTeams} allowSolo />
           {/* Telefonda bu tugma ekran pastiga mahkamlanadi (setup-start) — sozlamalarni surib o'tirish shart emas. */}
           <div className="setup-start">
             <button className="btn primary big full" disabled={questions.length === 0} onClick={() => start(false)}>

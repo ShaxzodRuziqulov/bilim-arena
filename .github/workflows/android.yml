@@ -57,8 +57,10 @@ jobs:
           chmod +x gradlew
           if [ "$HAS_KEY" = "true" ]; then
             export BILIM_KEYSTORE="$RUNNER_TEMP/bilim.p12"
-            ./gradlew --no-daemon assembleRelease
+            # APK — to'g'ridan-to'g'ri tarqatish uchun; AAB — Google Play Console'ga yuklash uchun (shu kalit — yuklash kaliti).
+            ./gradlew --no-daemon assembleRelease bundleRelease
             cp app/build/outputs/apk/release/app-release.apk ../Bilim-Arena.apk
+            cp app/build/outputs/bundle/release/app-release.aab ../Bilim-Arena.aab
           else
             ./gradlew --no-daemon assembleDebug
             cp app/build/outputs/apk/debug/app-debug.apk ../Bilim-Arena.apk
@@ -68,6 +70,13 @@ jobs:
         with:
           name: Bilim-Arena-apk
           path: Bilim-Arena.apk
+
+      # AAB Release sahifasiga qo'yilmaydi (oddiy foydalanuvchiga kerak emas) — faqat Actions "Artifacts"da.
+      - uses: actions/upload-artifact@v7
+        if: env.HAS_KEY == 'true'
+        with:
+          name: Bilim-Arena-aab-play-market
+          path: Bilim-Arena.aab
 
       - name: Release'ga qo'shish
         if: inputs.tag != ''

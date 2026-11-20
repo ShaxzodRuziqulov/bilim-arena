@@ -17,7 +17,8 @@
     "postinstall": "node node_modules/electron/install.js",
     "test": "node --test tests/*.test.js",
     "smoke:electron": "node scripts/electron-smoke.mjs",
-    "video": "vite build && electron scripts/promo-video/record.cjs"
+    "video": "vite build && electron scripts/promo-video/record.cjs",
+    "store-assets": "vite build && electron scripts/store-assets/capture.cjs"
   },
   "dependencies": {
     "@fontsource/nunito": "^5.3.0",

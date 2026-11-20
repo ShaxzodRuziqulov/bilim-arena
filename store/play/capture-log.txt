@@ -1,0 +1,18 @@
+sarlavha-1024x500 belgi-512
+qurilma 360 640 3
+yuklandi
+telefon-1-zal 1080x1920
+telefon-2-kodbuzar 1080x1920
+telefon-3-robot-menyu 1080x1920
+telefon-4-robot-bloklar 1080x1920
+telefon-5-xazina-tayyorgarlik 1080x1920
+qurilma 720 360 3
+yuklandi
+telefon-6-soya 2160x1080
+telefon-7-xazina-xarita 2160x1080
+telefon-8-xazina-savol 2160x1080
+qurilma 1280 800 1.5
+yuklandi
+planshet-1-zal 1920x1200
+planshet-2-java-robot 1920x1200
+planshet-3-xazina 1920x1200

@@ -6,10 +6,10 @@
 }
 
 /* Dengiz to'lqinlari va qirg'oqdagi ko'pik */
-.rs-sea { animation: rs-sea 9s linear infinite; }
-@keyframes rs-sea { to { transform: translateX(140px); } }
-.rs-foam { animation: rs-foam 6s linear infinite; }
-@keyframes rs-foam { to { stroke-dashoffset: -152; } }
+.rb-sea { animation: rb-sea 9s linear infinite; }
+@keyframes rb-sea { to { transform: translateX(140px); } }
+.rb-foam { animation: rb-foam 6s linear infinite; }
+@keyframes rb-foam { to { stroke-dashoffset: -152; } }
 
 /* Bezaklar: tagi bilan joyiga qo'yiladi, cho'zilmaydi */
 .race-wrap .deco {
@@ -25,20 +25,20 @@
 .deco-volcano { --w: 8.6cqw; }
 .deco-rocks { --w: 6cqw; }
 .deco-ship { --w: 6.4cqw; }
-.race-wrap .deco.sea { animation: rs-bob 3.4s ease-in-out infinite; }
-@keyframes rs-bob { 50% { transform: translate(-50%, -100%) translateY(-.5cqw) rotate(-2deg); } }
-.rs-fronds { transform-box: fill-box; transform-origin: 50% 70%; animation: rs-sway 3.6s ease-in-out infinite; }
-@keyframes rs-sway { 0%, 100% { transform: translate(-6px, -80px) rotate(-3deg); } 50% { transform: translate(-6px, -80px) rotate(3deg); } }
-.rs-smoke circle { transform-box: fill-box; transform-origin: center; animation: rs-smoke 3.6s ease-out infinite; opacity: 0; }
-.rs-smoke circle:nth-child(2) { animation-delay: 1.2s; }
-.rs-smoke circle:nth-child(3) { animation-delay: 2.4s; }
-@keyframes rs-smoke {
+.race-wrap .deco.sea { animation: rb-bob 3.4s ease-in-out infinite; }
+@keyframes rb-bob { 50% { transform: translate(-50%, -100%) translateY(-.5cqw) rotate(-2deg); } }
+.rb-fronds { transform-box: fill-box; transform-origin: 50% 70%; animation: rb-sway 3.6s ease-in-out infinite; }
+@keyframes rb-sway { 0%, 100% { transform: translate(-6px, -80px) rotate(-3deg); } 50% { transform: translate(-6px, -80px) rotate(3deg); } }
+.rb-smoke circle { transform-box: fill-box; transform-origin: center; animation: rb-smoke 3.6s ease-out infinite; opacity: 0; }
+.rb-smoke circle:nth-child(2) { animation-delay: 1.2s; }
+.rb-smoke circle:nth-child(3) { animation-delay: 2.4s; }
+@keyframes rb-smoke {
   0% { transform: translateY(8px) scale(.5); opacity: 0; }
   20% { opacity: .9; }
   100% { transform: translateY(-46px) translateX(10px) scale(1.8); opacity: 0; }
 }
-.rs-lava { animation: rs-lava 2.4s ease-in-out infinite; }
-@keyframes rs-lava { 50% { opacity: .55; } }
+.rb-lava { animation: rb-lava 2.4s ease-in-out infinite; }
+@keyframes rb-lava { 50% { opacity: .55; } }
 
 /* Kataklar: qumdagi tosh plitalar */
 .theme-adventure .node {
@@ -56,15 +56,15 @@
   background: radial-gradient(circle at 40% 35%, #fff2a8, #f2b92c);
   border-color: #9a6a00;
   font-size: 2cqw;
-  animation: rs-star 2s ease-in-out infinite;
+  animation: rb-star 2s ease-in-out infinite;
 }
-@keyframes rs-star {
+@keyframes rb-star {
   50% { transform: translate(-50%, -50%) scale(1.1); box-shadow: 0 .42cqw 0 #6b4a1f, 0 0 2.2cqw #ffd84dcc; }
 }
 .theme-adventure .node.trap { background: radial-gradient(circle at 40% 35%, #b9a2ff, #5b3fc4); border-color: #2c1b6b; font-size: 2cqw; animation: none; }
 .node.trap { animation: none; }
-.swirl-icon { display: inline-block; line-height: 1; animation: rs-spin 3s linear infinite; }
-@keyframes rs-spin { to { transform: rotate(360deg); } }
+.swirl-icon { display: inline-block; line-height: 1; animation: rb-spin 3s linear infinite; }
+@keyframes rb-spin { to { transform: rotate(360deg); } }
 
 /* Xazina sandig'i */
 .race-wrap .node.end {
@@ -73,15 +73,15 @@
   background: radial-gradient(circle, #ffe9a3 0, #ffd36b88 40%, transparent 70%);
   border: 0;
   box-shadow: none;
-  animation: rs-chest-glow 1.8s ease-in-out infinite;
+  animation: rb-chest-glow 1.8s ease-in-out infinite;
 }
-@keyframes rs-chest-glow { 50% { filter: drop-shadow(0 0 1.4cqw #ffd84d); } }
+@keyframes rb-chest-glow { 50% { filter: drop-shadow(0 0 1.4cqw #ffd84d); } }
 .chest { width: 82%; overflow: visible; }
 .chest-lid { transform-box: fill-box; transform-origin: 0% 100%; transition: transform .6s cubic-bezier(.3, 1.6, .5, 1); }
 .chest.open .chest-lid { transform: rotate(-38deg) translate(-2px, -3px); }
 .chest-coins circle { transform-box: fill-box; transform-origin: center; opacity: 0; }
-.chest.open .chest-coins circle { animation: rs-coin 1.6s calc(.3s + var(--i) * .15s) ease-out infinite; }
-@keyframes rs-coin {
+.chest.open .chest-coins circle { animation: rb-coin 1.6s calc(.3s + var(--i) * .15s) ease-out infinite; }
+@keyframes rb-coin {
   0% { transform: translateY(6px) scale(.6); opacity: 0; }
   25% { opacity: 1; }
   100% { transform: translateY(-26px) scale(1.1); opacity: 0; }
@@ -94,11 +94,11 @@
   border-radius: 50%;
   border: .4cqw solid #ffd84d;
   pointer-events: none;
-  animation: rs-burst .9s ease-out both;
+  animation: rb-burst .9s ease-out both;
 }
-.node-burst.trap { border-color: #b98cff; border-style: dashed; animation: rs-burst-spin 1s ease-out both; }
-@keyframes rs-burst { from { transform: scale(.4); opacity: 1; } to { transform: scale(2.4); opacity: 0; } }
-@keyframes rs-burst-spin { from { transform: scale(2.2) rotate(0); opacity: 0; } 40% { opacity: 1; } to { transform: scale(.5) rotate(-300deg); opacity: 0; } }
+.node-burst.trap { border-color: #b98cff; border-style: dashed; animation: rb-burst-spin 1s ease-out both; }
+@keyframes rb-burst { from { transform: scale(.4); opacity: 1; } to { transform: scale(2.4); opacity: 0; } }
+@keyframes rb-burst-spin { from { transform: scale(2.2) rotate(0); opacity: 0; } 40% { opacity: 1; } to { transform: scale(.5) rotate(-300deg); opacity: 0; } }
 
 /* Qahramonlar: yo'l bo'ylab JS bilan yuradi, shuning uchun CSS o'tishi o'chirilgan */
 .race-wrap .token { transition: none; }
@@ -113,14 +113,14 @@
   background: radial-gradient(#0007, transparent 70%);
 }
 .race-wrap .token-jump { transform-origin: 50% 100%; }
-.race-wrap .token-jump.moved { animation: rs-land .45s cubic-bezier(.3, 1.4, .5, 1); }
-@keyframes rs-land {
+.race-wrap .token-jump.moved { animation: rb-land .45s cubic-bezier(.3, 1.4, .5, 1); }
+@keyframes rb-land {
   0% { transform: scale(1.14, .84); }
   60% { transform: scale(.95, 1.06); }
   100% { transform: none; }
 }
-.token.swirl .token-jump { animation: rs-swirl .55s linear; }
-@keyframes rs-swirl { to { transform: rotate(360deg); } }
+.token.swirl .token-jump { animation: rb-swirl .55s linear; }
+@keyframes rb-swirl { to { transform: rotate(360deg); } }
 .token-crown {
   position: absolute;
   left: 50%;
@@ -130,9 +130,9 @@
   line-height: 1;
   transform: translateX(-50%) rotate(-8deg);
   filter: drop-shadow(0 .2cqw .2cqw #0006);
-  animation: rs-crown 1.4s ease-in-out infinite;
+  animation: rb-crown 1.4s ease-in-out infinite;
 }
-@keyframes rs-crown { 50% { transform: translateX(-50%) translateY(-.3cqw) rotate(6deg); } }
+@keyframes rb-crown { 50% { transform: translateX(-50%) translateY(-.3cqw) rotate(6deg); } }
 .land-dust { position: absolute; left: 50%; top: 100%; pointer-events: none; }
 .land-dust i {
   position: absolute;
@@ -142,13 +142,13 @@
   border-radius: 50%;
   background: #f3dfae;
   opacity: 0;
-  animation: rs-dust .6s ease-out both;
+  animation: rb-dust .6s ease-out both;
 }
 .land-dust i:nth-child(1) { --dx: -2.6cqw; }
 .land-dust i:nth-child(2) { --dx: -1.3cqw; animation-delay: .04s; }
 .land-dust i:nth-child(3) { --dx: 1.3cqw; animation-delay: .04s; }
 .land-dust i:nth-child(4) { --dx: 2.6cqw; }
-@keyframes rs-dust {
+@keyframes rb-dust {
   0% { transform: translate(0, 0) scale(.4); opacity: .9; }
   100% { transform: translate(var(--dx), -1cqw) scale(1.3); opacity: 0; }
 }
@@ -170,28 +170,28 @@
   background: #8fa3b8;
   border: .15cqw solid #fff;
   box-shadow: 0 .2cqw .4cqw #0006;
-  animation: rs-place .5s cubic-bezier(.2, 1.8, .4, 1);
+  animation: rb-place .5s cubic-bezier(.2, 1.8, .4, 1);
 }
 .score-place.p1 { background: linear-gradient(#ffe68a, #f2b92c); }
 .score-place.p2 { background: linear-gradient(#f1f4f7, #b6c2cc); }
 .score-place.p3 { background: linear-gradient(#f3c79a, #c27a3a); }
-@keyframes rs-place { from { transform: scale(2) rotate(-30deg); } }
+@keyframes rb-place { from { transform: scale(2) rotate(-30deg); } }
 .hud-btn.off { opacity: .45; }
 
 @media (prefers-reduced-motion: reduce) {
-  .rs-sea, .rs-foam, .rs-fronds, .rs-smoke circle, .rs-lava, .race-wrap .deco.sea, .swirl-icon,
+  .rb-sea, .rb-foam, .rb-fronds, .rb-smoke circle, .rb-lava, .race-wrap .deco.sea, .swirl-icon,
   .theme-adventure .node.bonus, .race-wrap .node.end, .token-crown, .land-dust, .node-burst { animation: none; }
-  .rs-fronds { transform: translate(-6px, -80px); }
+  .rb-fronds { transform: translate(-6px, -80px); }
 }
-:root.reduce-motion .rs-fronds { transform: translate(-6px, -80px); }
+:root.reduce-motion .rb-fronds { transform: translate(-6px, -80px); }
 :root.reduce-motion .land-dust, :root.reduce-motion .node-burst { display: none; }
 
 /* ---------- 2-faza: yangi kataklar, holat belgilari, kuchaytirgichlar ---------- */
 .theme-adventure .node.chest { background: radial-gradient(circle at 40% 35%, #ffc98a, #c26b25); border-color: #5a2e0c; font-size: 1.9cqw; }
-.theme-adventure .node.lightning { background: radial-gradient(circle at 40% 35%, #a5e9ff, #1e9bd7); border-color: #0b4f73; font-size: 1.9cqw; animation: rs-zap 2.6s ease-in-out infinite; }
+.theme-adventure .node.lightning { background: radial-gradient(circle at 40% 35%, #a5e9ff, #1e9bd7); border-color: #0b4f73; font-size: 1.9cqw; animation: rb-zap 2.6s ease-in-out infinite; }
 .theme-adventure .node.bridge { background: radial-gradient(circle at 40% 35%, #e9c99a, #9a6a3a); border-color: #5d3b1c; font-size: 1.9cqw; }
 .theme-arena .node.chest, .theme-arena .node.lightning, .theme-arena .node.bridge { background: #3d6378; color: #fff; }
-@keyframes rs-zap { 0%, 88%, 100% { filter: none; } 92% { filter: brightness(1.8) drop-shadow(0 0 1cqw #7fdcff); } }
+@keyframes rb-zap { 0%, 88%, 100% { filter: none; } 92% { filter: brightness(1.8) drop-shadow(0 0 1cqw #7fdcff); } }
 .node-burst.chest, .node-burst.coin { border-color: #ffb347; }
 .node-burst.zap { border-color: #7fdcff; }
 .node-burst.bridge { border-color: #e9c99a; }
@@ -313,8 +313,8 @@
 
 .lost-overlay { background: radial-gradient(ellipse at 50% 40%, #0b3a55dd, #020b14f2); }
 .lost-card { border-color: #7fb6d6; }
-.win-hero.sink { animation: rs-sink 2.4s ease-in both; }
-@keyframes rs-sink { 0% { transform: rotate(0); } 40% { transform: rotate(-12deg); } 100% { transform: translateY(1.5cqw) rotate(-24deg); opacity: .75; } }
+.win-hero.sink { animation: rb-sink 2.4s ease-in both; }
+@keyframes rb-sink { 0% { transform: rotate(0); } 40% { transform: rotate(-12deg); } 100% { transform: translateY(1.5cqw) rotate(-24deg); opacity: .75; } }
 .lost-tip { opacity: .8; }
 .daily-note { display: inline-block; margin: .4cqh 0 1cqh; padding: .5cqh 1.2cqw; border-radius: 99px; background: #ffffff14; font-weight: 800; }
 .daily-note.record { background: linear-gradient(90deg, #ffd36b, #ffb347); color: #352511; animation: num-pop .6s cubic-bezier(.2, 1.6, .4, 1); }
