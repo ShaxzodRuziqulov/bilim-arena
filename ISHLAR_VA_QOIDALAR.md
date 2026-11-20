@@ -508,3 +508,10 @@ Foydalanuvchi rejani tasdiqladi. Jonlar haqida javob bermagani uchun ular standa
 - Versiya 0.8.0 → 0.9.0. Bu “minor” versiya, chunki yangi imkoniyatlar qo‘shildi.
 - `v0.9.0` tegi push qilinsa, GitHub Actions Windows o‘rnatuvchisini va imzolangan APK’ni Release’ga joylaydi. O‘rnatilgan dasturlar yangilanishni o‘zi yuklab oladi.
 - Eski natijalar va savollar yangi versiyada o‘qiladi: tanga va nominatsiyalar ixtiyoriy maydon, eski natijalarda yo‘q bo‘lsa 0 deb olinadi (test bilan tekshirilgan).
+
+## 2026-11-20 — GitHub Actions: Node 24 versiyalari
+- Muammo: 0.9.0 relizida GitHub Node 20 eskirgani haqida ogohlantirdi (`checkout@v4`, `setup-node@v4`, `setup-java@v4`, `upload-artifact@v4`). Keyinroq bu reliz chiqarishni to‘xtatib qo‘yishi mumkin edi.
+- Yangilandi: `checkout@v7`, `setup-node@v7`, `setup-java@v6`, `upload-artifact@v7`. Yig‘ish qadamlari, imzolash va Release’ga yuklash o‘zgarmadi.
+- Reliz eslatmalari ko‘rib chiqildi: biz uchun mos kelmaydigan o‘zgarish yo‘q. `setup-node` v5 dan boshlab keshni o‘zi yoqadi, lekin bizda `cache: npm` aniq yozilgan.
+- Sinov: `android-actions-yangilash` branch’ida Android workflow’i o‘tdi (APK yig‘ildi va artefakt sifatida joylandi, Release’ga hech narsa yuborilmadi). Node 20 ogohlantirishi chiqmadi.
+- Windows o‘rnatuvchisi faqat `v*` tegida yig‘iladi, u keyingi relizda tekshiriladi. U ham xuddi shu `checkout@v7` va `setup-node@v7` dan foydalanadi.
