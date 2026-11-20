@@ -472,7 +472,8 @@ export default function Race({ config, askPin, onFinish, onExit, exitLabel = 'So
         requestAnimationFrame(frame);
       });
     }
-    updateTeam(idx, () => ({ pos: to }));
+    // X-8: girdobdan keyin ko'prik bilan oldinga o'tilgan kataklar ham "Eng katta qaytish"ga qo'shiladi.
+    updateTeam(idx, (t) => ({ pos: to, comeback: t.comeback + (t.trapped && to > t.pos ? to - t.pos : 0) }));
     await sleep(reducedMotion() ? STEP_MS : 200);
   };
 

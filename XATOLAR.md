@@ -4,7 +4,7 @@ Bu ro‘yxatda topilgan, lekin hali tuzatilmagan muammolar turadi. Har birini tu
 
 Muhimlik darajasi: **Yuqori** — o‘quvchi yoki o‘qituvchi darhol sezadi; **O‘rta** — ba’zi holatlarda ko‘rinadi; **Past** — kosmetik yoki juda kam uchraydi.
 
-Tekshiruv sanasi: 2026-11-20, versiya 0.9.0.
+Tekshiruv sanasi: 2026-11-20, versiya 0.9.0. Holat: 0.9.2 da barcha 10 ta band yopildi.
 
 ---
 
@@ -35,37 +35,53 @@ Tekshiruv sanasi: 2026-11-20, versiya 0.9.0.
 **Tuzatish rejasi:** jamoalar soni 1 dan ko‘pga o‘zgarganda, foydalanuvchi nomni o‘zi o‘zgartirmagan bo‘lsa, standart nomni (“Qizillar”) qaytarish. Teskari holatda ham shunday qilish.
 
 ## X-3. Bir xil nomli jamoalar natijada aralashib ketishi mumkin — Past
+✅ **Tuzatildi (0.9.2, 2026-11-20):** bir xil nomlar o‘yin boshlanishida avtomatik farqlanadi (“A”, “A 2”; katta-kichik harf farqisiz) — `src/lib/teams.js`, tayyorgarlikda ogohlantirish chiqadi; natijalar shohsupasi jamoani tartib raqami bilan ajratadi. Testlar: `tests/teams.test.js`.
+
 **Ko‘rinishi:** o‘qituvchi ikki jamoaga bir xil nom bersa (masalan, ikkalasi ham “A”), natijalar ekranida shohsupa kartalari bir xil kalit oladi va nominatsiyalar ikkalasiga ham ko‘rsatiladi. Nominatsiyalar natijaga jamoa nomi bilan yoziladi.
 **Tuzatish rejasi:** tayyorgarlikda bir xil nomlarga ogohlantirish chiqarish yoki ularni avtomatik farqlash (“A”, “A 2”). Natijalarda kalit sifatida jamoa tartib raqamini ishlatish.
 
 ## X-4. Fon musiqasi dastur yashirilganda to‘xtamaydi yoki uzilib qoladi — O‘rta (tekshirilmagan)
+✅ **Tuzatildi (0.9.2, 2026-11-20):** `src/lib/sound.js` — sahifa yashirilsa umumiy ovoz konteksti to‘xtatiladi (Xazina musiqasi ham, effektlar ham), qaytganda davom etadi; yashirin paytda effekt chalinsa ham kontekst qayta yonmaydi. Brauzerda tekshirildi: running → suspended → (effekt) suspended → running.
+
 **Ko‘rinishi (kutilayotgan):** Xazina poygasi ochiq turganda boshqa oynaga o‘tilsa yoki dastur kichraytirilsa, musiqa chalinaveradi. Brauzer taymerlarni sekinlashtirgani uchun u uzuq-yuluq ham chiqishi mumkin.
 **Sababi:** `src/lib/race-music.js` va `src/lib/sound.js` sahifa ko‘rinishi o‘zgarishini (`visibilitychange`) kuzatmaydi. Soya o‘yinida bu holat hisobga olingan.
 **Tuzatish rejasi:** sahifa yashirinsa musiqani pasaytirish yoki to‘xtatish, qaytganda davom ettirish. Electron’da va telefonda quloq bilan tekshirish.
 
 ## X-5. Kunlik sarguzashtda javob variantlarining tartibi har kimda boshqacha — Past
+✅ **Qaror (0.9.2, 2026-11-20):** o‘zgartirilmaydi. Xarita va savollar tartibi kunlik bir xil, javob variantlarining joyi esa aralashadi — o‘quvchi to‘g‘ri javob joyini yodlab ololmaydi.
+
 **Ko‘rinishi:** bugungi xarita va savollar tartibi hamma uchun bir xil, lekin variantli savollardagi javoblarning joylashuvi har o‘yinda aralashadi.
 **Sababi:** `prepare()` (`Race.jsx`) variantlarni `Math.random` bilan aralashtiradi, kunlik urug‘dan foydalanmaydi.
 **Qaror kerak:** bu xatomi yoki yo‘qmi, o‘qituvchi aytadi. Variantlar aralashib tursa, javob joyini yodlab olib bo‘lmaydi.
 
 ## X-6. Kunlik sarguzashtni yarim tundan keyin “Yana o‘ynash” bilan davom ettirish — Past
+✅ **Tuzatildi (0.9.2, 2026-11-20):** `replayConfig()` (`race-rules.js`) — “Yana o‘ynash” bosilganda sana o‘zgargan bo‘lsa bugungi xarita va bugungi sana olinadi. Test qo‘shildi.
+
 **Ko‘rinishi:** kechqurun boshlangan kunlik sarguzashtda yarim tundan keyin “Yana o‘ynash” bosilsa, kechagi xarita ochiladi va natija kechagi kunga yoziladi.
 **Tuzatish rejasi:** “Yana o‘ynash” bosilganda sana o‘zgargan bo‘lsa, bugungi xaritani ochish yoki “Bu kechagi sarguzasht” deb ogohlantirish.
 
 ## X-7. “Eng aniq” nominatsiyasi kam javob bergan jamoaga ketishi mumkin — Past
+✅ **Tuzatildi (0.9.2, 2026-11-20):** “Eng aniq” faqat kamida 3 ta javob bergan jamoalar orasida (`MIN_ACCURATE_ANSWERS`). Test qo‘shildi.
+
 **Ko‘rinishi:** aniqlik foizda hisoblanadi: 1 ta savolga 1 ta to‘g‘ri javob (100%) 10 tadan 9 ta (90%) dan yuqori turadi. Navbatlar teng bo‘lgani uchun bu kam uchraydi, lekin muddatidan oldin yakunlangan o‘yinda bo‘lishi mumkin. Hozir bunday o‘yinda nominatsiya umuman berilmaydi.
 **Tuzatish rejasi:** kerak bo‘lsa, “Eng aniq” uchun eng kam javoblar sonini belgilash (masalan, 3 ta).
 
 ## X-8. Ko‘prikdan sakrash “Eng katta qaytish” nominatsiyasiga qo‘shilmaydi — Past
+✅ **Tuzatildi (0.9.2, 2026-11-20):** girdobdan keyin ko‘prik bilan oldinga o‘tilgan kataklar ham “Eng katta qaytish”ga qo‘shiladi (`jump()`).
+
 **Ko‘rinishi:** girdobdan keyingi qadamlar sanaladi, lekin ko‘prik bilan o‘tilgan 3 katak hisobga kirmaydi.
 **Tuzatish rejasi:** `jump()` da ham `comeback`ni oshirish.
 
 ## X-9. “Bilim maydoni” mavzusida xazina sandig‘i katagi to‘rtburchak bo‘lib qoladi — Past
+✅ **Tuzatildi (0.9.2, 2026-11-20):** `race-board.css` — “Bilim maydoni”da sandiq katagi dumaloq, shaffof oltin yorug‘lik bilan; eski to‘rtburchak fon yo‘q. Brauzerda tekshirildi.
+
 **Ko‘rinishi:** sokin mavzuda oxirgi katak chizilgan sandiq ostida to‘rtburchak sariq fon bilan chiqadi, boshqa kataklar bilan uyg‘un emas.
 **Sababi:** `styles.css` dagi `.theme-arena .node.end` uslubi yangi sandiq bilan to‘qnashadi.
 **Tuzatish rejasi:** Arena mavzusi uchun sandiq katagining alohida uslubi.
 
 ## X-10. Electron sinovi bir marta 6/10 natija berdi — O‘rta (sababi noma’lum)
+✅ **Tuzatildi (0.9.2, 2026-11-20):** 5 ta ketma-ket urinish — 12/12. Tasodifiy yiqilishlar Soya bosqichida bo‘lgani uchun: daraja endi sichqoncha bilan menyudagi “Boshlash”ni bosib boshlanadi (klaviatura fokusiga bog‘liq emas, Enter — zaxira), chiqish Esc’i zal tugmasi ko‘ringuncha takrorlanadi. Keyin yana 3 urinish — 12/12.
+
 **Ko‘rinishi:** 0.9.0 relizidan oldin `npm run smoke:electron` birinchi urinishda 6/10, kodga tegmasdan qayta ishga tushirilganda 12/12 o‘tdi.
 **Taxmin:** vaqtga bog‘liq tasodifiy nosozlik (kompyuter band bo‘lgan). Natija fayli: `%TEMP%\bilim-arena-smoke`.
 **Tuzatish rejasi:** sinovni bir necha marta ketma-ket ishga tushirib, qaysi qadamlar yiqilishini aniqlash. Kerak bo‘lsa, kutish vaqtlarini oshirish.

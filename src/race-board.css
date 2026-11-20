@@ -76,6 +76,14 @@
   animation: rb-chest-glow 1.8s ease-in-out infinite;
 }
 @keyframes rb-chest-glow { 50% { filter: drop-shadow(0 0 1.4cqw #ffd84d); } }
+/* X-9: "Bilim maydoni" mavzusidagi eski to'rtburchak katak uslubi (styles.css) sandiq ostida chiqmasin —
+   sokin oltin rangli dumaloq yorug'lik. */
+.race-wrap.theme-arena .node.end {
+  border: 0;
+  border-radius: 50%;
+  box-shadow: none;
+  background: radial-gradient(circle, #efe2b4 0, #bc9e5588 42%, transparent 70%);
+}
 .chest { width: 82%; overflow: visible; }
 .chest-lid { transform-box: fill-box; transform-origin: 0% 100%; transition: transform .6s cubic-bezier(.3, 1.6, .5, 1); }
 .chest.open .chest-lid { transform: rotate(-38deg) translate(-2px, -3px); }

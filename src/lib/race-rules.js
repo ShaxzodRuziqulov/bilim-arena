@@ -146,8 +146,11 @@ export const AWARDS = {
   spirit: { icon: '🤝', title: 'Jamoa ruhi' },
 };
 
+// X-7: "Eng aniq" — kamida shuncha javob bergan jamoalar orasida (1 ta savolga 1 ta to'g'ri = 100% ko'p javobdan ustun bo'lmasin).
+export const MIN_ACCURATE_ANSWERS = 3;
+
 const AWARD_VALUE = {
-  accurate: (t) => (t.correct + t.wrong ? t.correct / (t.correct + t.wrong) : 0),
+  accurate: (t) => (t.correct + t.wrong >= MIN_ACCURATE_ANSWERS ? t.correct / (t.correct + t.wrong) : 0),
   streak: (t) => ((t.bestRun || 0) >= 2 ? t.bestRun : 0),
   coins: (t) => t.coins || 0,
   rebound: (t) => t.rebounds || 0,
@@ -202,6 +205,16 @@ export function questionsFingerprint(questions) {
 
 // Kunlik o'yin urug'i: sana + to'plam (bugun shu to'plamni kim o'ynasa ham xarita bir xil).
 export const dailySeed = (day, setId) => hashString(`${day}|${setId}`);
+
+/**
+ * "Yana o'ynash" uchun sozlama. Oddiy o'yin — yangi tasodifiy xarita. Kunlik sarguzasht — shu kungi xarita;
+ * X-6: agar o'yin kechagi kunda boshlangan bo'lsa (yarim tundan o'tgan), bugungi xarita va bugungi sana olinadi.
+ */
+export function replayConfig(config, today = dayKey(), random = Math.random) {
+  if (!config.daily) return { ...config, seed: Math.floor(random() * 2 ** 31) };
+  if (config.daily === today) return config;
+  return { ...config, daily: today, seed: dailySeed(today, config.setId) };
+}
 
 export function seededShuffle(list, random) {
   const a = [...list];

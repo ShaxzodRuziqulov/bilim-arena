@@ -12,8 +12,27 @@ export const isSoundEnabled = () => enabled;
 // Umumiy ovoz konteksti (Xazina poygasining fon musiqasi ham shundan foydalanadi).
 export function audioContext() {
   ctx ??= new AudioContext();
-  if (ctx.state === 'suspended') ctx.resume().catch(() => {});
+  // Ilova yashirin turganda (X-4) kontekst qayta yoqilmaydi — aks holda effekt chalinishi musiqani ham uyg'otadi.
+  if (ctx.state === 'suspended' && !hiddenPaused) ctx.resume().catch(() => {});
   return ctx;
+}
+
+// X-4: ilova yashirilsa (boshqa oynaga o'tish, kichraytirish, telefonda fonga o'tish) — musiqa va effektlar to'xtaydi,
+// qaytganda davom etadi. Xazina poygasining fon musiqasi ham shu kontekstdan foydalanadi.
+let hiddenPaused = false;
+if (typeof document !== 'undefined') {
+  document.addEventListener('visibilitychange', () => {
+    if (!ctx) return;
+    if (document.hidden) {
+      if (ctx.state === 'running') {
+        hiddenPaused = true;
+        ctx.suspend().catch(() => {});
+      }
+    } else if (hiddenPaused) {
+      hiddenPaused = false;
+      ctx.resume().catch(() => {});
+    }
+  });
 }
 
 function tone(freq, start, duration, type = 'sine', volume = 0.18, endFreq = null) {

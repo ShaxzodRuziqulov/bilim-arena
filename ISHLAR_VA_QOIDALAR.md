@@ -526,3 +526,8 @@ Foydalanuvchi tayyorgarlik ekranidagi buzilgan logotipni topdi. Uni hozir tuzatm
 - **Do‘kon rasmlari:** `npm run store-assets` (`scripts/store-assets/capture.cjs`) → `store/play/`: belgi 512, sarlavha 1024×500, 8 telefon (1080×1920 va 2160×1080, sensorli taqlid — Soya keng rejimda) va 3 planshet (1920×1200) skrinshoti.
 - **Qo‘llanma:** `store/PLAY_MARKET.md` — hisob, AAB, tavsiflar (uz/ru/en), Data safety, kontent reytingi, Families ro‘yxati, yopiq sinov (12 sinovchi, 14 kun).
 - Hisob ochish (~$25, shaxsni tasdiqlash) va yopiq sinov — foydalanuvchi qiladi.
+
+## 2026-11-20 — 0.9.2: qolgan xatolar (X-3 … X-10) yopildi
+Foydalanuvchi qolgan xatolarni tavsiya bo‘yicha tuzatishni so‘radi (X-5 — o‘zgartirilmaydi, X-7 — kamida 3 ta javob). Batafsil — XATOLAR.md.
+- X-3 bir xil jamoa nomlari, X-4 yashirilganda ovoz, X-6 kunlik “Yana o‘ynash” yarim tundan keyin, X-7 “Eng aniq” chegarasi, X-8 ko‘prik va “qaytish”, X-9 Arena sandig‘i, X-10 Electron sinovi barqarorligi.
+- Tekshiruv: `npm test` — 88/88 (yangi: teams, X-6, X-7), build, Electron smoke 5+3 marta ketma-ket 12/12; brauzerda X-4 (ovoz konteksti holatlari) va X-9 (Arena sandig‘i).

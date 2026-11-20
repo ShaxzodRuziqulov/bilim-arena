@@ -3,6 +3,7 @@ import { loadData, saveData, quitApp, isDesktop, getSaveStatus, subscribeSaveSta
 import { setSoundEnabled } from './lib/sound.js';
 import { onBackButton } from './lib/platform.js';
 import { uid } from './lib/util.js';
+import { replayConfig } from './lib/race-rules.js';
 import PinModal from './components/PinModal.jsx';
 import Admin from './screens/Admin.jsx';
 import SetEditor from './screens/SetEditor.jsx';
@@ -175,7 +176,7 @@ export default function App() {
         <Results
           result={screen.result}
           // Yana o'ynash: oddiy o'yinda kataklar qayta aralashadi, kunlik sarguzashtda bugungi xarita saqlanadi.
-          onReplay={() => goGame({ name: 'play', game: screen.game, config: { ...screen.config, seed: screen.config.daily ? screen.config.seed : Math.floor(Math.random() * 2 ** 31) }, key: uid() })}
+          onReplay={() => goGame({ name: 'play', game: screen.game, config: screen.game === 'race' ? replayConfig(screen.config) : screen.config, key: uid() })}
           onReview={() => goGame({ name: 'review', game: screen.game, result: screen.result, config: screen.config })}
           onAdmin={toHall}
           adminLabel="O‘yinlar zali"

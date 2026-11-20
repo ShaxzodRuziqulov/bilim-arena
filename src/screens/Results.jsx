@@ -82,7 +82,7 @@ export default function Results({ result, onReplay, onAdmin, onReview, adminLabe
           const place = ranked.findIndex((o) => game.ranking.every((key) => (o[key] || 0) === (t[key] || 0)));
           const order = ranked.indexOf(t);
           return (
-            <div key={t.name} className={`podium-col place-${place + 1}`} style={{ '--team': t.color, '--delay': `${(ranked.length - order) * 0.18}s` }}>
+            <div key={result.teams.indexOf(t)} className={`podium-col place-${place + 1}`} style={{ '--team': t.color, '--delay': `${(ranked.length - order) * 0.18}s` }}>
               <div className="podium-card">
                 <div className="medal">{MEDALS[place]}</div>
                 <div className="podium-hero">{t.hero}</div>
