@@ -53,8 +53,8 @@ export function validateData(raw) {
     if (h.kind === 'robot') return validateRobotResult(h);
     return {id:h.id,date:text(h.date),setName:text(h.setName),trackLength:number(h.trackLength),winner:h.winner == null ? null : text(h.winner),teams:h.teams.map(t=>{
       if (!object(t)) fail('Jamoa formati noto‘g‘ri');
-      return {name:text(t.name),color:text(t.color),hero:text(t.hero),pos:number(t.pos),correct:number(t.correct),wrong:number(t.wrong)};
-    }),hard:list(h.hard).map(q=>({text:text(q.text),wrong:number(q.wrong),...(q.question ? {question:validateQuestion(q.question)} : {})}))};
+      return {name:text(t.name),color:text(t.color),hero:text(t.hero),pos:number(t.pos),correct:number(t.correct),wrong:number(t.wrong),...(t.coins === undefined ? {} : {coins:number(t.coins)})};
+    }),...(Array.isArray(h.awards) ? {awards:h.awards.filter(object).map(a=>({team:text(a.team),id:text(a.id)}))} : {}),hard:list(h.hard).map(q=>({text:text(q.text),wrong:number(q.wrong),...(q.question ? {question:validateQuestion(q.question)} : {})}))};
   }),robot:validateRobot(raw.robot)};
 }
 export function parseBackup(value) {

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { gameIdOfResult, gameOfResult } from '../games/registry.jsx';
-import { soloStars } from '../lib/race-rules.js';
+import { AWARDS, soloStars } from '../lib/race-rules.js';
 
 const MEDALS = ['🥇', '🥈', '🥉', '4'];
 
@@ -28,8 +28,9 @@ function CountUp({ value, delay = 0 }) {
 export default function Results({ result, onReplay, onAdmin, onReview, adminLabel = 'Sozlamalar' }) {
   // Tartib va ko'rsatkichlar o'yin modulidan olinadi (masalan: poygada qadamlar, robotda yulduzlar).
   const game = gameOfResult(result);
-  const [main, second] = game.ranking;
-  const ranked = [...result.teams].sort((a, b) => b[main] - a[main] || b[second] - a[second]);
+  // Tartib maydonlari ketma-ket solishtiriladi (yo'q maydon — 0, masalan eski natijalardagi tangalar).
+  // Natijasi teng jamoalar bir xil o'rinda turadi (quyida `place`).
+  const ranked = [...result.teams].sort((a, b) => game.ranking.reduce((d, key) => d || (b[key] || 0) - (a[key] || 0), 0));
   // Shohsupada g'olib o'rtada turadi: 2 — 1 — 3 — 4.
   const stage = ranked.length >= 3 ? [ranked[1], ranked[0], ...ranked.slice(2)] : ranked;
   // Yakka Xazina poygasi: shohsupa o'rniga bitta o'yinchi kartasi va yulduzlar.
@@ -78,7 +79,7 @@ export default function Results({ result, onReplay, onAdmin, onReview, adminLabe
       <div className="podium">
         {stage.map((t) => {
           // Natijasi teng jamoalar bir xil o'rinni egallaydi.
-          const place = ranked.findIndex((o) => o[main] === t[main] && o[second] === t[second]);
+          const place = ranked.findIndex((o) => game.ranking.every((key) => (o[key] || 0) === (t[key] || 0)));
           const order = ranked.indexOf(t);
           return (
             <div key={t.name} className={`podium-col place-${place + 1}`} style={{ '--team': t.color, '--delay': `${(ranked.length - order) * 0.18}s` }}>
@@ -98,6 +99,18 @@ export default function Results({ result, onReplay, onAdmin, onReview, adminLabe
                     </div>
                   ))}
                 </div>
+                {/* Xazina poygasi nominatsiyalari (2026-11-20 dan; eski natijalarda yo'q). */}
+                {result.awards?.some((a) => a.team === t.name && AWARDS[a.id]) && (
+                  <div className="podium-awards">
+                    {result.awards
+                      .filter((a) => a.team === t.name && AWARDS[a.id])
+                      .map((a) => (
+                        <span key={a.id} title={AWARDS[a.id].title}>
+                          {AWARDS[a.id].icon} {AWARDS[a.id].title}
+                        </span>
+                      ))}
+                  </div>
+                )}
               </div>
               <div className="podium-base">{place + 1}</div>
             </div>

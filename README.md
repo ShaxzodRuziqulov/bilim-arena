@@ -30,8 +30,18 @@ Dastur bepul; rasmiy faylni o‘zgartirmasdan ulashish mumkin, sotish mumkin ema
   To‘plamni Excel’ga eksport ham qilish mumkin (rasmlar faqat JSON eksportda saqlanadi).
 - **Avtomatik yangilanish** — o‘rnatilgan dastur GitHub Releases’dan yangi versiyani fonda yuklab oladi
   va dastur yopilganda o‘rnatadi (Sozlamalar → Yangilanishlar).
-- **Xazina poygasi** — 2–4 jamoa navbat bilan doskaga chiqib javob beradi. To‘g‘ri javob — 1 qadam oldinga,
-  ⭐ bonus katak (+1), 🌀 girdob (−1). Bir jamoa xazinaga yetgach, davra oxirigacha navbatlar tenglashtiriladi. Qadamlar, keyin to‘g‘ri javoblar soni solishtiriladi; teng natija — durang.
+- **Xazina poygasi** — yakka yoki 2–4 jamoa. Jamoalar navbat bilan doskaga chiqib javob beradi. O‘yin chizilgan orol xaritasida o‘tadi: qahramonlar yo‘l bo‘ylab yuradi, fonda kod ichida yaratilgan musiqa chaladi (🎵 tugmasi bilan o‘chadi).
+  To‘g‘ri javob — 1 qadam oldinga. Bir jamoa xazinaga yetgach, davra oxirigacha navbatlar tenglashtiriladi.
+  G‘olib qadamlar, keyin to‘g‘ri javoblar, keyin tangalar soni bo‘yicha aniqlanadi; hammasi teng bo‘lsa — durang.
+  Tayyorgarlikdagi qo‘shimcha qoidalar (hammasi yoqilgan, istaganini o‘chirish mumkin; hammasi o‘chirilsa — klassik poyga):
+  - *Yangi kataklar:* ⭐ bonus (+1), 🌀 girdob (−1), 🎁 sandiq (🛡 qalqon), ⚡ chaqmoq savol (vaqt yarmi, +2 qadam), 🌉 ko‘prik (3 katak oldinga). Kataklar har o‘yinda aralashadi, lekin hamma jamoa uchun bir joyda turadi;
+  - *Seriya 🔥:* ketma-ket 3 ta to‘g‘ri javob — +1 qadam;
+  - *Kuchaytirgichlar:* har jamoaga bir martadan 50/50 va +15 soniya;
+  - *Ilib olish va tangalar:* xato javobni keyingi jamoa topsa 🪙 oladi, tez javob ham 🪙 beradi;
+  - *Jonlar ❤️ (yakka):* 3 ta jon, jon tugasa “Kema cho‘kdi”.
+
+  Jamoaviy o‘yin oxirida shohsupa va nominatsiyalar bo‘ladi (🎯 🔥 🪙 🦅 💪, har jamoa kamida bitta oladi).
+  Yakka o‘yinda 🗓 **Kunlik sarguzasht** bor: bugungi xarita hamma uchun bir xil, rekord shu qurilmada saqlanadi.
 - **Robot dasturlash** — bitta zinapoya, 16 daraja, savol to‘plami kerak emas:
   - *1–10: Bloklar* (5–7-sinf) — tugmalar bilan buyruqlar, P funksiyasi va rekursiya; kam buyruq bilan yechilsa ko‘proq yulduz;
   - *11–16: Java* (8–11-sinf) — haqiqiy Java kodi (metod, int, for, while, if), xatolar o‘zbekcha va qator raqami bilan;

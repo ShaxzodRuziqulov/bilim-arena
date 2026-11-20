@@ -77,3 +77,15 @@
   .rs-logo small { margin: 0; }
   .rs-tag { display: none; }
 }
+
+/* Qo'shimcha qoidalar (2-faza) */
+.race-setup .mech-list { display: grid; grid-template-columns: 1fr; gap: 8px; margin-bottom: 12px; }
+.race-setup .mech-item { display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; border-radius: 12px; border: 1px solid #2a5566; background: #0f2f3c; cursor: pointer; margin: 0; }
+.race-setup .mech-item.on { border-color: var(--gold); background: #133f4d; }
+.race-setup .mech-item input { width: 22px; height: 22px; margin-top: 2px; flex-shrink: 0; accent-color: #ffd36b; }
+.race-setup .mech-item b { display: block; font-size: 15px; }
+.race-setup .mech-item small { display: block; color: #a9cbd3; font-size: 13px; margin-top: 2px; line-height: 1.35; }
+
+/* Kunlik sarguzasht (3-faza) */
+.race-setup .daily-box { display: grid; gap: 6px; margin-top: 12px; }
+.race-setup .daily-box small { color: #a9cbd3; font-size: 13px; line-height: 1.4; }

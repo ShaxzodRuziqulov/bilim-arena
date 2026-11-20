@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { playableQuestions, uid } from '../lib/util.js';
 import TeamPicker, { freshTeams, pickTeams } from '../components/TeamPicker.jsx';
+import { DEFAULT_MECH, MECHANICS, dailySeed, dayKey, questionsFingerprint } from '../lib/race-rules.js';
+import { dailyRecord, dailyStorage, dayStreak } from '../lib/race-daily.js';
 import '../race-setup.css';
 
 export default function GameSetup({ data, setId, solo = false, go }) {
@@ -13,20 +15,35 @@ export default function GameSetup({ data, setId, solo = false, go }) {
   const [trackLength, setTrackLength] = useState(data.settings.trackLength);
 
   const [theme, setTheme] = useState('adventure');
+  // Qo'shimcha qoidalar: standart holatda hammasi yoqilgan, o'qituvchi istaganini o'chiradi.
+  const [mech, setMech] = useState(DEFAULT_MECH);
+  // Ilib olish — faqat jamoalarda, jonlar — faqat yakka o'yinda.
+  const shownMechanics = MECHANICS.filter((m) => (isSolo ? !m.teamsOnly : !m.soloOnly));
 
   const set = data.sets.find((s) => s.id === currentSetId);
   const questions = set ? playableQuestions(set) : [];
 
-  const start = () =>
+  // Kunlik sarguzasht: bugungi xarita va savollar tartibi sana + to'plamga bog'liq.
+  // Rekord to'plam tarkibiga ham bog'liq: savollar o'zgarsa, bugun uchun yangi rekord boshlanadi.
+  const today = dayKey();
+  const fingerprint = questions.length ? `${questionsFingerprint(questions)}-${trackLength}` : '';
+  const todayBest = isSolo && set ? dailyRecord(dailyStorage(), today, set.id, fingerprint) : null;
+  const streakDays = isSolo ? dayStreak(dailyStorage(), today) : 0;
+
+  const start = (isDaily = false) =>
     go({
       name: 'play',
       game: 'race',
       key: uid(),
       config: {
+        setId: set.id,
         setName: set.name,
         subject: set.subject,
         grade: set.grade,
         theme,
+        mech,
+        seed: isDaily ? dailySeed(today, set.id) : Math.floor(Math.random() * 2 ** 31),
+        ...(isDaily ? { daily: today } : {}),
         questions,
         teams: pickTeams(teams, count),
         time,
@@ -104,6 +121,18 @@ export default function GameSetup({ data, setId, solo = false, go }) {
           </div>
           <label>O‘yin muhiti</label>
           <div className="theme-picker"><button className={theme === 'adventure' ? 'selected' : ''} onClick={() => setTheme('adventure')}><span>🏝️</span><b>Sarguzasht</b><small>Rangli orol va xazina</small></button><button className={theme === 'arena' ? 'selected' : ''} onClick={() => setTheme('arena')}><span>◆</span><b>Bilim maydoni</b><small>Sokin ranglar va aniq yo‘l</small></button></div>
+          <label className="mt">Qo‘shimcha qoidalar</label>
+          <div className="mech-list">
+            {shownMechanics.map((m) => (
+              <label key={m.id} className={`mech-item ${mech[m.id] ? 'on' : ''}`}>
+                <input type="checkbox" checked={mech[m.id]} onChange={(e) => setMech((x) => ({ ...x, [m.id]: e.target.checked }))} />
+                <span>
+                  <b>{m.title}</b>
+                  <small>{m.text}</small>
+                </span>
+              </label>
+            ))}
+          </div>
           {isSolo ? (
             <div className="rules note">
               <b>Yakka o‘yin:</b> savollarga ketma-ket javob berasiz. To‘g‘ri javob — 1 qadam oldinga, xato javobda joyda qolasiz.
@@ -113,8 +142,8 @@ export default function GameSetup({ data, setId, solo = false, go }) {
           ) : (
           <div className="rules note">
             <b>Qoidalar:</b> jamoalar navbat bilan doskaga chiqadi. To‘g‘ri javob — 1 qadam oldinga.
-            ⭐ katakka tushsangiz +1 bonus qadam, 🌀 girdobga tushsangiz 1 qadam orqaga (har bir katak
-            jamoaga bir marta ta’sir qiladi). Bir jamoa xazinaga yetgach, davra oxirigacha qolgan jamoalar ham navbatini o‘ynaydi. Avval qadamlar, keyin to‘g‘ri javoblar soni solishtiriladi. Ikkalasi teng bo‘lsa — durang. Har navbatda boshqa o‘quvchi chiqsin.
+            ⭐ katakka tushsangiz +1 bonus qadam, 🌀 girdobga tushsangiz 1 qadam orqaga (har bir maxsus katak
+            jamoaga bir marta ta’sir qiladi, kataklar hamma uchun bir joyda). Bir jamoa xazinaga yetgach, davra oxirigacha qolgan jamoalar ham navbatini o‘ynaydi. Avval qadamlar, keyin to‘g‘ri javoblar, keyin tangalar solishtiriladi. Hammasi teng bo‘lsa — durang. Har navbatda boshqa o‘quvchi chiqsin.
           </div>
           )}
         </div>
@@ -124,10 +153,22 @@ export default function GameSetup({ data, setId, solo = false, go }) {
           <TeamPicker count={count} setCount={setCount} teams={teams} setTeams={setTeams} allowSolo />
           {/* Telefonda bu tugma ekran pastiga mahkamlanadi (setup-start) — sozlamalarni surib o'tirish shart emas. */}
           <div className="setup-start">
-            <button className="btn primary big full" disabled={questions.length === 0} onClick={start}>
+            <button className="btn primary big full" disabled={questions.length === 0} onClick={() => start(false)}>
               ▶ O‘yinni boshlash
             </button>
           </div>
+          {isSolo && (
+            <div className="daily-box">
+              <button className="btn gold big full" disabled={questions.length === 0} onClick={() => start(true)}>
+                🗓 Kunlik sarguzasht
+              </button>
+              <small>
+                Bugungi xarita hamma uchun bir xil, ertaga yangisi.{' '}
+                {todayBest ? `Bugungi rekord: ${'★'.repeat(todayBest.stars) || '—'} · ${todayBest.pos}/${trackLength} qadam.` : 'Bugun hali o‘ynalmagan.'}
+                {streakDays > 1 && ` 🔥 ${streakDays} kun ketma-ket.`}
+              </small>
+            </div>
+          )}
         </div>
       </main>
     </div>

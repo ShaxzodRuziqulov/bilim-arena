@@ -252,3 +252,7 @@
   .question-overlay { top: 0; }
   .question-overlay .question-card { width: 97%; height: 95%; padding: 2.2cqh 2cqw; }
 }
+
+/* Natijalar: Xazina poygasi nominatsiyalari */
+.podium-awards { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-top: 10px; }
+.podium-awards span { padding: 3px 10px; border-radius: 99px; font-size: .82rem; font-weight: 800; background: color-mix(in srgb, var(--team) 22%, transparent); border: 1px solid var(--team); }

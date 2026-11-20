@@ -174,7 +174,8 @@ export default function App() {
       content = (
         <Results
           result={screen.result}
-          onReplay={() => goGame({ name: 'play', game: screen.game, config: screen.config, key: uid() })}
+          // Yana o'ynash: oddiy o'yinda kataklar qayta aralashadi, kunlik sarguzashtda bugungi xarita saqlanadi.
+          onReplay={() => goGame({ name: 'play', game: screen.game, config: { ...screen.config, seed: screen.config.daily ? screen.config.seed : Math.floor(Math.random() * 2 ** 31) }, key: uid() })}
           onReview={() => goGame({ name: 'review', game: screen.game, result: screen.result, config: screen.config })}
           onAdmin={toHall}
           adminLabel="O‘yinlar zali"

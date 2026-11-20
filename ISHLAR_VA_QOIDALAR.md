@@ -381,3 +381,124 @@ Foydalanuvchi telefonda sinadi: yon tomonga buriladigan o‘yinlar kichik, boshl
 - Doimiy imzolash kaliti yaratildi (PKCS12, RSA 4096, 30 yil). Zaxira nusxa va parol: `C:\Users\Shaxsiy\shaxsiy\_zaxira\bilim-arena-android-kalit\` — repoda yo‘q. GitHub maxfiy sozlamalari: `BILIM_KEYSTORE_BASE64`, `BILIM_KEYSTORE_PASSWORD`, `BILIM_KEY_ALIAS`.
 - Imzolangan release APK sinov yig‘ishida tekshirildi: APK ichida aynan shu sertifikat va v2 imzo bloki bor.
 - Bundan keyin har `v*` tegida Release’ga `Bilim-Arena-Setup.exe` va `Bilim-Arena.apk` qo‘shiladi; APK yangi versiyasi eski ustidan o‘rnatiladi (sinov debug APK’lari bundan mustasno — ularni o‘chirib o‘rnatish kerak).
+
+## 2026-11-20 — Xazina poygasi: 1-faza, yangi ko‘rinish (qoidalar o‘zgarmadi)
+Reja 5 fazali: 0) maket (foydalanuvchi o‘tkazib yuborishni so‘radi), 1) ko‘rinish, 2) yangi mexanikalar, 3) final va yakka rejim, 4) tekshiruv. Bu yozuv — faqat 1-faza.
+- **Orol xaritasi** (`src/components/RaceScenery.jsx`): dengizdagi to‘lqinlar suzib turadi, notekis qirg‘oqli orolning atrofida ko‘pik va sayozlik bor. Ustida qumli yo‘l, soyasi va izlari bilan. Bezaklar SVG’da chizilgan: palma barglari tebranadi, tog‘ qorli, vulqon tutaydi, toshlar va kema to‘lqinda chayqaladi. Emoji bezaklar olib tashlandi. Telefonda sahna cho‘zilganda bezaklar cho‘zilmaydi.
+- **Silliq yo‘l** (`src/lib/race-track.js`): kataklar endi to‘g‘ri chiziqli “ilon”da emas, silliq egri yo‘lda teng oraliqda joylashgan. Burilishlar yumaloq.
+- **Qahramon yo‘l bo‘ylab yuradi**: endi katakdan katakka to‘g‘ri chiziq bilan o‘tmaydi, yo‘l egrisi bo‘ylab sakrab boradi. Ostida soyasi bor, qo‘nganda chang ko‘tariladi. Girdobda aylanib orqaga qaytadi. Animatsiyalar o‘chirilganda bularning o‘rniga avvalgi tempdagi oddiy qadam qo‘yiladi.
+- **Kataklar**: qumdagi tosh plitalar; ⭐ yorqin tus olib, porlab turadi; 🌀 belgisi aylanadi. Maxsus katak ishga tushganda halqa “portlaydi”. Oxirida 💰 o‘rniga chizilgan sandiq turadi: birinchi jamoa yetib kelganda qopqog‘i ochilib, tangalar chiqadi.
+- **Hisob paneli**: har jamoada o‘rin belgisi (1/2/3 — oltin, kumush, bronza), o‘rin o‘zgarganda u “sakraydi”. Peshqadam qahramon boshida 👑, durang bo‘lsa toj ko‘rsatilmaydi. O‘rin poyga qoidasi bo‘yicha hisoblanadi: avval qadamlar, keyin to‘g‘ri javoblar.
+- **Fon musiqasi** (`src/lib/race-music.js`): quvnoq orol kuyi kod ichida sintez qilinadi, fayl yoki litsenziya kerak emas. Savol paytida ovozi pasayadi, pauzada jim bo‘ladi, g‘alabada to‘xtaydi. HUD’dagi 🎵 tugmasi musiqani yoqib-o‘chiradi, tanlov brauzerda eslab qolinadi. Platformadagi “Ovoz va musiqa” sozlamasi o‘chirilsa, musiqa ham chalinmaydi.
+- **Ovozlar**: qadamda ikki xil balandlikdagi tovush, girdobda pasayuvchi “vizillash”, g‘alabada tangalar jarangi.
+- “Bilim maydoni” mavzusi avvalgidek sokin ko‘rinishda qoldi: bezaklar yashirilgan, xarita xira ranglarda. Xato savollarni takrorlash ekrani o‘zgarmadi.
+
+### Tekshiruv
+- `npm test` — 65/65 o‘tdi, shulardan 4 tasi `tests/race-track.test.js` dagi yangi testlar: kataklar soni, sahna ichida joylashishi, oraliqlar, yo‘l chetidagi nuqtalar.
+- `npm run build` — muvaffaqiyatli.
+- Brauzerda tekshirildi: 3 jamoa bilan 12 qadamli xarita, to‘g‘ri javobdan keyin yo‘l bo‘ylab yurish, toj va o‘rin belgilari, sandiq qopqog‘ining ochilishi. 752×336 telefon o‘lchamida bezaklar cho‘zilmagan. Konsolda xato yo‘q.
+- Tekshirilmagan: Electron smoke, haqiqiy telefon/doska, musiqani quloq bilan eshitib ko‘rish, girdob va bonus kataklari, oxirigacha o‘ynalgan to‘liq o‘yin.
+
+## 2026-11-20 — Xazina poygasi: 2-faza, yangi mexanikalar
+Foydalanuvchi to‘rtala mexanikani tanladi, standart holatda hammasi yoqilgan. Tayyorgarlik ekranidagi “Qo‘shimcha qoidalar” bo‘limida har birini o‘chirish mumkin. Hammasi o‘chirilsa, o‘yin avvalgi klassik poyga bo‘lib qoladi: ⭐ 30%, 🌀 55%, ⭐ 80%.
+
+### Yangi qoidalar (`src/lib/race-rules.js`)
+1. **Yangi kataklar.**
+   - 🎁 sandiq — 🛡 qalqon beradi: keyingi 🌀 girdob ta’sir qilmaydi.
+   - ⚡ chaqmoq — jamoaning keyingi savoli chaqmoq bo‘ladi: vaqti yarmi (kamida 10 soniya), to‘g‘ri javob +2 qadam.
+   - 🌉 ko‘prik — burilishda 3 katak oldinga sakratadi.
+   - Kataklar har o‘yinda aralashadi, lekin bir o‘yinda hamma jamoa uchun bir joyda turadi. Ikki maxsus katak yonma-yon tushmaydi, ko‘prik qo‘nadigan katak oddiy bo‘ladi.
+   - 8 qadamli qisqa yo‘lda ko‘prik bo‘lmaydi.
+   - Avvalgidek: har maxsus katak jamoaga bir marta ta’sir qiladi, katak keltirgan harakat yana katakni ishga tushirmaydi.
+   - “Yana o‘ynash” bosilganda kataklar qaytadan aralashadi.
+2. **Seriya 🔥.** Ketma-ket 3 ta to‘g‘ri javob +1 bonus qadam beradi, keyin hisob noldan boshlanadi. Xato yoki vaqt tugashi seriyani uzadi.
+3. **Kuchaytirgichlar.** Har jamoada bir martadan 50/50 (variantli savolda to‘g‘ri javob va bitta xato qoladi) va +15 soniya bor. Vaqt cheklanmagan o‘yinda +15 soniya chiqmaydi.
+4. **Ilib olish va tangalar.**
+   - Variantli savolda (kamida 2 variant qolsa) jamoa xato qilsa yoki vaqti tugasa, keyingi jamoa javob berib ko‘radi. To‘g‘ri topsa +1 🪙 oladi, ✓/✗ statistikasi o‘zgarmaydi. “O‘tkazib yuborish” tugmasi bor.
+   - Vaqtning birinchi uchdan birida berilgan to‘g‘ri javob ham +1 🪙 beradi.
+   - Yakka o‘yinda ilib olish yo‘q.
+5. **G‘olibni aniqlash.** Avval qadamlar, keyin to‘g‘ri javoblar, keyin tangalar solishtiriladi. Uchalasi ham teng bo‘lsa — durang. Eski natijalarda tanga yo‘q va 0 deb olinadi.
+
+### Ekranlar
+- **Taxta:** yangi kataklar o‘z rangida, ko‘prik chizilgan arqonli yo‘lak. Har katakninng o‘z xabari va halqa animatsiyasi bor.
+- **Hisob paneli:** har jamoada 🪙, 🔥, 🛡, ⚡ belgilari. Kuchaytirgich ishlatilgach, uning belgisi xira bo‘lib qoladi.
+- **Savol kartasi:** 50/50 va +15 s tugmalari, chaqmoq savol belgisi va moviy ramka, ilib olish bosqichi (ramka ilib olayotgan jamoa rangida). Fikr-mulohazada tanga, seriya va ilib olish natijasi yoziladi.
+- **Natijalar:** tanga saqlanadi va shohsupada ko‘rinadi. O‘rin barcha tartib maydonlari bo‘yicha hisoblanadi.
+
+### Tekshiruv
+- `npm test` — 74/74 o‘tdi. Yangi `tests/race-mechanics.test.js` dagi testlar: klassik joylashuv, 5 xil uzunlikda 40 tadan aralash joylashuv, bir xil urug‘, ko‘prik joyi, chaqmoq vaqti, tez javob, ilib olish shartlari, 50/50, tangalar bilan g‘olib.
+- `npm run build` — muvaffaqiyatli. `npm run smoke:electron` — 12/12.
+- Brauzerda tekshirildi:
+  - tayyorgarlikda 4 ta o‘chirgich (hammasi yoqilgan);
+  - xarita yangi kataklar va ko‘prik bilan;
+  - +15 s (taymer 26 → 41), 50/50 (4 variantdan 2 tasi qoldi);
+  - ⚡ katakdan keyin 15 soniyali chaqmoq savol;
+  - ilib olish bosqichi va uning natijasi, seriya belgisi;
+  - muddatidan oldin yakunlashda natijalar ekrani, teng natijada durang.
+- Tekshirilmagan: ko‘prik sakrashi va sandiq qalqonining girdobdan saqlashi brauzerda ko‘rilmadi (faqat kod va qoidalar testi bor); oxirigacha o‘ynalgan to‘liq o‘yin; haqiqiy doska va telefon.
+- Ishlab chiqish paytida bitta muammo bo‘ldi: Vite dev-server Results.jsx ga `sed` orqali kiritilgan o‘zgarishni sezmadi va eski nusxani berib turdi. Fayl qayta saqlangach tuzaldi. Build va diskdagi kodda xato yo‘q edi.
+
+## 2026-11-20 — Xazina poygasi: 3-faza, final marosimi va yakka rejim
+Foydalanuvchi rejani tasdiqladi. Jonlar haqida javob bermagani uchun ular standart holatda yoqilgan, o‘chirish mumkin.
+
+### Jamoaviy o‘yin: g‘alaba marosimi
+- O‘yin tugaganda “kamera” xazinaga yaqinlashadi (taxta 1,7 baravar kattalashadi) va sandiq ochiladi.
+- Keyin shohsupa chiqadi: qahramonlar 3 → 2 → 1 tartibida pog‘onaga sakrab chiqadi, g‘olibga 👑 tushadi. Teng natijali jamoalar bir xil o‘rinda turadi. 4-jamoa shohsupa ostida ko‘rsatiladi.
+- **Nominatsiyalar** (`teamAwards`): 🎯 Eng aniq, 🔥 Eng uzun seriya (kamida 2 ta), 🪙 Eng ko‘p tanga, 🦅 Eng ko‘p ilib olgan, 💪 Eng katta qaytish (girdobdan keyingi qadamlar).
+  - Teng natijada nominatsiyani hamma teng jamoalar oladi.
+  - Ko‘rsatkich hamma jamoada bir xil bo‘lsa, bu nominatsiya berilmaydi.
+  - Hech narsa olmagan jamoaga 🤝 Jamoa ruhi beriladi.
+  - Nominatsiyalar faqat oxirigacha o‘ynalgan o‘yinda beriladi, muddatidan oldin yakunlansa — yo‘q.
+- Nominatsiyalar natijaga yoziladi va natijalar ekranida shohsupa kartalarida ko‘rinadi. Eski natijalar avvalgidek o‘qiladi.
+
+### Yakka rejim
+- **❤️ Jonlar** (tayyorgarlikda o‘chirsa bo‘ladi): 3 ta jon, har xato yoki vaqt tugashi bitta jonni oladi. 🎁 sandiq qalqon o‘rniga +1 ❤️ beradi (ko‘pi bilan 3 ta). Jon tugasa “🚢 Kema cho‘kdi!” chiqadi, natija saqlanadi va yulduz berilmaydi.
+- **🗓 Kunlik sarguzasht:** kataklar joyi va savollar tartibi sana + to‘plamga bog‘liq, shu kuni hamma uchun bir xil. “Yana o‘ynash” bugungi xaritani saqlaydi.
+  - Rekord (yulduz, keyin qadam, keyin kam xato) shu qurilmada saqlanadi (`src/lib/race-daily.js`, oxirgi 90 ta yozuv). Ketma-ket o‘ynalgan kunlar ham hisoblanadi.
+  - Tayyorgarlikda bugungi rekord, g‘alaba yoki cho‘kish oynasida “Bugungi rekord!” ko‘rsatiladi.
+
+### Savollar o‘zgarsa nima bo‘ladi (foydalanuvchi savoli)
+- **Yangi fan yoki to‘plam:** poyga hech qaysi fanga bog‘lanmagan, istalgan to‘plam bilan ishlaydi.
+- **O‘yin paytida savollar tahrirlansa:** o‘yin boshlanganda savollar nusxasi olinadi, ketayotgan o‘yinga ta’sir qilmaydi.
+- **Savollar qadamlardan kam bo‘lsa:** to‘plam tugagach qayta aralashtirilib takrorlanadi (tayyorgarlikda ogohlantirish bor).
+- **Kunlik rekord** sana, to‘plam, to‘plam tarkibining izi (`questionsFingerprint`) va yo‘l uzunligiga bog‘langan. Savol qo‘shilsa, o‘chirilsa, tahrirlansa yoki qadamlar soni o‘zgarsa, shu kun uchun yangi rekord boshlanadi. Eskisi o‘chmaydi, faqat boshqa savollar bilan qo‘yilgan natija bilan solishtirilmaydi. Savollar tartibi o‘zgarsa, iz o‘zgarmaydi.
+- **Uzun savol, kod yoki rasm:** savol kartasi ko‘taradi. Chaqmoq savolda kamida 10 soniya qoladi, asosiy vaqtni o‘qituvchi oshirishi mumkin.
+
+### Tekshiruv
+- `npm test` — 83/83. Yangi `tests/race-phase3.test.js` dagi testlar:
+  - nominatsiyalar: teng natija, bir xil ko‘rsatkich, yakka o‘yin;
+  - kunlik urug‘ va savollar tartibining takrorlanishi;
+  - to‘plam izi: savol qo‘shish, o‘chirish, tahrirlash, tartib almashtirish;
+  - kunlik rekord: birinchi, yaxshiroq va yomonroq natija, to‘plam o‘zgarishi;
+  - ketma-ket kunlar va buzilgan xotira;
+  - natija formatida tanga va nominatsiyalar, eski natijalar.
+- `npm run build` — muvaffaqiyatli. `npm run smoke:electron` — 12/12.
+- Brauzerda avtomatik o‘yinchi bilan tekshirildi:
+  - 3 jamoa, 8 qadam — oxirigacha o‘ynalgan o‘yin, xazinaga yaqinlashish, shohsupa va 5 ta nominatsiya. Natijalar ekranida nominatsiyalar saqlangan.
+  - Yakka kunlik sarguzasht: 3 ta xato → ❤️ 3 → 0 → “Kema cho‘kdi”. “Yana o‘ynash” — kataklar xuddi o‘sha joyda. Xatosiz o‘yin → ★★★, “Bugungi rekord!”. Tayyorgarlikda rekord ko‘rindi.
+- Tekshirilmagan: marosimning telefon ekranidagi ko‘rinishi (CSS’da past ekran uchun moslama bor, lekin ko‘rilmagan), haqiqiy doska, kunlik sarguzashtda kun almashishi (yarim tun).
+- Kuzatuv: yaqqol g‘olib bitta jamoa ko‘p nominatsiyani (masalan, 3 tasini) olishi mumkin, qolganlar “Jamoa ruhi” oladi. Darsda bu qanday qabul qilinishini ko‘rish kerak.
+
+## 2026-11-20 — Xazina poygasi: 4-faza, yakuniy tekshiruv va tuzatishlar
+### Tekshiruv (kod o‘zgartirilmasdan)
+- Kod ko‘rib chiqildi: o‘yin ekrani, qoidalar, natijalar va saqlash formati.
+- Brauzerda avtomatik o‘yinchi bilan sinaldi:
+  - 4 jamoa, vaqt cheklanmagan, “Bilim maydoni” mavzusi, 8 qadam — oxirigacha o‘ynalgan o‘yin, marosim va 4-o‘rin;
+  - ilib olish paytida pauza;
+  - xato savollarni takrorlash rejimi;
+  - telefon o‘lchamida (752×336) savol kartasi, ilib olish va marosim;
+  - animatsiyalar o‘chirilgan rejim.
+
+  Konsolda yangi xato chiqmadi.
+- Foydalanuvchi to‘rtta tuzatishni tasdiqladi.
+
+### Tuzatishlar
+1. “Kema cho‘kdi”da fon musiqasi endi to‘xtaydi (avval faqat g‘alabada to‘xtardi).
+2. **Nominatsiyalar adolatli:** bitta jamoa ko‘pi bilan 2 ta nominatsiya oladi (`MAX_AWARDS_PER_TEAM`), ortiqchasi shu ko‘rsatkich bo‘yicha keyingi eng yaxshi jamoaga o‘tadi. Avval 2 jamoali o‘yinda g‘olib 5 tadan 4 tasini olgan edi.
+3. **Girdob dastlabki 3 katakda turmaydi** (`TRAP_FROM = 4`). Sinovda girdob 1-katakda chiqib, birinchi to‘g‘ri javob jamoani startga qaytargan edi. Barcha uzunlikdagi yo‘llarda hamma kataklar sig‘ishi qayta tekshirildi (500 ta urug‘).
+4. **Javob va ilib olish faqat bir marta qabul qilinadi:** tugma juda tez ikki marta bosilsa, ikkinchisi e’tiborsiz qoldiriladi. Brauzerda ilib olishda tekshirildi — ikki marta bosilganda bitta tanga berildi.
+
+### Tekshiruv dalillari
+- `npm test` — 84/84. Yangi testlar: nominatsiya limiti va girdobning boshida turmasligi.
+- `npm run build` — muvaffaqiyatli. `npm run smoke:electron` — 12/12.
+- Tekshirilmagan: musiqaning to‘xtashi quloq bilan eshitib ko‘rilmadi (faqat kodda), haqiqiy doska va telefon, yarim tunda kunlik xaritaning almashishi.
