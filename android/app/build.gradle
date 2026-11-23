@@ -6,10 +6,15 @@ def appVersion = pkg.version
 def (vMajor, vMinor, vPatch) = appVersion.tokenize('.').collect { it.replaceAll(/\D.*/, '') as int }
 // Imzolash kaliti faqat muhit o'zgaruvchilaridan (GitHub Actions maxfiy sozlamalari). Kalit repoga yozilmaydi.
 def keystorePath = System.getenv('BILIM_KEYSTORE')
+def githubUpdates = providers.gradleProperty('githubUpdates').map { it == 'true' }.getOrElse(false)
 
 android {
     namespace = "uz.bilimarena.app"
     compileSdk = rootProject.ext.compileSdkVersion
+    buildFeatures {
+        buildConfig = true
+    }
+    sourceSets.main.java.srcDir(githubUpdates ? 'src/github/java' : 'src/play/java')
     defaultConfig {
         applicationId "uz.bilimarena.app"
         minSdkVersion rootProject.ext.minSdkVersion
@@ -40,6 +45,10 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+    if (githubUpdates) {
+        sourceSets.release.manifest.srcFile 'src/github/AndroidManifest.xml'
+        sourceSets.debug.manifest.srcFile 'src/github/AndroidManifest.xml'
     }
 }
 

@@ -93,6 +93,12 @@ Maktabdagi 5–11-sinf o‘quvchilarini darsga qiziqtirish, jamoaviy ishtirok va
 - Veb ZIP statik serverga joylashtirish uchun. Android APK GitHub orqali yuklanadi. Google Play yoki Apple App Store’da e’lon qilish alohida jarayon.
 - Birlashtirilgan kodda mahalliy 89/89 avtomatik test, Vite build va vaqtinchalik profil bilan Electron’da 6/6 tekshiruv o‘tdi. To‘rtta o‘yin joriy yig‘ilmadan ochildi.
 
+## 2026-11-23 — Android ilova ichidan yangilash
+
+- GitHub orqali tarqatiladigan Android APK’da «Sozlamalar → Umumiy → Yangilanishlar» joriy versiyani va «Yangilash» tugmasini ko‘rsatadi. Tugma eng yangi barqaror relizni tekshiradi. Yangisi topilsa APK yuklanadi va uning paket nomi, versiyasi va imzosi tekshiriladi. Ilova joriy ma’lumotni diskka yozgach Android tasdiqlash oynasini ochadi.
+- Android o‘rnatish ruxsatini so‘rasa, sozlamadan qaytilgach tugma qayta bosiladi. Internet ishlamasa yoki yangi relizda APK bo‘lmasa, ilova xabar ko‘rsatadi va o‘yinlar ishlashda davom etadi. Google Play AAB varianti do‘kon orqali yangilanadi va GitHub yuklovchisi hamda o‘rnatish ruxsatini o‘z ichiga olmaydi.
+- 89/89 avtomatik test, Vite build va Android ko‘prigi taqlidida 6/6 UI tekshiruvi o‘tdi. Testlar versiya, so‘nggi reliz, o‘rnatish ruxsati, o‘rnatuvchi uchun versiya, internet xatosi va Google Play holatini qamrab oldi. Haqiqiy APK qurilishi va telefonda o‘rnatish hali tasdiqlanmagan.
+
 ## Xazina poygasi qoidalari
 1. 2–4 jamoa qatnashadi. Bir davra — har jamoaga bittadan navbat.
 2. To‘g‘ri javob +1 qadam. Xato yoki vaqt tugashi — qadam berilmaydi.

@@ -1,4 +1,5 @@
 import { isNativeApp } from '../lib/platform.js';
+import AndroidUpdatePanel from '../components/AndroidUpdatePanel.jsx';
 import { useEffect, useRef, useState } from 'react';
 import { isDesktop, quitApp } from '../lib/store.js';
 import { downloadJson, formatDate, newSet, normalizeQuestion, playableQuestions, uid } from '../lib/util.js';
@@ -346,9 +347,7 @@ function HistoryTab({ data, update, game }) {
 function UpdatePanel({ state, version }) {
   const { status } = state;
   const text = {
-    web: isNativeApp
-      ? 'Android ilovasi: yangi versiya chiqqanda GitHub sahifasidan yangi APK faylni yuklab, ustidan o‘rnating — ma’lumotlar saqlanib qoladi.'
-      : 'Brauzer rejimida yangilanish yo‘q — bu faqat o‘rnatilgan dasturda ishlaydi.',
+    web: 'Brauzer rejimida yangilanish yo‘q — bu faqat o‘rnatilgan dasturda ishlaydi.',
     dev: 'Ishlab chiqish rejimida yangilanish tekshirilmaydi.',
     idle: 'Hali tekshirilmadi.',
     checking: 'Tekshirilmoqda…',
@@ -432,7 +431,7 @@ function GeneralTab({ data, update, askPin, onRestore, updateStatus }) {
         </div>
         <div className="panel">
           <h3>Yangilanishlar</h3>
-          <UpdatePanel state={updateStatus} version={version} />
+          {isNativeApp ? <AndroidUpdatePanel /> : <UpdatePanel state={updateStatus} version={version} />}
         </div>
       </div>
       <BackupPanel data={data} onRestore={onRestore} askPin={askPin} />

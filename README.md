@@ -10,6 +10,8 @@ Windows “Windows protected your PC” deb ogohlantirsa: **More info → Run an
 
 📱 **Android:** [Bilim-Arena.apk](https://github.com/ShaxzodRuziqulov/bilim-arena/releases/latest/download/Bilim-Arena.apk) — telefonda oching va o‘rnating (“noma’lum manbalar”ga ruxsat so‘rasa, bering). Soya va Xazina poygasi telefonda yon tomonga burib o‘ynaladi.
 
+GitHub APK’ning yangilash tugmasi mavjud versiyasida **Sozlamalar → Umumiy → Yangilanishlar → Yangilash** tugmasidan foydalaning. Yangi APK topilsa, Android o‘rnatishni tasdiqlash oynasini ochadi. Tizim ruxsat so‘rasa, ruxsat bergach ilovaga qayting va tugmani yana bosing. Google Play nusxasi do‘kon orqali yangilanadi.
+
 Dastur bepul; rasmiy faylni o‘zgartirmasdan ulashish mumkin, sotish mumkin emas — [LICENSE.md](LICENSE.md). Kutubxonalar: [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md).
 
 ## Hozir nimalar bor

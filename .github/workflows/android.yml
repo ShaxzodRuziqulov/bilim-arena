@@ -58,13 +58,17 @@ jobs:
           if [ "$HAS_KEY" = "true" ]; then
             export BILIM_KEYSTORE="$RUNNER_TEMP/bilim.p12"
             # APK — to'g'ridan-to'g'ri tarqatish uchun; AAB — Google Play Console'ga yuklash uchun (shu kalit — yuklash kaliti).
-            ./gradlew --no-daemon assembleRelease bundleRelease
+            ./gradlew --no-daemon -PgithubUpdates=true assembleRelease
             cp app/build/outputs/apk/release/app-release.apk ../Bilim-Arena.apk
+            ./gradlew --no-daemon bundleRelease
             cp app/build/outputs/bundle/release/app-release.aab ../Bilim-Arena.aab
           else
-            ./gradlew --no-daemon assembleDebug
+            ./gradlew --no-daemon -PgithubUpdates=true assembleDebug
             cp app/build/outputs/apk/debug/app-debug.apk ../Bilim-Arena.apk
           fi
+          build_tools=$(find "$ANDROID_HOME/build-tools" -name apksigner | sort -V | tail -1)
+          "$build_tools" verify ../Bilim-Arena.apk
+          "${build_tools%/*}/aapt" dump permissions ../Bilim-Arena.apk | grep -F 'android.permission.REQUEST_INSTALL_PACKAGES'
 
       - uses: actions/upload-artifact@v7
         with:

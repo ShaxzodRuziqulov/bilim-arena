@@ -1,6 +1,11 @@
 ## Bilim Arena — bepul ta’limiy o‘yinlar (Windows va Android)
 
-### 0.10.0 yangiliklari
+### 0.10.1 yangiliklari
+
+- GitHub’dan o‘rnatilgan Android ilovasida **Sozlamalar → Umumiy → Yangilanishlar** bo‘limi joriy versiya raqami va **Yangilash** tugmasini ko‘rsatadi.
+- Eski nusxadan o‘tish uchun ushbu APK’ni eski ilova ustidan bir marta o‘rnating. Keyingi versiyalarda tugma yangilanishni yuklaydi va Android tasdiqlash oynasini ochadi.
+
+### 0.10.0 da qo‘shilganlar
 
 - Kodbuzarda uch vazifadan iborat **Mantiq sinovi**.
 - Robot dasturlashda telefon uchun ixcham blokli darslar, xato buyruq ko‘rsatkichi va Java boshlang‘ich kodini tahrirlash yordamchisi.
