@@ -7,7 +7,84 @@ Maktabdagi 5–11-sinf o‘quvchilarini darsga qiziqtirish, jamoaviy ishtirok va
 - Avval mavjud Xazina poygasining xatolari va darsdagi qulayligi yaxshilanadi.
 - O‘qituvchi savollarni sinf darajasiga moslaydi; har navbatda boshqa o‘quvchi chiqishini boshqaradi.
 - Amalga oshirilmagan imkoniyatlar tayyor deb ko‘rsatilmaydi.
-- Har o‘zgarishda ushbu faylga natija va tekshiruv yoziladi.
+- Har yakunlangan ish uchun ushbu faylga sana, bajarilgan o‘zgarish, amaldagi qoida, istisno, tekshiruv natijasi va ochiq qolgan holat yoziladi. O‘yinchi yoki o‘qituvchi uchun amaldagi foydalanish tartibi o‘zgarsa, README ham yangilanadi.
+
+## 2026-11-23 — zaxira, Xazina poygasi va Soya
+
+| Ish | Amaldagi qoida va istisno | Tekshiruv |
+| --- | --- | --- |
+| To‘liq zaxirani tiklash | 25 MB chegarasi olib tashlandi. Fayl tanlanganda tarkib tekshiriladi va oldindan ko‘rsatiladi. Saqlash tasdiqdan keyin boshlanadi. Buzilgan JSON yoki mos kelmaydigan format rad etiladi. Brauzer xotirasi kvotasi va diskdagi bo‘sh joy hali ham tiklashga ta’sir qiladi. | Electron’da taxminan 28 MB zaxiradagi 100 ta rasmli savol tiklandi va diskdan qayta o‘qildi. |
+| Xazina poygasida navbat | «Savolni ochish» darhol bosiladi. Navbat banneri 0,6 soniya ko‘rinadi. Bir katakda bir nechta jamoa turganda belgilar yonma-yon joylashadi. Bitta jamoa turgan katakda belgi markazda qoladi. | Electron’da boshlang‘ich katakdagi to‘rtta belgi ustma-ust tushmasligi va tugma darhol savol ochishi tekshirildi. |
+| Soya’da sokin rejim | Ilovada animatsiyalar o‘chirilganda yoki tizimda harakat kamaytirilganda menyudagi qahramon joyida turadi va sahnalar qorayishsiz almashadi. Yozilgan soyaning harakati va izi o‘yin mexanikasining bir qismi sifatida saqlanadi. | Electron’da menyu tasviri o‘zgarmasligi, darajaga kirish, soya izining ko‘rinishi, menyuga va zalga qaytish tekshirildi. |
+
+- To‘liq zaxira joriy ma’lumotlarni almashtiradi. Ma’lumotlari ochilgan qurilmada joriy PIN saqlanadi. Ilova bazani ocholmay, tiklash ekranidan ish boshlasa, zaxiradagi PIN tiklanadi. Zaxirada saqlamasi yo‘q yakka o‘yinning natijalari saqlanadi.
+- `npm test` — 61/61. `npm run build` — muvaffaqiyatli. Vaqtinchalik profil bilan Electron tekshiruvi — 7/7, renderer xatosi kuzatilmadi.
+- Haqiqiy sensorli doskada dars, Windows o‘rnatuvchisi va avtomatik yangilanish ushbu o‘zgarishlar bilan tekshirilmagan. Doska uchun qadamlar [SINF_SINOVI.md](SINF_SINOVI.md) faylida.
+
+## 2026-11-23 — tarqatishga tayyorlik auditi
+
+**Qaror.** Windows yig‘ilmasi nazoratli sinovga tayyor. Keng tarqatish uchun o‘rnatuvchi, yangilanish va haqiqiy doskadagi dars sinovi qoldi. Telefon uchun alohida Android/iOS paketi yo‘q. Telefon brauzeri tajribasi uchun kichik ekrandagi boshqaruv va haqiqiy qurilmalar sinovi qoldi.
+
+| Yo‘nalish | Dalil va istisno |
+| --- | --- |
+| Windows | 61/61 avtomatik test o‘tdi. Vite yig‘ildi. NSIS o‘rnatuvchisi birinchi urinishda sandbox DNS chekloviga uchradi, ruxsatli qayta urinishda yig‘ildi. `win-unpacked` ichidagi 0.7.0 ishga tushdi va Electron ko‘prigi ishladi. `Get-AuthenticodeSignature` o‘rnatuvchi uchun `NotSigned` qaytardi. Toza Windows’da o‘rnatish va versiyalar oralig‘ida yangilanish hali sinovdan o‘tmagan. |
+| Telefon, 390×844 | Electron Chromium emulyatsiyasida Kodbuzar sensorli taxminni baholadi, Robot birinchi bosqichi uch yulduz bilan yakunlandi. Xazina poygasida javob va aloqa ishladi, ammo savolni ochish tugmasi 25 px baland, matni 7 px. Soya telefonni burish ekranini ko‘rsatdi. Tik holatdagi Soya sinovi o‘yin boshqaruvi uchun dalil sifatida qabul qilinmaydi. |
+| Telefon, 844×390 | Xazina poygasi savol tugmasi taxminan 45 px baland bo‘ldi. Soya’da sensor bilan harakat yozildi va iz ko‘rindi. Android Chrome, iPhone Safari, ekran klaviaturasi va real qurilma unumdorligi hali tekshirilmagan. |
+| Personajlar | Kalitjon javoblarga mos yo‘l-yo‘riq beradi. Robi bosh ekran va o‘yindagi vazifani bog‘laydi, robotning yo‘nalishi ko‘rinadi. Soya va izi mexanikani tushuntiradi. Xazina poygasidagi emojilar jamoalarni ajratadi. Doskaning orqa qatoridan siluetlar va telefon ekranida kichik belgilar alohida baholanishi kerak. |
+| Animatsiyalar | Xazina poygasining savol tugmasi kutmaydi. Soya’da sokin rejim menyu yurishi va sahna qorayishini to‘xtatadi, o‘yin ichidagi soya saqlanadi. Klaviatura va sensor sinovlaridan tashqari haqiqiy doska va turli telefonlarda ravonlik hali o‘lchanmagan. |
+
+- Tarqatishdan oldin toza Windows’da o‘rnatish, eski versiyadan yangilash, internet bo‘lmaganda ochish va savol bankining saqlanishi tekshiriladi. GitHub reliz jarayonida testlar va asosiy Electron oqimi nashrdan oldin bajarilishi kerak. Joriy ish oqimi paketni yig‘adi va e’lon qiladi, unda ushbu tekshiruvlar alohida bosqich sifatida yo‘q.
+- Telefon uchun avval veb-versiya yoki alohida ilova yetkazilishi kelishiladi. Qaysi yo‘l tanlansa, tik va yon holatlarda boshqaruv, ortga qaytish, ovoz, natija saqlanishi va qayta ochish haqiqiy qurilmalarda tasdiqlanadi.
+- Ushbu auditda o‘yin kodi o‘zgartirilmadi. O‘rnatuvchi lokal yig‘ildi.
+
+## 2026-11-23 — Xazina poygasi qahramonlari namunalari
+
+- ImageGen yordamida shaffof fonli tulki va astronavt portretlari yaratildi. Tulkining uchli quloqlari va astronavtning dumaloq dubulg‘asi 32 va 48 px ko‘rinishda bir-biridan ajraldi.
+- Uslub tasdiqlangach toshbaqa va sher ham ImageGen’da yaratildi. Xazina poygasida to‘rtta standart qahramon 192×192 shaffof PNG sifatida jamoa tanlash, maydon, navbat, savol va natija ekranlarida ko‘rsatiladi.
+- Saqlash formati o‘zgarmadi. Eski natijalardagi shu to‘rtta belgi portretga moslanadi, qolgan tanlovlar emoji sifatida chiqadi. Robot o‘z jamoa belgilaridan foydalanishda davom etadi.
+- `npm test` 61/61, `npm run build` muvaffaqiyatli. Electron’da 5/5 tekshiruv o‘tdi: tanlash, muqobil emoji, to‘rtta rasmning Windows va 844×390 yon telefon o‘lchamida ajralishi hamda natijalar. Haqiqiy telefon va sensorli doskada ko‘rinishi hali tekshirilmagan.
+
+## 2026-11-23 — Xazina poygasining telefon maketi
+
+- Tik holatda navbatdagi o‘yinchi yoki jamoa, portret va «Savolni ochish» tugmasi pastki panelda turadi. Savol ochilganda javoblar bir ustunda chiqadi. Uzun savol, rasm, kod yoki javoblar kartaning ichida siljitib ko‘riladi.
+- Yon holatda xaritaning 16:9 nisbati saqlanadi. Qisqa ekranlarda boshqaruv tugmalari kattaroq va savol kartasi siljiydi. Shu moslashuv xato savollarni takrorlashda ham ishlaydi.
+- Poyga qoidalari, savol turlari va natijalarni saqlash formati saqlanadi. Haqiqiy Android Chrome, iPhone Safari va sensorli doskada alohida tekshiruv kerak.
+- `npm test` 61/61, `npm run build` muvaffaqiyatli. Electron sensor emulyatsiyasida 13/13 tekshiruv o‘tdi. 390×844 va 844×390 ekranlarda yakka poyga tayyorgarlikdan diskda saqlangan g‘alabagacha o‘ynaldi. 320 px kenglikda raqam, matn, o‘n oltilik, tartiblash va moslashtirish tugmalari bosildi. Tik ekranda to‘rt jamoa tanlash, natijalar va takrorlashdan qaytish tasdiqlandi. 1366×768 ekranda maydonning 16:9 nisbati tekshirildi.
+
+## 2026-11-23 — Soya telefon boshqaruvi
+
+- Sensorli qurilma tik turganda yon tomonga burish tavsiyasi va «O‘yinlar zaliga qaytish» tugmasi ko‘rinadi. O‘yin davomida telefon tik holatga qaytsa ham shu tugma ishlaydi. Yon holatda Soya o‘z menyusi va boshqaruvlari bilan ochiladi.
+- Yozish va soyani bekor qilish tugmalari yurish va sakrash tugmalari bilan bir xil diametrga keltirildi. 844×390 emulyatsiyada diametr 51 px bo‘ldi. Uchta daraja maslahati qo‘llanayotgan boshqaruvga qarab Q yoki ekrandagi ● tugmasini ko‘rsatadi.
+- 61/61 avtomatik test, muvaffaqiyatli build va 4/4 Electron tekshiruvi. 390×844 holatda darajadan oldin va o‘yin davomida zalga chiqish tekshirildi. Yon holatda yozish, yurish, sakrash va bekor qilish natijalari skrinshotlarda ko‘rildi. Kompyuterda Enter darajani ochdi.
+- Haqiqiy Android va iPhone’da bir yoki ikki qo‘l bilan boshqarish qulayligi hali baholanmagan.
+
+## 2026-11-23 — Soya’da ikki barmoq bilan boshqarish sinovi
+
+- 844×390 Electron Chromium sensor emulyatsiyasida ikki alohida sensor nuqtasi yuborildi. Yurish bosib turilganda ikkinchi bosish sakrashni boshladi. Skrinshotlarda Soya qahramoni o‘ngga siljigan va poldan ko‘tarilgan. Ikkala bosish tugagach, ketma-ket ikki tasvirda gorizontal joyi bir xil qoldi.
+- Yurish bosib turilganda yozish tugmasi ishga tushdi. Yozuv tugagach soya soni 0/2 dan 1/2 ga o‘tdi, soya va izi ko‘rindi. Bekor qilish tugmasi sonni 0/2 ga qaytardi. Sinovda renderer xatosi qayd etilmadi.
+- Haqiqiy telefon aniqlanmadi. Ushbu natija ikki bir vaqtdagi sensor hodisasi ishlashini tasdiqlaydi. Bosh barmoq bilan yetish qulayligi, iPhone Safari va Android Chrome’dagi aylantirish va ko‘p barmoqli boshqaruv uchun haqiqiy qurilma kerak. O‘yin kodiga o‘zgartirish kiritilmadi.
+
+## 2026-11-23 — Robot dasturlashning telefondagi birinchi darsi
+
+- Birinchi yakka mashqning ixcham ekranida topshiriq, robot maydoni, asosiy dastur va ishga tushirish tugmasi ko‘rinadi. «Darajalar» tugmasi 16 darajali ro‘yxatni ochadi. P funksiyasi odatda yashiriladi, ammo katta oynada tuzilgan dastur P dan foydalansa, kichik oynada ham uni tahrirlash mumkin.
+- Ishlayotgan buyruq ajratiladi. Robot yo‘ldan chiqishga urinsa, shu buyruq raqami ko‘rsatiladi va blok belgilangan holda qoladi. Noto‘g‘ri burilish undan oldin bo‘lishi mumkin, shu sababli izoh robot yo‘nalishi va avvalgi burilishlarni tekshirishni aytadi.
+- Jamoaviy rejim, boshqa blok darajalari va Java muharriri bo‘yicha ushbu bosqichda maket o‘zgartirilmadi. Kompyuterda oldingi P, qadam va tezlik boshqaruvlari mavjud.
+- 61/61 avtomatik test va build muvaffaqiyatli. Electron’dagi sensor taqlidida 390×844 va 844×390 ekranda noto‘g‘ri dasturni bajarish, uchinchi buyruqni topish, oldingi burilishni tuzatish, uch yulduz olish va ikkinchi darajaga o‘tish tekshirildi. 320 px kenglikda gorizontal toshish kuzatilmadi. Haqiqiy telefonda yangi o‘yinchining mustaqil sinovi hali o‘tkazilmagan.
+
+## 2026-11-23 — Robot mashqlari va Kodbuzar mantiq sinovi
+
+- Robotning yakka mashqlarida kichik ekranlarda 16 daraja ro‘yxati «Darajalar» tugmasi orqali ochiladi. Bloklarda ishlayotgan buyruq ko‘rinadi, robot yo‘ldan chiqsa tegishli blok va raqam belgilanadi. P funksiyasi uchinchi darsdan boshlab ko‘rinadi. Avvalgi ikki darsda katta ekranda P ishlatilgan dastur kichik ekranda ham tahrirlanadi.
+- Oltita Java darsida boshlang‘ich kod bor. «Kodni shu yerdan tahrirlash» tugmasi mavjud o‘zgaruvchini, sonni yoki buyruqni tanlaydi, yangi qator kerak bo‘lgan darsda esa kursorni kod oxiriga qo‘yadi. Oddiy muharrir, ekran klaviaturasi, kod bo‘laklari va nazariya mavjud. Jamoaviy o‘yin tartibi, baholar va yulduzlarning saqlash shakli saqlanadi.
+- Kodbuzar bosh ekranida «Mantiq sinovi» bor. Tayyor dalilda ikki dalilga mos kod tanlanadi. Eng foydali taxminda eng yomon javob guruhida kamroq kod qoladigan taxmin tanlanadi. «Xatoni toping» vazifasida berilgan kodga zid bo‘lgan izoh aniqlanadi. Xato javobni qayta tanlash mumkin. Yakunda raqamlari qayta aralashtirilgan sinov boshlanadi. Ushbu mashq kunlik seriya yoki asosiy yulduzlarni hisoblamaydi.
+- 62/62 avtomatik test va muvaffaqiyatli build. Yangi test 120 ta boshlang‘ich qiymatda uchala vazifaning yagona javobini tekshirdi. Electron’da 19 ta amaliy tekshiruv, jumladan ikkinchi blok darsini yakunlash, P ga buyruq qo‘shish, Java darsini tahrirlab yechish hamda Kodbuzarning uch vazifasini tugatish o‘tdi.
+- 320×640 va 844×390 emulyatsiyada 16 darajaning har biri ochildi. Maydon ekranga sig‘di va gorizontal siljish talab qilinmadi. Kodbuzar sinovi bosh ekranining tugmalari ikki o‘lchamda ham kamida 44 px balandlikda chiqdi.
+- Android va iPhone’da haqiqiy ekran klaviaturasi hamda Kodbuzarni bir necha marta o‘ynagandagi qiziqish hali foydalanuvchi bilan baholanmagan.
+
+## 2026-11-23 — Windows 0.7.0 lokal yig‘ilmasi
+
+- `npm run dist` bilan joriy koddan Windows x64 uchun `release/Bilim-Arena-Setup.exe` va joylashtirish uchun `dist/` veb papkasi yig‘ildi.
+- 62/62 avtomatik test o‘tdi. O‘rnatuvchisiz paket nusxasi vaqtinchalik profil bilan ochildi. Unda versiya, zal, Kodbuzar mantiq sinovi, Robot ish maydoni, Soya va Xazina poygasidagi portretlar tasdiqlandi. Oltita tekshiruv o‘tdi.
+- O‘rnatuvchi SHA-256 qiymati `7DED37FE0229C70D4B84B25FA8E80C39B32E5910110A3A3B178BF589F13C96C5`. Raqamli imzo mavjud emas. Joriy qurilmaga o‘rnatish, eski versiyadan yangilash va GitHub’ga e’lon qilish bu yig‘ish ishining tarkibiga kirmadi.
 
 ## Xazina poygasi qoidalari
 1. 2–4 jamoa qatnashadi. Bir davra — har jamoaga bittadan navbat.
@@ -83,7 +160,7 @@ Mahsulot qarorlari va takliflar: [MAHSULOT_QARORLARI.md](MAHSULOT_QARORLARI.md).
 ### Amaldagi zaxira qoidalari va chegaralar
 - Avtomatik nusxa bir qurilmada saqlanadi va barcha vaqtlar arxivi emas — oxirgi yaroqli oldingi holat. Qurilma buzilishiga qarshi alohida fayl nusxasi kerak.
 - JSON shifrlanmagan; PIN ochiq emas, xesh ko‘rinishida. Faylni egasi nazorat qiladigan joyda saqlash kerak.
-- To‘liq import 25 MB bilan cheklangan. Juda katta rasmli tarix uchun keyin alohida arxivlash kerak bo‘lishi mumkin.
+- Ushbu versiyada to‘liq import 25 MB bilan cheklangan edi. Chegara 2026-11-23 da olib tashlandi.
 - To‘liq tiklash birlashtirish emas: joriy to‘plamlar va tarix almashtiriladi; ishlayotgan qurilmaning PIN/himoyasi saqlanadi.
 - Disk yoki brauzer xotirasida joy yetmasa, alohida JSON nusxani yuklab olib joyni bo‘shatish kerak; ilova bu muammoni yashirmaydi.
 

@@ -1,3 +1,5 @@
+import RaceHero from './RaceHero.jsx';
+
 export const TEAM_PRESETS = [
   { name: 'Qizillar', color: '#ff5c7a', hero: '🦊' },
   { name: 'Ko‘klar', color: '#4da3ff', hero: '🧑‍🚀' },
@@ -30,7 +32,7 @@ export default function TeamPicker({ count, setCount, teams, setTeams, allowSolo
         {teams.slice(0, count).map((t, i) => (
           <div key={i} className="team-edit" style={{ borderColor: t.color }}>
             <button className="hero-pick" style={{ background: t.color + '33' }} onClick={() => nextHero(i)} title="Qahramonni almashtirish">
-              {t.hero}
+              {allowSolo ? <RaceHero hero={t.hero} /> : t.hero}
             </button>
             <input value={t.name} onChange={(e) => editTeam(i, { name: e.target.value })} />
           </div>

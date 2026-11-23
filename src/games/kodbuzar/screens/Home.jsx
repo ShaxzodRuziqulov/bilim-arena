@@ -3,7 +3,7 @@ import { sfx } from '../game/sound.js';
 import { Coach } from '../components/Mascot.jsx';
 import { tilt } from '../components/Effects.jsx';
 
-export default function Home({ save, onContinue, onLevels, onDaily, onHowTo, onToggleSound, onExit }) {
+export default function Home({ save, onContinue, onLevels, onDaily, onChallenges, onHowTo, onToggleSound, onExit }) {
   const next = nextLevel(save);
   const world = worldById(next.worldId);
   const today = save.daily[todayKey()];
@@ -56,6 +56,12 @@ export default function Home({ save, onContinue, onLevels, onDaily, onHowTo, onT
           <span className="card-kicker">{DAILY.icon} Kunlik kod</span>
           <span className="card-title">{dailyLabel}</span>
           <span className="card-sub">{streak > 0 ? `🔥 ${streak} kunlik seriya` : 'Har kuni bitta yangi seyf — seriyani boshlang'}</span>
+        </button>
+
+        <button className="card tilt challenge-entry" onClick={go(onChallenges)} {...tilt}>
+          <span className="card-shine" />
+          <span className="card-title">🔎 Mantiq sinovi</span>
+          <span className="card-sub">Dalilni tekshiring, foydali taxminni tanlang va xatoni toping</span>
         </button>
 
         <div className="card-row">

@@ -31,8 +31,9 @@ export function roundedTexture(scene, w, h, fill, edge, { radius = RADIUS, edgeW
  * Sahna kamerasi: canvas GAME_W×RES o'lchamda, kamera RES marta yaqinlashtiriladi —
  * sahna kodi mantiqiy GAME_W×GAME_H koordinatalarda qoladi. Har sahna create() boshida chaqiradi.
  */
-export function setupCamera(scene) {
-  return scene.cameras.main.setOrigin(0, 0).setZoom(RES);
+export function setupCamera(scene, fadeDuration = 250) {
+  const camera = scene.cameras.main.setOrigin(0, 0).setZoom(RES);
+  if (!reducedMotion()) camera.fadeIn(fadeDuration, 11, 13, 23);
 }
 
 /** Statik Graphics'ni RenderTexture'ga ko'chiradi va Graphics'ni o'chiradi. */
@@ -97,11 +98,13 @@ export function keycap(scene, x, y, key, label, { depth = 0, fixed = false, part
 export function go(scene, key, data) {
   if (scene._leaving) return;
   scene._leaving = true;
-  scene.cameras.main.fadeOut(200, 11, 13, 23);
-  scene.cameras.main.once('camerafadeoutcomplete', () => {
-    scene._leaving = false;
+  scene.events.once('shutdown', () => { scene._leaving = false; });
+  if (reducedMotion()) {
     scene.scene.start(key, data);
-  });
+    return;
+  }
+  scene.cameras.main.once('camerafadeoutcomplete', () => scene.scene.start(key, data));
+  scene.cameras.main.fadeOut(200, 11, 13, 23);
 }
 
 /** Fon: yuqoridan pastga gradient, xira "yulduzlar" va sekin suzuvchi tuman. theme — WORLD_THEME elementi. */

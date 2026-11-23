@@ -13,7 +13,8 @@ export const JAVA_LESSONS = [
     task: 'Robotni batareyagacha olib boring.',
     grid: ['S...', '###.', '###*'],
     dir: 1,
-    start: '// Robot o‘ngga qarab turibdi\nrobot.yur();\n',
+    start: '// Robot o‘ngga qarab turibdi\nrobot.yur(1);\n',
+    guide: { anchor: 'robot.yur(1);', target: '1', text: 'Avval yurish masofasini o‘zgartiring. Burilishdan keyingi buyruqlarni pastga yozing.' },
   },
   {
     topic: '2-dars · O‘zgaruvchilar',
@@ -28,6 +29,7 @@ export const JAVA_LESSONS = [
     dir: 1,
     need: 'int',
     start: '// qadam o‘zgaruvchisiga to‘g‘ri sonni bering\nint qadam = 1;\nrobot.yur(qadam);\n',
+    guide: { anchor: 'int qadam = 1;', target: '1', text: 'qadam o‘zgaruvchisidagi qiymatni o‘zgartiring, keyin qolgan yo‘l uchun buyruq qo‘shing.' },
   },
   {
     topic: '3-dars · for sikli',
@@ -42,6 +44,7 @@ export const JAVA_LESSONS = [
     dir: 1,
     need: 'for',
     start: 'for (int i = 0; i < 1; i++) {\n    robot.yur();\n}\n',
+    guide: { anchor: 'i < 1', target: '1', text: 'Takrorlar sonidan boshlang. Sikl ichiga bitta zina uchun buyruqlarni yozing.' },
   },
   {
     topic: '4-dars · while sikli',
@@ -56,6 +59,7 @@ export const JAVA_LESSONS = [
     dir: 1,
     need: 'while',
     start: 'while (!robot.oldindaDevor()) {\n    robot.yur();\n}\n',
+    guide: { text: 'Birinchi sikl robotni burilishgacha olib boradi. Keyingi buyruqni sikldan keyin yozing.' },
   },
   {
     topic: '5-dars · if sharti',
@@ -70,6 +74,7 @@ export const JAVA_LESSONS = [
     dir: 1,
     need: 'if',
     start: 'for (int i = 0; i < 20; i++) {\n    robot.yur();\n}\n',
+    guide: { anchor: 'robot.yur();', text: 'Sikl ichidagi yurish buyrug‘ini tekshiring. «Kod bo‘laklari»dan if … else ishlatish mumkin.' },
   },
   {
     topic: '6-dars · O‘zgaruvchini o‘zgartirish',
@@ -84,6 +89,7 @@ export const JAVA_LESSONS = [
     dir: 1,
     need: 'while',
     start: 'int n = 5;\n',
+    guide: { text: 'n boshlang‘ich masofani beradi. Keyingi qatorda while siklini yozing.' },
   },
 ];
 

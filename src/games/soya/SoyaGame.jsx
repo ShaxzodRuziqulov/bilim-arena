@@ -41,9 +41,10 @@ export default function SoyaGame({ onExit, soundOn = true }) {
           <button className="btn" onClick={onExit}>Zalga qaytish</button>
         </div>
       )}
-      <div className="soya-rotate" role="alert">
+      <div className="soya-rotate">
         <div className="phone" aria-hidden="true" />
-        Telefonni yon tomonga burang
+        <p role="status">Telefonni yon tomonga burang</p>
+        <button className="btn" onClick={onExit}>← O‘yinlar zaliga qaytish</button>
       </div>
     </div>
   );

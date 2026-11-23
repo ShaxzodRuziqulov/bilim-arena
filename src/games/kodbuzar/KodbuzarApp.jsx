@@ -9,6 +9,7 @@ import Home from './screens/Home.jsx';
 import Levels from './screens/Levels.jsx';
 import HowTo from './screens/HowTo.jsx';
 import Game from './screens/Game.jsx';
+import Challenges from './screens/Challenges.jsx';
 
 // soundOn — platformaning umumiy ovoz sozlamasi: o'chiq bo'lsa, Kodbuzarning o'z sozlamasidan qat'i nazar jim.
 // reduceMotion — platformadagi "Animatsiyalar" o'chirilgan bo'lsa, Kodbuzar animatsiyalari ham o'chadi.
@@ -42,6 +43,8 @@ export default function KodbuzarApp({ onExit, soundOn = true, reduceMotion = fal
     view = <Levels save={save} onBack={() => setScreen({ name: 'home' })} onOpen={openLevel} />;
   } else if (screen.name === 'howto') {
     view = <HowTo onBack={() => setScreen({ name: 'home' })} />;
+  } else if (screen.name === 'challenges') {
+    view = <Challenges onBack={() => setScreen({ name: 'home' })} />;
   } else if (screen.name === 'level') {
     const world = worldById(screen.worldId);
     const key = `${world.id}-${screen.level}`;
@@ -99,6 +102,7 @@ export default function KodbuzarApp({ onExit, soundOn = true, reduceMotion = fal
         onContinue={openLevel}
         onLevels={() => setScreen({ name: 'levels' })}
         onDaily={() => setScreen({ name: 'daily' })}
+        onChallenges={() => setScreen({ name: 'challenges' })}
         onHowTo={() => setScreen({ name: 'howto' })}
         onToggleSound={toggleSound}
         onExit={onExit}

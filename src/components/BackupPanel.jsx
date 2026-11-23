@@ -27,10 +27,9 @@ export default function BackupPanel({ data, onRestore, askPin }) {
     const file=event.target.files[0]; event.target.value=''; setError(''); setCandidate(null); setGames({});
     if(!file)return;
     try {
-      if(file.size>25*1024*1024)throw new Error('Zaxira fayli 25 MB dan katta.');
-      const text=await file.text();
-      setCandidate(parseBackup(text));
-      setGames(backupGameSaves(text));
+      const backup = JSON.parse(await file.text());
+      setCandidate(parseBackup(backup));
+      setGames(backupGameSaves(backup));
     }
     catch(e) { setError('Fayl qabul qilinmadi: '+e.message); }
   };

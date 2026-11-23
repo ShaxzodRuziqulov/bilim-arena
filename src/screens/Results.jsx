@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { gameIdOfResult, gameOfResult } from '../games/registry.jsx';
 import { soloStars } from '../lib/race-rules.js';
+import RaceHero from '../components/RaceHero.jsx';
 
 const MEDALS = ['🥇', '🥈', '🥉', '4'];
 
@@ -33,7 +34,8 @@ export default function Results({ result, onReplay, onAdmin, onReview, adminLabe
   // Shohsupada g'olib o'rtada turadi: 2 — 1 — 3 — 4.
   const stage = ranked.length >= 3 ? [ranked[1], ranked[0], ...ranked.slice(2)] : ranked;
   // Yakka Xazina poygasi: shohsupa o'rniga bitta o'yinchi kartasi va yulduzlar.
-  const solo = gameIdOfResult(result) === 'race' && result.teams.length === 1;
+  const race = gameIdOfResult(result) === 'race';
+  const solo = race && result.teams.length === 1;
   const player = result.teams[0];
   const stars = solo ? soloStars(player, result.trackLength) : 0;
 
@@ -50,7 +52,7 @@ export default function Results({ result, onReplay, onAdmin, onReview, adminLabe
               : `${result.trackLength - player.pos} qadam qoldi. Yana urinib ko‘ring!`}
           </p>
           <div className="solo-result" style={{ '--team': player.color }}>
-            <div className="podium-hero">{player.hero}</div>
+            <div className="podium-hero"><RaceHero hero={player.hero} /></div>
             <h2>{player.name}</h2>
             <div className="win-stars big" aria-label={`${stars} yulduz`}>
               {[0, 1, 2].map((i) => (
@@ -84,7 +86,7 @@ export default function Results({ result, onReplay, onAdmin, onReview, adminLabe
             <div key={t.name} className={`podium-col place-${place + 1}`} style={{ '--team': t.color, '--delay': `${(ranked.length - order) * 0.18}s` }}>
               <div className="podium-card">
                 <div className="medal">{MEDALS[place]}</div>
-                <div className="podium-hero">{t.hero}</div>
+                <div className="podium-hero">{race ? <RaceHero hero={t.hero} /> : t.hero}</div>
                 <h2>{t.name}</h2>
                 <div className="podium-stats">
                   {game.stats(t, result).map((s) => (

@@ -25,6 +25,9 @@ Tayyorlangan sana: 2026-10-25. Ushbu sinov rejasi tayyor; haqiqiy sinf sinovi ha
 | Pauza va davom etish | PINsiz ishlaydi, savol vaqti pauzada kamaymaydi | To‘ldirilmagan |
 | PIN | O‘quvchi o‘yinni yakunlab zalga qaytadi, lekin Sozlamalarni ochish va dasturni yopish PIN so‘raydi | To‘ldirilmagan |
 | Xazinaga yetish | Oxirgi davrada navbatlar tenglashtiriladi | To‘ldirilmagan |
+| Xazina poygasida bir katakdagi jamoalar | To‘rtta belgi orqa qatordan ajraladi, «Savolni ochish» darhol bosiladi | To‘ldirilmagan |
+| Soya, animatsiyalar o‘chirilgan | Menyu tinch, sahna qoraymaydi, yozilgan soya va uning izi ko‘rinadi | To‘ldirilmagan |
+| Soya telefonda, ikki barmoq | Bir barmoq yurishni ushlab turganda ikkinchisi sakraydi yoki yozadi. Barmoqlarni olganda yurish to‘xtaydi. Yozilgan soya bekor qilinadi. | Emulyatsiyada tasdiqlandi. Android Chrome va iPhone Safari’da tekshirilmagan. |
 | Xatolarni takrorlash | Vaqt cheklanmaydi, musobaqa natijasi o‘zgarmaydi | To‘ldirilmagan |
 | Qayta ishga tushirish | Savol va natijalar joyida | To‘ldirilmagan |
 | Zaxira olish va boshqa sinov qurilmasida tiklash | To‘plamlar, rasmlar va tarix qaytadi | To‘ldirilmagan |

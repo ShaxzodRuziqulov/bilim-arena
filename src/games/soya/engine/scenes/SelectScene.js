@@ -16,7 +16,7 @@ export default class SelectScene extends Phaser.Scene {
   }
 
   create() {
-    setupCamera(this).fadeIn(250, 11, 13, 23);
+    setupCamera(this);
     playMusic('menu');
     backdrop(this, GAME_W, GAME_H, 3);
     button(this, 90, 40, 140, 44, '← Menyu', () => go(this, 'menu'));

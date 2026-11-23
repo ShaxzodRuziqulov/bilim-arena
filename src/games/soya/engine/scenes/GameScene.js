@@ -59,7 +59,7 @@ export default class GameScene extends Phaser.Scene {
 
     // Xarita HUD ostida: kamera yuqoriga suriladi, HUD ekranga mahkamlanadi.
     this.cameras.main.setScroll(0, -HUD_TOP);
-    setupCamera(this).fadeIn(250, 11, 13, 23);
+    setupCamera(this);
     playMusic(this.level.worldIndex); // har dunyoning o'z kuyi
     setMusicMuffled(false);
     this.physics.world.setBounds(0, 0, MAP_W, MAP_H);
@@ -371,6 +371,7 @@ export default class GameScene extends Phaser.Scene {
     for (const o of this.touchParts) o.setVisible(on);
     for (const o of this.keycapParts) o.setVisible(!on);
     this.hintText.y = HUD_TOP + MAP_H + (on ? 26 : 8);
+    this.hintText.setText(on ? (this.level.touchHint ?? this.level.hint) : this.level.hint);
     if (!on) Object.assign(this.touch, { left: false, right: false, jump: false });
   }
 
@@ -392,17 +393,17 @@ export default class GameScene extends Phaser.Scene {
       c.on('pointerup', () => set(false));
       c.on('pointerout', () => set(false));
     };
-    const tap = (x, label, fn, color = 0xffffff) => {
-      const c = this.add.circle(x, y, 32, color, 0.14).setStrokeStyle(2, color, 0.45).setScrollFactor(0).setDepth(30).setInteractive();
-      const t = this.add.text(x, y, label, { fontFamily: FONT, fontSize: 24, color: '#ffffff' }).setOrigin(0.5).setScrollFactor(0).setDepth(31).setAlpha(0.85);
+    const tap = (x, label, fn, radius, color = 0xffffff) => {
+      const c = this.add.circle(x, y, radius, color, 0.14).setStrokeStyle(2, color, 0.45).setScrollFactor(0).setDepth(30).setInteractive();
+      const t = this.add.text(x, y, label, { fontFamily: FONT, fontSize: 28, color: '#ffffff' }).setOrigin(0.5).setScrollFactor(0).setDepth(31).setAlpha(0.85);
       this.touchParts.push(c, t);
       c.on('pointerdown', fn);
     };
     pad(72, '◀', 'left');
     pad(190, '▶', 'right');
     pad(GAME_W - 72, '▲', 'jump');
-    tap(GAME_W - 188, '●', () => this.toggleRecording(), C.record);
-    tap(GAME_W - 276, '↶', () => this.removeLastShadow());
+    tap(GAME_W - 188, '●', () => this.toggleRecording(), 44, C.record);
+    tap(GAME_W - 284, '↶', () => this.removeLastShadow(), 44);
   }
 
   // --- Soya mexanikasi ---

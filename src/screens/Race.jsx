@@ -4,6 +4,7 @@ import { play } from '../lib/sound.js';
 import CodeBlock from '../components/CodeBlock.jsx';
 import OrderAnswer from '../components/OrderAnswer.jsx';
 import MatchAnswer from '../components/MatchAnswer.jsx';
+import RaceHero from '../components/RaceHero.jsx';
 
 import { isSolo, raceWinner, roundFinished, soloStars } from '../lib/race-rules.js';
 
@@ -192,11 +193,13 @@ export default function Race({ config, askPin, onFinish, onExit, exitLabel = 'So
     setPaused(false);
   };
 
-  const spread = (i) => (i - (teams.length - 1) / 2) * 2.4;
+  const tokenSpacing = 5.6;
+  const tokenEdgeMargin = 3;
 
   return (
     <div className={`race-wrap theme-${config.theme || 'adventure'}`}>
-      <div className="stage">
+      <div className="stage" data-phase={phase}>
+        <div className="race-board">
         <svg className="board-svg" viewBox="0 0 160 90" preserveAspectRatio="none" aria-hidden="true">
           <defs>
             <linearGradient id="land" x1="0" y1="0" x2="1" y2="1">
@@ -252,16 +255,21 @@ export default function Race({ config, askPin, onFinish, onExit, exitLabel = 'So
 
         {teams.map((t, i) => {
           const p = track[t.pos];
+          const peers = teams.filter((other) => other.pos === t.pos);
+          const halfWidth = (peers.length - 1) * tokenSpacing / 2;
+          const edge = halfWidth + tokenEdgeMargin;
+          const center = Math.max(edge, Math.min(100 - edge, p.x));
+          const x = center - halfWidth + peers.indexOf(t) * tokenSpacing;
           return (
             <div
               key={t.id}
               className={`token ${i === turn && phase !== 'won' ? 'active' : ''}`}
-              style={{ left: `${p.x + spread(i)}%`, top: `${p.y}%`, '--team': t.color }}
+              style={{ left: `${x}%`, top: `${p.y}%`, '--team': t.color }}
             >
               {/* key=pos: har qadamda element yangilanib, sakrash animatsiyasi qayta ishlaydi. */}
               <div key={t.pos} className={`token-jump ${t.pos > 0 ? 'moved' : ''}`}>
                 <span>
-                  <i>{t.hero}</i>
+                  <i><RaceHero hero={t.hero} /></i>
                 </span>
               </div>
               {t.pos > 0 && <b key={'ring' + t.pos} className="land-ring" />}
@@ -269,10 +277,12 @@ export default function Race({ config, askPin, onFinish, onExit, exitLabel = 'So
           );
         })}
 
+        </div>
         <div className="hud">
+          <div className="race-scores">
           {teams.map((t, i) => (
             <div key={t.id} className={`score ${i === turn ? 'current' : ''}`} style={{ '--team': t.color }}>
-              <span className="score-hero">{t.hero}</span>
+              <span className="score-hero"><RaceHero hero={t.hero} /></span>
               <div className="score-info">
                 <b>{t.name}</b>
                 <small key={t.pos + '-' + t.correct} className="score-num">
@@ -282,6 +292,7 @@ export default function Race({ config, askPin, onFinish, onExit, exitLabel = 'So
               </div>
             </div>
           ))}
+          </div>
           <span className="spacer" />
           <button className="hud-btn" title="To‘liq ekran" aria-label="To‘liq ekran" onClick={() => { if (document.fullscreenElement) document.exitFullscreen().catch(() => {}); else document.documentElement.requestFullscreen?.().catch(() => {}); }}>⛶</button>
           <button className="hud-btn" disabled={phase === 'moving'} onClick={openMenu} title="Pauza va o‘yinni boshqarish" aria-label="O‘yinni to‘xtatib turish">
@@ -291,7 +302,7 @@ export default function Race({ config, askPin, onFinish, onExit, exitLabel = 'So
 
         {phase === 'ready' && (
           <div key={`banner-${turn}-${questionNumber.current}`} className="turn-banner" style={{ '--team': team.color }} aria-hidden="true">
-            <span>{team.hero}</span>
+            <span><RaceHero hero={team.hero} /></span>
             <b>{solo ? `${questionNumber.current + 1}-savol` : team.name}</b>
             <small>{solo ? team.name : 'navbati'}</small>
           </div>
@@ -299,7 +310,7 @@ export default function Race({ config, askPin, onFinish, onExit, exitLabel = 'So
 
         {(phase === 'ready' || phase === 'moving') && (
           <div className="turn-panel" style={{ '--team': team.color }}>
-            <span className="turn-hero">{team.hero}</span>
+            <span className="turn-hero"><RaceHero hero={team.hero} /></span>
             <div className="turn-text">
               <b>{solo ? `${team.name}, ${questionNumber.current + 1}-savol` : `${team.name} navbati!`}</b>
               <small>{phase === 'ready' ? (solo ? 'Tayyor bo‘lsangiz, savolni oching' : 'Jamoaning keyingi o‘quvchisi doskaga chiqsin') : 'Qahramon yo‘lda…'}</small>
@@ -424,7 +435,7 @@ export function QuestionCard({ item, team, solo = false, time, paused, phase, re
       <div className="question-card" style={{ '--team': team.color }}>
         <div className="q-top">
           <span className="q-team">
-            {team.hero} {solo ? team.name : `${team.name} javob beryapti`}
+            <RaceHero hero={team.hero} /> {solo ? team.name : `${team.name} javob beryapti`}
           </span>
           {time > 0 && <TimerRing left={Math.max(0, left)} total={time} urgent={left <= 5 && !answered} />}
         </div>

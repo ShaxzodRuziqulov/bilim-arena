@@ -28,6 +28,11 @@ export default function RobotGame({ config, robot, onProgress, askPin, onFinish,
   const firstUnsolved = steps.findIndex((_, i) => !starsOf(i));
   const [practiceIdx, setPracticeIdx] = useState(config.start ?? (firstUnsolved < 0 ? 0 : firstUnsolved));
   const [practiceKey, setPracticeKey] = useState(0);
+  const [levelsOpen, setLevelsOpen] = useState(false);
+  const wrapRef = useRef(null);
+  useEffect(() => {
+    wrapRef.current?.scrollTo(0, 0);
+  }, [practiceIdx]);
 
   // Jamoaviy rejim
   const [round, setRound] = useState(0);
@@ -52,6 +57,7 @@ export default function RobotGame({ config, robot, onProgress, askPin, onFinish,
   const step = steps[levelIdx];
   const level = step.level;
   const Workspace = WORKSPACES[step.part];
+  const intro = !team && step.part === 'kod';
 
   const endTurn = (points, solved, reason) => {
     setScores((s) => s.map((x, i) => (i === teamIdx ? { score: x.score + points, solved: x.solved + (solved ? 1 : 0) } : x)));
@@ -149,7 +155,7 @@ export default function RobotGame({ config, robot, onProgress, askPin, onFinish,
         : `${config.teams?.[(teamIdx + 1) % n].name} navbati →`;
 
   return (
-    <div className="robo-wrap" style={{ '--team': current?.color || 'var(--accent)' }}>
+    <div ref={wrapRef} className={`robo-wrap${team ? '' : ' robo-practice'}${intro ? ' robo-intro' : ''}`} style={{ '--team': current?.color || 'var(--accent)' }}>
       <header className="robo-hud">
         <div className="robo-title">
           <b>
@@ -173,15 +179,17 @@ export default function RobotGame({ config, robot, onProgress, askPin, onFinish,
             ))}
           </div>
         ) : (
-          <div className="robo-levels">
+          <div id="robot-practice-levels" className={`robo-levels${levelsOpen ? ' is-open' : ''}`}>
             {steps.map((s, i) => (
               <button
                 key={i}
                 className={`robo-lv robo-lv-${s.part} ${i === practiceIdx ? 'on' : ''} ${i > 0 && s.part !== steps[i - 1].part ? 'robo-lv-part' : ''}`}
                 title={g.levelLabel(i)}
+                aria-current={i === practiceIdx ? 'step' : undefined}
                 onClick={() => {
                   setPracticeIdx(i);
                   setPracticeKey((k) => k + 1);
+                  setLevelsOpen(false);
                 }}
               >
                 {i + 1}
@@ -192,6 +200,11 @@ export default function RobotGame({ config, robot, onProgress, askPin, onFinish,
         )}
 
         <div className="robo-hud-right">
+          {!team && (
+            <button className="btn robo-level-toggle" aria-expanded={levelsOpen} aria-controls="robot-practice-levels" onClick={() => setLevelsOpen((open) => !open)}>
+              Darajalar
+            </button>
+          )}
           {team && (
             <>
               <div className="robo-tries" title="Qolgan urinishlar">
@@ -214,6 +227,7 @@ export default function RobotGame({ config, robot, onProgress, askPin, onFinish,
         index={levelIdx}
         locked={phase !== 'play' || menu}
         practice={!team}
+        intro={intro}
         onAttempt={onAttempt}
         onNext={!team && practiceIdx < steps.length - 1 ? () => setPracticeIdx((i) => i + 1) : null}
       />

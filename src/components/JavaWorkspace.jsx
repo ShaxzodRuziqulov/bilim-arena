@@ -20,6 +20,7 @@ const SNIPPETS = [
 ];
 const KEYS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', ';', '(', ')', '{', '}', '<', '>', '=', '+', '-', '!', '"', 'i', 'n', '++', '--'];
 const INDENT = '    ';
+const isCompact = () => window.matchMedia('(max-width: 700px), (max-width: 1024px) and (max-height: 520px)').matches;
 
 // **qalin** va `kod` belgilarini React elementlariga aylantiradi.
 function rich(text) {
@@ -53,8 +54,9 @@ export default function JavaWorkspace({ level, index, locked, practice, onAttemp
   const [lines, setLines] = useState([{ text: 'Kodni yozing va «Ishga tushirish»ni bosing.', cls: 'h' }]);
   const [won, setWon] = useState(null);
   const [speed, setSpeed] = useState('normal');
-  const [keypad, setKeypad] = useState(true);
-  const [theoryOpen, setTheoryOpen] = useState(true);
+  const [keypad, setKeypad] = useState(() => !practice || !isCompact());
+  const [theoryOpen, setTheoryOpen] = useState(() => !practice || !isCompact());
+  const [snippetsOpen, setSnippetsOpen] = useState(false);
   const consoleRef = useRef(null);
   const ms = SPEEDS[speed];
   const editable = !running && !locked;
@@ -175,6 +177,15 @@ export default function JavaWorkspace({ level, index, locked, practice, onAttemp
   };
   // Ekran tugmalari bosilganda textarea fokusni yo'qotmasin.
   const keep = (e) => e.preventDefault();
+  const selectGuide = () => {
+    const { anchor, target } = level.guide;
+    const index = anchor ? code.indexOf(anchor) : -1;
+    const start = index < 0 ? code.length : index + (target ? anchor.indexOf(target) : 0);
+    const end = index < 0 ? start : start + (target ?? anchor).length;
+    const editor = taRef.current;
+    editor.focus();
+    editor.setSelectionRange(start, end);
+  };
 
   /* ---------- ishga tushirish ---------- */
   const resetWorld = () => {
@@ -293,9 +304,11 @@ export default function JavaWorkspace({ level, index, locked, practice, onAttemp
     <main className="robo-main java">
       <section className="robo-left">
         <div className={`robo-info jv-theory ${theoryOpen ? '' : 'closed'}`}>
-          <div className="jv-topic" onClick={() => setTheoryOpen((v) => !v)}>
+          <div className="jv-topic">
             <span>{level.topic}</span>
-            <button className="btn small-btn">{theoryOpen ? '▲ Yig‘ish' : '▼ Nazariya'}</button>
+            <button className="btn small-btn" aria-expanded={theoryOpen} onClick={() => setTheoryOpen((v) => !v)}>
+              {theoryOpen ? '▲ Yig‘ish' : '▼ Nazariya'}
+            </button>
           </div>
           <h2>{level.title}</h2>
           {theoryOpen && (
@@ -312,6 +325,13 @@ export default function JavaWorkspace({ level, index, locked, practice, onAttemp
       </section>
 
       <section className="robo-right">
+        {practice && level.guide && (
+          <div className="jv-guide">
+            <p>{level.guide.text}</p>
+            <button className="btn" disabled={!editable} onClick={selectGuide}>Kodni shu yerdan tahrirlash</button>
+            <button className="btn" aria-expanded={snippetsOpen} onClick={() => setSnippetsOpen((open) => !open)}>Kod bo‘laklari</button>
+          </div>
+        )}
         <div className="jv-edhead">
           <span className="jv-file">Main.java</span>
           <div className="row-buttons">
@@ -348,6 +368,7 @@ export default function JavaWorkspace({ level, index, locked, practice, onAttemp
             {mark && <div className={`jv-hl ${mark.kind}`} style={{ top: `calc(${mark.line - 1} * var(--lh) + .6em - ${scroll}px)` }} />}
             <textarea
               ref={taRef}
+              aria-label="Java kodi"
               value={code}
               spellCheck={false}
               autoCapitalize="off"
@@ -365,7 +386,7 @@ export default function JavaWorkspace({ level, index, locked, practice, onAttemp
           </div>
         </div>
 
-        <div className="jv-snips">
+        <div className={`jv-snips${snippetsOpen ? ' is-open' : ''}`}>
           {SNIPPETS.map(([label, txt, inline]) => (
             <button key={label} className="jv-snip" onPointerDown={keep} onClick={() => snippet(txt, inline)} disabled={!editable} title={txt}>
               {label}

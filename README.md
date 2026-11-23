@@ -14,6 +14,7 @@ Dastur bepul; rasmiy faylni o‘zgartirmasdan ulashish mumkin, sotish mumkin ema
 
 - **O‘yinlar zali** — dastur har doim shu yerdan ochiladi. To‘rtala o‘yin bir xil afishada: Kodbuzar, Soya (yakka), Robot dasturlash (yakka yoki jamoa), Xazina poygasi (yakka yoki 2–4 jamoa). Har o‘yindan chiqqanda zalga qaytiladi; oxirgi o‘ynalgan o‘yinni davom ettirish qatori bor.
 - **Kodbuzar** — 2 xonali rangli seyflardagi kodni topish (“Buqa va sigir” mantig‘i), darajalar va kunlik kod.
+  **Mantiq sinovi** uchta qisqa vazifani beradi. Dalildan kodni toping, eng foydali taxminni tanlang va noto‘g‘ri izohni aniqlang.
 - **Soya** — platformer-jumboq: harakatlaringizni yozing, soyangiz ularni takrorlaydi. 15 daraja, 3 dunyo.
 - **Sozlamalar** (zaldagi ⚙) — ikki bo‘lim: **Umumiy** (ovoz va musiqa, animatsiyalar, PIN, yangilanishlar, zaxira — barcha o‘yinlar uchun) va **O‘yinlar** (har o‘yinning o‘z sozlamalari, natijalari; Xazina poygasining savol to‘plamlari).
 - **PIN (ixtiyoriy)** — o‘rnatilsa, Sozlamalarni ochish va dasturdan chiqishda so‘raladi, dastur ochiq turgan vaqtda bir marta. O‘yinlar, pauza va natijalar PINsiz.
@@ -40,6 +41,10 @@ Dastur bepul; rasmiy faylni o‘zgartirmasdan ulashish mumkin, sotish mumkin ema
 - **Natijalar** — reyting, aniqlik foizi, ko‘p xato qilingan savollar; o‘yinlar tarixi saqlanadi.
 - To‘plamlarni `.json` fayl sifatida eksport / import qilish.
 - **To‘liq zaxira va tiklash** — Sozlamalar → Zaxira va tiklash. Avtomatik oldingi nusxa va saqlash xatosidan keyin qayta urinish mavjud.
+  JSON fayl tanlanganda savol va natijalar soni ko‘rinadi. Tasdiqlasangiz, zaxira joriy to‘plamlar va tarixni almashtiradi. 25 MB dan katta fayllar ham qabul qilinadi. Tiklash uchun qurilmada yetarli bo‘sh joy kerak.
+- **Animatsiyalar** — Sozlamalar → Umumiy. Xazina poygasida savol tugmasi darhol ochiladi. Soya’da animatsiyalar o‘chirilganda menyu harakati va sahna qorayishi to‘xtaydi, yozilgan soya esa o‘yinda harakatini takrorlaydi.
+- **Xazina poygasi kichik ekranda** — tik holatda javoblar bir ustunda, yon holatda maydon keng ko‘rinishda chiqadi. Uzun savol yoki javoblar bo‘lsa, savol kartasini pastga siljiting.
+- **Soya telefonda** — o‘ynash uchun telefonni yon tomonga buring. Tik holatdagi ekrandan zalga qaytish mumkin. Sensorli boshqaruvda ● tugmasi soya yozishni boshlaydi va tugatadi.
 - **Xato savollarni takrorlash** — yangi o‘yin natijasidagi eng ko‘p xato qilingan 10 tagacha savol, vaqt cheklovisiz va asosiy natijani o‘zgartirmasdan.
 
 ## Ishga tushirish

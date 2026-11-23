@@ -5,6 +5,7 @@ import App from './App.jsx';
 import '@fontsource-variable/nunito';
 import './styles.css';
 import './game.css';
+import './race-mobile.css';
 import './robot.css';
 
 // Sensorli doskada uzoq bosish kontekst menyusini ochmasin.

@@ -588,3 +588,20 @@ kbd { background: var(--glass-2); border: 1px solid var(--line); border-radius: 
   transition: none !important;
 }
 .kb.reduce .float-digit, .kb.reduce .confetti { display: none; }
+
+.kb-challenge { width: min(100%, 680px); margin-inline: auto; gap: 12px; }
+.kb-challenge h1,
+.kb-challenge p { margin: 0; }
+.kb-challenge-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.kb-challenge .btn { min-height: 46px; }
+.challenge-rule { color: var(--muted); font-size: .9rem; }
+.challenge-clues { display: grid; gap: 8px; list-style: none; margin: 0; padding: 0; }
+.challenge-clues li,
+.challenge-options .btn { display: flex; align-items: center; gap: 12px; padding: 10px 12px; text-align: left; }
+.challenge-clues li { border: 1px solid #ffffff30; border-radius: 12px; background: #ffffff0d; }
+.challenge-options { display: grid; gap: 8px; }
+.challenge-options.options-codes { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.options-codes .btn { justify-content: center; }
+.challenge-code { color: #ffe08a; font-size: 1.22rem; font-variant-numeric: tabular-nums; letter-spacing: .1em; }
+.challenge-options .btn[aria-pressed="true"] { outline: 2px solid #67e8f9; opacity: 1; }
+.challenge-feedback { line-height: 1.5; color: #c8f5dc; }

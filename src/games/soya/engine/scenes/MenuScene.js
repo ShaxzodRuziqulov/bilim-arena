@@ -13,7 +13,8 @@ export default class MenuScene extends Phaser.Scene {
   }
 
   create() {
-    setupCamera(this).fadeIn(300, 11, 13, 23);
+    this.still = reducedMotion();
+    setupCamera(this, 300);
     backdrop(this, GAME_W, GAME_H, 7);
 
     // Sarlavhaning "soyasi" — o'yin g'oyasiga ishora.
@@ -75,7 +76,7 @@ export default class MenuScene extends Phaser.Scene {
     this.parade = {
       y,
       shadow: this.add.image(120, y, 'shadow').setOrigin(0.5, 1).setTint(SHADOW_COLORS[0]).setAlpha(0.9).setScale(INV),
-      hero: this.add.image(120, y, 'hero').setOrigin(0.5, 1).setTint(0x7dd3fc).setScale(INV),
+      hero: this.add.image(this.still ? 164 : 120, y, 'hero').setOrigin(0.5, 1).setTint(0x7dd3fc).setScale(INV),
       trail: [],
       dir: 1,
       clock: 0,
@@ -83,6 +84,7 @@ export default class MenuScene extends Phaser.Scene {
   }
 
   update(_time, dt) {
+    if (this.still) return;
     const p = this.parade;
     p.hero.x += p.dir * dt * 0.12;
     if (p.hero.x > GAME_W - 120 || p.hero.x < 120) p.dir *= -1;

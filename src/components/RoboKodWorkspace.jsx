@@ -25,7 +25,7 @@ const ICON = {
 };
 const ROWS = { m: 'Asosiy dastur', p: 'P funksiyasi' };
 
-export default function RoboKodWorkspace({ level, index, locked, practice, onAttempt, onNext }) {
+export default function RoboKodWorkspace({ level, index, locked, practice, intro, onAttempt, onNext }) {
   const map = useMemo(() => parseGrid(level.grid), [level]);
   const world = useRef(null);
   const runner = useRef(null);
@@ -37,6 +37,7 @@ export default function RoboKodWorkspace({ level, index, locked, practice, onAtt
   const [running, setRunning] = useState(false);
   const [waiting, setWaiting] = useState(false);
   const [now, setNow] = useState(null);
+  const [failedStep, setFailedStep] = useState(null);
   const [bump, setBump] = useState(0);
   const [win, setWin] = useState(false);
   const [msg, setMsg] = useState(null);
@@ -54,6 +55,7 @@ export default function RoboKodWorkspace({ level, index, locked, practice, onAtt
 
   const total = prog.m.length + prog.p.length;
   const editable = !running && !locked;
+  const usesFunction = index >= 2 || active === 'p' || prog.p.length > 0 || prog.m.includes('P');
 
   const resetWorld = () => {
     runner.current?.stop();
@@ -64,6 +66,7 @@ export default function RoboKodWorkspace({ level, index, locked, practice, onAtt
     setBump(0);
     setWin(false);
     setNow(null);
+    setFailedStep(null);
     setWaiting(false);
   };
 
@@ -102,7 +105,10 @@ export default function RoboKodWorkspace({ level, index, locked, practice, onAtt
         if (a.t === 'call') return ms * 0.45;
         if (a.t === 'move' && !a.ok) {
           setBump((b) => b + 1);
-          finish(false, 'Robot yo‘ldan chiqib ketdi! Qaysi buyruq xato ekanini toping.');
+          if (intro) setFailedStep({ r: a.r, i: a.i });
+          finish(false, intro
+            ? `${a.r === 'p' ? 'P funksiyasi' : 'Asosiy dastur'}: ${a.i + 1}-buyruqda oldinda yo‘l yo‘q. Robot yo‘nalishini va oldingi burilishlarni tekshiring.`
+            : 'Robot yo‘ldan chiqib ketdi! Qaysi buyruq xato ekanini toping.');
           return false;
         }
         setSnap(w.snapshot());
@@ -136,13 +142,20 @@ export default function RoboKodWorkspace({ level, index, locked, practice, onAtt
     }
     play('tap');
     setProg((p) => ({ ...p, [active]: [...p[active], c] }));
+    setFailedStep(null);
     setMsg(null);
   };
   const removeAt = (r, i) => {
     if (!editable) return;
     setProg((p) => ({ ...p, [r]: p[r].filter((_, j) => j !== i) }));
+    if (failedStep) {
+      setFailedStep(null);
+      setMsg(null);
+    }
   };
-  const backspace = () => editable && setProg((p) => ({ ...p, [active]: p[active].slice(0, -1) }));
+  const backspace = () => {
+    if (prog[active].length) removeAt(active, prog[active].length - 1);
+  };
   const clearAll = () => {
     if (!editable) return;
     setProg({ m: [], p: [] });
@@ -150,7 +163,7 @@ export default function RoboKodWorkspace({ level, index, locked, practice, onAtt
   };
 
   return (
-    <main className="robo-main">
+    <main className="robo-main" data-uses-function={usesFunction} data-first-level={index === 0}>
       <section className="robo-left">
         <div className="robo-info">
           <h2>
@@ -163,7 +176,7 @@ export default function RoboKodWorkspace({ level, index, locked, practice, onAtt
 
       <section className="robo-right">
         {['m', 'p'].map((r) => (
-          <div key={r} className={`kod-row ${active === r ? 'active' : ''}`} onClick={() => editable && setActive(r)}>
+          <div key={r} className={`kod-row ${active === r ? 'active' : ''}`} data-row={r} onClick={() => editable && setActive(r)}>
             <div className="kod-rowhead">
               <b>{ROWS[r]}</b>
               <small>
@@ -174,11 +187,13 @@ export default function RoboKodWorkspace({ level, index, locked, practice, onAtt
               {Array.from({ length: KOD_MAX[r] }, (_, i) => {
                 const c = prog[r][i];
                 if (!c) return <div key={i} className="kod-slot" />;
+                const failed = failedStep?.r === r && failedStep.i === i;
                 return (
                   <button
                     key={i}
-                    className={`kod-cmd ${c} ${now?.r === r && now?.i === i ? 'now' : ''}`}
+                    className={`kod-cmd ${c} ${now?.r === r && now?.i === i ? 'now' : ''}${failed ? ' failed' : ''}`}
                     title={`${KOD_NAMES[c]} — o‘chirish`}
+                    aria-label={`${i + 1}-buyruq: ${KOD_NAMES[c]}${failed ? ', xato' : ''}`}
                     disabled={!editable}
                     onClick={(e) => {
                       e.stopPropagation();
@@ -195,7 +210,7 @@ export default function RoboKodWorkspace({ level, index, locked, practice, onAtt
 
         <div className="kod-palette">
           {['F', 'L', 'R', 'P'].map((c) => (
-            <button key={c} className="kod-pbtn" disabled={!editable} onClick={() => add(c)}>
+            <button key={c} className="kod-pbtn" data-command={c} disabled={!editable} onClick={() => add(c)}>
               <span className={`kod-cmd ${c}`}>{ICON[c]}</span>
               {KOD_NAMES[c]}
             </button>
@@ -209,24 +224,29 @@ export default function RoboKodWorkspace({ level, index, locked, practice, onAtt
           Qatorni bosib tanlang, keyin buyruq qo‘shing. Qo‘yilgan buyruqni bossangiz — o‘chadi. Buyruqlar: <b>{total}</b> · 3 ★
           uchun ≤ <b>{level.par}</b>
         </p>
+        {intro && (
+          <p className="robo-intro-tip">
+            {usesFunction ? 'Buyruq yozishdan oldin Asosiy dastur yoki P funksiyasi qatorini tanlang.' : 'Buyruqni tanlang. Uni olib tashlash uchun dasturdagi blokni bosing.'}
+          </p>
+        )}
 
         <div className="robo-actions">
           <button className="btn primary big" disabled={(running && !waiting) || locked || !prog.m.length} onClick={() => run(false)}>
             ▶ {running ? 'Davom' : 'Ishga tushirish'}
           </button>
-          <button className="btn big" disabled={(running && !waiting) || locked || !prog.m.length} onClick={() => run(true)} title="Har bosishda bitta buyruq">
+          <button className="btn big robo-step-action" disabled={(running && !waiting) || locked || !prog.m.length} onClick={() => run(true)} title="Har bosishda bitta buyruq">
             ⏯ Qadam
           </button>
-          <button className="btn big" onClick={stop} disabled={!running && !msg && !won}>
+          <button className="btn big robo-stop-action" onClick={stop} disabled={!running && !msg && !won} data-running={running}>
             {running ? '■ To‘xtatish' : '↺ Qayta'}
           </button>
-          <button className="btn big" onClick={clearAll} disabled={!editable || !total}>
+          <button className="btn big robo-clear-action" onClick={clearAll} disabled={!editable || !total} aria-label="Barcha buyruqlarni o‘chirish">
             🗑
           </button>
           <SpeedPicker value={speed} onChange={setSpeed} />
         </div>
 
-        <p className={`robo-msg ${msg?.kind || ''}`}>{msg?.text}</p>
+        <p className={`robo-msg ${msg?.kind || ''}`} role="status">{msg?.text}</p>
 
         {won && practice && (
           <div className="robo-won">

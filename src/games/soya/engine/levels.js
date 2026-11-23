@@ -25,6 +25,7 @@ export const WORLDS = [
         maxShadows: 2,
         par: { shadows: 1, seconds: 5 },
         hint: 'Eshik tugma bosilganda ochiladi. Q — yozishni boshlang, tugma ustiga boring va Q ni yana bosing. Soya tugmani ushlab turadi.',
+        touchHint: '● ni bosib yozishni boshlang. Pol tugmasiga yuring va ● ni yana bosing. Soya tugmani ushlab turadi.',
         map: [
           FULL,
           ...rows('#                   #        #', 10),
@@ -105,6 +106,7 @@ export const WORLDS = [
         maxShadows: 3,
         par: { shadows: 2, seconds: 7 },
         hint: 'Lazer o‘ldiradi, lekin vaqti-vaqti bilan o‘chadi, soya esa nurni to‘sadi. Lazer o‘chganda ostiga boring va Q bosing — soya nurni to‘sib turadi.',
+        touchHint: 'Lazer o‘chganda uning ostiga boring va yozuvni ● bilan tugating. Soya nurni to‘sib turadi.',
         map: [
           FULL,
           '#           v       v        #',
@@ -238,6 +240,7 @@ export const WORLDS = [
         maxShadows: 2,
         par: { shadows: 1, seconds: 6 },
         hint: 'Yozuvni havoda to‘xtatsangiz, soya o‘sha joyda qotib qoladi. Tikanlar ustida sakrab, tushayotganda Q ni bosing — pog‘ona tayyor.',
+        touchHint: 'Tikanlar ustidan sakrang va tushayotganda ● ni bosing. Soya havoda pog‘ona bo‘lib qoladi.',
         map: [
           FULL,
           ...rows(EMPTY, 13),

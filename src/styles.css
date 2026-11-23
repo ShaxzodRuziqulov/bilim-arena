@@ -430,13 +430,11 @@ label.check input { width: auto; }
   border: .25cqw solid var(--team);
   box-shadow: 0 0 2.4cqw color-mix(in srgb, var(--team) 60%, transparent);
   font-size: 1.5cqw;
-  animation: rise .35s ease-out;
 }
 .turn-hero { font-size: 3.4cqw; animation: bob 1.4s ease-in-out infinite; }
 .turn-text b { display: block; font-size: 2cqw; color: var(--team); }
 .turn-text small { color: #c3d2e6; }
 .turn-panel .btn.huge { font-size: 1.8cqw; }
-@keyframes rise { from { transform: translate(-50%, 40%); opacity: 0; } }
 
 .toast {
   position: absolute;
