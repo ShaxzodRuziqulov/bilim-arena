@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { LEVELS } from '../levels.js';
-import { FONT, GAME_H, GAME_W, INV } from '../layout.js';
-import { backdrop, button, go, setupCamera } from '../ui.js';
+import { DESIGN_H as GAME_H, DESIGN_W as GAME_W, FONT, INV } from '../layout.js';
+import { backdrop, button, go, fitDesign, setupCamera } from '../ui.js';
 import { getSave, nextLevelIndex, setMusic, setSound, totalStars } from '../save.js';
 import { setAudioEnabled } from '../audio.js';
 import { playMusic, setMusicEnabled } from '../music.js';
@@ -14,7 +14,7 @@ export default class MenuScene extends Phaser.Scene {
 
   create() {
     this.still = reducedMotion();
-    setupCamera(this, 300);
+    fitDesign(setupCamera(this, 300));
     backdrop(this, GAME_W, GAME_H, 7);
 
     // Sarlavhaning "soyasi" — o'yin g'oyasiga ishora.

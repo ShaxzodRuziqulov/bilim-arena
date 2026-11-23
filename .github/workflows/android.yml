@@ -1,0 +1,84 @@
+# Android APK yig'ish (Capacitor). Kompyuterda Android SDK kerak emas — hammasi GitHub serverida.
+# - release.yml dan chaqiriladi (v* teg): tayyor APK Release'ga "Bilim-Arena.apk" nomi bilan qo'shiladi;
+# - "android-*" branchga push yoki qo'lda ishga tushirish: APK faqat Actions "Artifacts" bo'limida (sinov uchun).
+# Imzolash: BILIM_KEYSTORE_BASE64 / BILIM_KEYSTORE_PASSWORD / BILIM_KEY_ALIAS maxfiy sozlamalari bo'lsa — release APK
+# shu kalit bilan imzolanadi (keyingi versiyalarni ustidan o'rnatish uchun kalit doim bir xil bo'lishi shart).
+# Bo'lmasa — sinov uchun debug APK yig'iladi.
+name: Android
+
+on:
+  workflow_call:
+    inputs:
+      tag:
+        type: string
+        required: true
+  workflow_dispatch:
+  push:
+    branches: ['android-*']
+
+permissions:
+  contents: write
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    env:
+      ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      HAS_KEY: ${{ secrets.BILIM_KEYSTORE_BASE64 != '' }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 21
+      # Android SDK GitHub ubuntu serverida oldindan o‘rnatilgan (ANDROID_HOME); alohida o‘rnatish shart emas.
+
+      - run: npm ci
+      - run: npm run build
+      - run: npx cap sync android
+
+      - name: Imzolash kalitini tiklash
+        if: env.HAS_KEY == 'true'
+        shell: bash
+        run: echo "${{ secrets.BILIM_KEYSTORE_BASE64 }}" | base64 -d > "$RUNNER_TEMP/bilim.p12"
+
+      - name: APK yig'ish
+        shell: bash
+        working-directory: android
+        env:
+          BILIM_KEYSTORE_PASSWORD: ${{ secrets.BILIM_KEYSTORE_PASSWORD }}
+          BILIM_KEY_ALIAS: ${{ secrets.BILIM_KEY_ALIAS }}
+        run: |
+          chmod +x gradlew
+          if [ "$HAS_KEY" = "true" ]; then
+            export BILIM_KEYSTORE="$RUNNER_TEMP/bilim.p12"
+            # APK — to'g'ridan-to'g'ri tarqatish uchun; AAB — Google Play Console'ga yuklash uchun (shu kalit — yuklash kaliti).
+            ./gradlew --no-daemon assembleRelease bundleRelease
+            cp app/build/outputs/apk/release/app-release.apk ../Bilim-Arena.apk
+            cp app/build/outputs/bundle/release/app-release.aab ../Bilim-Arena.aab
+          else
+            ./gradlew --no-daemon assembleDebug
+            cp app/build/outputs/apk/debug/app-debug.apk ../Bilim-Arena.apk
+          fi
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: Bilim-Arena-apk
+          path: Bilim-Arena.apk
+
+      # AAB Release sahifasiga qo'yilmaydi (oddiy foydalanuvchiga kerak emas) — faqat Actions "Artifacts"da.
+      - uses: actions/upload-artifact@v7
+        if: env.HAS_KEY == 'true'
+        with:
+          name: Bilim-Arena-aab-play-market
+          path: Bilim-Arena.aab
+
+      - name: Release'ga qo'shish
+        if: inputs.tag != ''
+        shell: bash
+        run: gh release upload "${{ inputs.tag }}" Bilim-Arena.apk --clobber

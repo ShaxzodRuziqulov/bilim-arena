@@ -32,3 +32,28 @@ test('yakka rejim: xazinaga yetmasa 0, xatosiz 3, 75% dan yuqori 2, qolgani 1 yu
   assert.equal(roundFinished([p(8, 6, 0)], 0, 8), true);
   assert.equal(raceWinner([{ name: 'Ali', pos: 8, correct: 6 }]), 'Ali');
 });
+
+test('X-7: "Eng aniq" kamida 3 ta javob bergan jamoaga beriladi', async () => {
+  const { teamAwards, MIN_ACCURATE_ANSWERS } = await import('../src/lib/race-rules.js');
+  assert.equal(MIN_ACCURATE_ANSWERS, 3);
+  const t = (correct, wrong) => ({ correct, wrong, bestRun: 0, coins: 0, rebounds: 0, comeback: 0 });
+  // 1/1 (100%) — kam javob, hisobga olinmaydi; 9/10 (90%) — "Eng aniq".
+  const awards = teamAwards([t(1, 0), t(9, 1)]);
+  assert.ok(!awards[0].includes('accurate'));
+  assert.ok(awards[1].includes('accurate'));
+  // Ikkalasi ham kam javob bergan bo'lsa — nominatsiya berilmaydi.
+  assert.ok(teamAwards([t(1, 0), t(2, 0)]).every((a) => !a.includes('accurate')));
+});
+
+test('X-6: "Yana o‘ynash" — kunlik sarguzasht kun almashsa bugungi xaritani oladi', async () => {
+  const { replayConfig, dailySeed } = await import('../src/lib/race-rules.js');
+  const daily = { setId: 's1', daily: '2026-11-19', seed: dailySeed('2026-11-19', 's1'), questions: [] };
+  assert.equal(replayConfig(daily, '2026-11-19'), daily, 'shu kuni — o‘sha xarita');
+  const next = replayConfig(daily, '2026-11-20');
+  assert.equal(next.daily, '2026-11-20');
+  assert.equal(next.seed, dailySeed('2026-11-20', 's1'));
+  // Oddiy o'yin — har safar yangi tasodifiy xarita.
+  const plain = replayConfig({ setId: 's1', seed: 5 }, '2026-11-20', () => 0.5);
+  assert.equal(plain.seed, Math.floor(0.5 * 2 ** 31));
+  assert.equal(plain.daily, undefined);
+});

@@ -111,7 +111,9 @@ export default function Hall({ data, onStart, onStudio, onQuit, soundOn, onToggl
         <h2 id="games-title">O‘yinlar</h2>
         <div className="posters">
           {games.map((g) => (
-            <article key={g.id} className={`poster poster-${g.id}`}>
+            // Kartaning istalgan joyini bosish asosiy amalni boshlaydi (telefonda qulay); tugmalar o'z ishini qiladi.
+            <article key={g.id} className={`poster poster-${g.id}`}
+              onClick={(e) => { if (!e.target.closest('button') && !g.actions[0].disabled) start(g.actions[0].next); }}>
               <button className="poster-art-btn" onClick={() => start(g.actions[0].next)} disabled={g.actions[0].disabled}
                 aria-label={`${g.title}: ${g.actions[0].label}`}>
                 <Art id={g.id} />

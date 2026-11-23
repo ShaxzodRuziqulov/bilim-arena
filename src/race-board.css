@@ -1,0 +1,341 @@
+/* ---------- Xazina poygasi: orol xaritasi, kataklar, qahramonlar (1-faza ko'rinishi) ---------- */
+
+.race-wrap:not(.review-wrap) .stage {
+  background:
+    radial-gradient(ellipse at 50% 45%, #1c7d96 0, #0f5674 45%, #093c55 100%);
+}
+
+/* Dengiz to'lqinlari va qirg'oqdagi ko'pik */
+.rb-sea { animation: rb-sea 9s linear infinite; }
+@keyframes rb-sea { to { transform: translateX(140px); } }
+.rb-foam { animation: rb-foam 6s linear infinite; }
+@keyframes rb-foam { to { stroke-dashoffset: -152; } }
+
+/* Bezaklar: tagi bilan joyiga qo'yiladi, cho'zilmaydi */
+.race-wrap .deco {
+  transform: translate(-50%, -100%);
+  width: calc(var(--w, 6cqw) * var(--s, 1));
+  font-size: 0;
+  line-height: 0;
+  filter: drop-shadow(0 .3cqw .25cqw #0004);
+}
+.race-wrap .deco svg { display: block; width: 100%; height: auto; overflow: visible; }
+.deco-palm { --w: 6.4cqw; }
+.deco-mountain { --w: 11cqw; }
+.deco-volcano { --w: 8.6cqw; }
+.deco-rocks { --w: 6cqw; }
+.deco-ship { --w: 6.4cqw; }
+.race-wrap .deco.sea { animation: rb-bob 3.4s ease-in-out infinite; }
+@keyframes rb-bob { 50% { transform: translate(-50%, -100%) translateY(-.5cqw) rotate(-2deg); } }
+.rb-fronds { transform-box: fill-box; transform-origin: 50% 70%; animation: rb-sway 3.6s ease-in-out infinite; }
+@keyframes rb-sway { 0%, 100% { transform: translate(-6px, -80px) rotate(-3deg); } 50% { transform: translate(-6px, -80px) rotate(3deg); } }
+.rb-smoke circle { transform-box: fill-box; transform-origin: center; animation: rb-smoke 3.6s ease-out infinite; opacity: 0; }
+.rb-smoke circle:nth-child(2) { animation-delay: 1.2s; }
+.rb-smoke circle:nth-child(3) { animation-delay: 2.4s; }
+@keyframes rb-smoke {
+  0% { transform: translateY(8px) scale(.5); opacity: 0; }
+  20% { opacity: .9; }
+  100% { transform: translateY(-46px) translateX(10px) scale(1.8); opacity: 0; }
+}
+.rb-lava { animation: rb-lava 2.4s ease-in-out infinite; }
+@keyframes rb-lava { 50% { opacity: .55; } }
+
+/* Kataklar: qumdagi tosh plitalar */
+.theme-adventure .node {
+  width: 3.8cqw;
+  height: 3.8cqw;
+  background: radial-gradient(circle at 40% 35%, #fff6da, #ebd08f);
+  border: .22cqw solid #8a6630;
+  color: #6b4a1f;
+  font-size: 1.45cqw;
+  font-weight: 900;
+  box-shadow: 0 .42cqw 0 #6b4a1f, 0 .7cqw .8cqw #0004;
+}
+.theme-adventure .node.start { background: radial-gradient(circle at 40% 35%, #ffffff, #dfe8ee); border-color: #5a7686; font-size: 2cqw; }
+.theme-adventure .node.bonus {
+  background: radial-gradient(circle at 40% 35%, #fff2a8, #f2b92c);
+  border-color: #9a6a00;
+  font-size: 2cqw;
+  animation: rb-star 2s ease-in-out infinite;
+}
+@keyframes rb-star {
+  50% { transform: translate(-50%, -50%) scale(1.1); box-shadow: 0 .42cqw 0 #6b4a1f, 0 0 2.2cqw #ffd84dcc; }
+}
+.theme-adventure .node.trap { background: radial-gradient(circle at 40% 35%, #b9a2ff, #5b3fc4); border-color: #2c1b6b; font-size: 2cqw; animation: none; }
+.node.trap { animation: none; }
+.swirl-icon { display: inline-block; line-height: 1; animation: rb-spin 3s linear infinite; }
+@keyframes rb-spin { to { transform: rotate(360deg); } }
+
+/* Xazina sandig'i */
+.race-wrap .node.end {
+  width: 7.4cqw;
+  height: 7.4cqw;
+  background: radial-gradient(circle, #ffe9a3 0, #ffd36b88 40%, transparent 70%);
+  border: 0;
+  box-shadow: none;
+  animation: rb-chest-glow 1.8s ease-in-out infinite;
+}
+@keyframes rb-chest-glow { 50% { filter: drop-shadow(0 0 1.4cqw #ffd84d); } }
+/* X-9: "Bilim maydoni" mavzusidagi eski to'rtburchak katak uslubi (styles.css) sandiq ostida chiqmasin —
+   sokin oltin rangli dumaloq yorug'lik. */
+.race-wrap.theme-arena .node.end {
+  border: 0;
+  border-radius: 50%;
+  box-shadow: none;
+  background: radial-gradient(circle, #efe2b4 0, #bc9e5588 42%, transparent 70%);
+}
+.chest { width: 82%; overflow: visible; }
+.chest-lid { transform-box: fill-box; transform-origin: 0% 100%; transition: transform .6s cubic-bezier(.3, 1.6, .5, 1); }
+.chest.open .chest-lid { transform: rotate(-38deg) translate(-2px, -3px); }
+.chest-coins circle { transform-box: fill-box; transform-origin: center; opacity: 0; }
+.chest.open .chest-coins circle { animation: rb-coin 1.6s calc(.3s + var(--i) * .15s) ease-out infinite; }
+@keyframes rb-coin {
+  0% { transform: translateY(6px) scale(.6); opacity: 0; }
+  25% { opacity: 1; }
+  100% { transform: translateY(-26px) scale(1.1); opacity: 0; }
+}
+
+/* Maxsus katak ishga tushganda: halqa portlashi */
+.node-burst {
+  position: absolute;
+  inset: -30%;
+  border-radius: 50%;
+  border: .4cqw solid #ffd84d;
+  pointer-events: none;
+  animation: rb-burst .9s ease-out both;
+}
+.node-burst.trap { border-color: #b98cff; border-style: dashed; animation: rb-burst-spin 1s ease-out both; }
+@keyframes rb-burst { from { transform: scale(.4); opacity: 1; } to { transform: scale(2.4); opacity: 0; } }
+@keyframes rb-burst-spin { from { transform: scale(2.2) rotate(0); opacity: 0; } 40% { opacity: 1; } to { transform: scale(.5) rotate(-300deg); opacity: 0; } }
+
+/* Qahramonlar: yo'l bo'ylab JS bilan yuradi, shuning uchun CSS o'tishi o'chirilgan */
+.race-wrap .token { transition: none; }
+.token-shadow {
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  width: 3cqw;
+  height: .9cqw;
+  margin: -.2cqw 0 0 -1.5cqw;
+  border-radius: 50%;
+  background: radial-gradient(#0007, transparent 70%);
+}
+.race-wrap .token-jump { transform-origin: 50% 100%; }
+.race-wrap .token-jump.moved { animation: rb-land .45s cubic-bezier(.3, 1.4, .5, 1); }
+@keyframes rb-land {
+  0% { transform: scale(1.14, .84); }
+  60% { transform: scale(.95, 1.06); }
+  100% { transform: none; }
+}
+.token.swirl .token-jump { animation: rb-swirl .55s linear; }
+@keyframes rb-swirl { to { transform: rotate(360deg); } }
+.token-crown {
+  position: absolute;
+  left: 50%;
+  top: -1.9cqw;
+  font-size: 1.8cqw;
+  font-style: normal;
+  line-height: 1;
+  transform: translateX(-50%) rotate(-8deg);
+  filter: drop-shadow(0 .2cqw .2cqw #0006);
+  animation: rb-crown 1.4s ease-in-out infinite;
+}
+@keyframes rb-crown { 50% { transform: translateX(-50%) translateY(-.3cqw) rotate(6deg); } }
+.land-dust { position: absolute; left: 50%; top: 100%; pointer-events: none; }
+.land-dust i {
+  position: absolute;
+  width: 1cqw;
+  height: 1cqw;
+  margin: -.5cqw;
+  border-radius: 50%;
+  background: #f3dfae;
+  opacity: 0;
+  animation: rb-dust .6s ease-out both;
+}
+.land-dust i:nth-child(1) { --dx: -2.6cqw; }
+.land-dust i:nth-child(2) { --dx: -1.3cqw; animation-delay: .04s; }
+.land-dust i:nth-child(3) { --dx: 1.3cqw; animation-delay: .04s; }
+.land-dust i:nth-child(4) { --dx: 2.6cqw; }
+@keyframes rb-dust {
+  0% { transform: translate(0, 0) scale(.4); opacity: .9; }
+  100% { transform: translate(var(--dx), -1cqw) scale(1.3); opacity: 0; }
+}
+
+/* Hisob paneli: o'rin belgisi o'zgarganda "sakraydi" */
+.race-wrap .score { position: relative; }
+.score-place {
+  position: absolute;
+  top: -.8cqw;
+  left: -.8cqw;
+  display: grid;
+  place-items: center;
+  width: 1.9cqw;
+  height: 1.9cqw;
+  border-radius: 50%;
+  font-size: 1.1cqw;
+  font-weight: 900;
+  color: #2b1d00;
+  background: #8fa3b8;
+  border: .15cqw solid #fff;
+  box-shadow: 0 .2cqw .4cqw #0006;
+  animation: rb-place .5s cubic-bezier(.2, 1.8, .4, 1);
+}
+.score-place.p1 { background: linear-gradient(#ffe68a, #f2b92c); }
+.score-place.p2 { background: linear-gradient(#f1f4f7, #b6c2cc); }
+.score-place.p3 { background: linear-gradient(#f3c79a, #c27a3a); }
+@keyframes rb-place { from { transform: scale(2) rotate(-30deg); } }
+.hud-btn.off { opacity: .45; }
+
+@media (prefers-reduced-motion: reduce) {
+  .rb-sea, .rb-foam, .rb-fronds, .rb-smoke circle, .rb-lava, .race-wrap .deco.sea, .swirl-icon,
+  .theme-adventure .node.bonus, .race-wrap .node.end, .token-crown, .land-dust, .node-burst { animation: none; }
+  .rb-fronds { transform: translate(-6px, -80px); }
+}
+:root.reduce-motion .rb-fronds { transform: translate(-6px, -80px); }
+:root.reduce-motion .land-dust, :root.reduce-motion .node-burst { display: none; }
+
+/* ---------- 2-faza: yangi kataklar, holat belgilari, kuchaytirgichlar ---------- */
+.theme-adventure .node.chest { background: radial-gradient(circle at 40% 35%, #ffc98a, #c26b25); border-color: #5a2e0c; font-size: 1.9cqw; }
+.theme-adventure .node.lightning { background: radial-gradient(circle at 40% 35%, #a5e9ff, #1e9bd7); border-color: #0b4f73; font-size: 1.9cqw; animation: rb-zap 2.6s ease-in-out infinite; }
+.theme-adventure .node.bridge { background: radial-gradient(circle at 40% 35%, #e9c99a, #9a6a3a); border-color: #5d3b1c; font-size: 1.9cqw; }
+.theme-arena .node.chest, .theme-arena .node.lightning, .theme-arena .node.bridge { background: #3d6378; color: #fff; }
+@keyframes rb-zap { 0%, 88%, 100% { filter: none; } 92% { filter: brightness(1.8) drop-shadow(0 0 1cqw #7fdcff); } }
+.node-burst.chest, .node-burst.coin { border-color: #ffb347; }
+.node-burst.zap { border-color: #7fdcff; }
+.node-burst.bridge { border-color: #e9c99a; }
+.node-burst.shield { border-color: #9fe6c4; }
+.bridge-svg { pointer-events: none; }
+
+.race-wrap .toast.chest, .race-wrap .toast.coin { background: linear-gradient(135deg, #6b3a12, #2e1a08); border-color: #ffb347; color: #ffe7c2; }
+.race-wrap .toast.zap { background: linear-gradient(135deg, #0d4f73, #082a40); border-color: #7fdcff; color: #e2f7ff; }
+.race-wrap .toast.bridge { background: linear-gradient(135deg, #5d3b1c, #2b1a0b); border-color: #e9c99a; color: #fff1dc; }
+.race-wrap .toast.streak { background: linear-gradient(135deg, #7a2b0c, #3a1206); border-color: #ff8a3d; color: #ffe2cc; }
+.race-wrap .toast.shield { background: linear-gradient(135deg, #12573f, #08291e); border-color: #9fe6c4; color: #e3fff2; }
+.race-wrap .toast { max-width: 80%; text-align: center; }
+
+.score-chips { display: flex; gap: .5cqw; margin-top: .35cqw; font-size: 1.05cqw; font-weight: 800; white-space: nowrap; }
+.score-chips span { display: inline-flex; align-items: center; padding: .05cqw .4cqw; border-radius: 1cqw; background: #ffffff14; }
+.score-chips .used { opacity: .3; text-decoration: line-through; }
+.score-chips .chip-streak { background: #ff8a3d33; color: #ffd2b0; }
+
+.q-badge { padding: .4cqh 1cqw; border-radius: 99px; font-weight: 900; font-size: 1.3cqw; white-space: nowrap; }
+.q-badge.zap { background: #1e9bd7; color: #fff; box-shadow: 0 0 1.4cqw #7fdcff88; }
+.q-powers { display: flex; gap: .6cqw; margin-left: auto; }
+.q-powers .power {
+  border: .18cqw solid #ffd36b;
+  background: #2b200a;
+  color: #fff3c4;
+  border-radius: 1cqw;
+  padding: .6cqh 1.1cqw;
+  font: inherit;
+  font-size: 1.3cqw;
+  font-weight: 900;
+  cursor: pointer;
+  min-height: 44px;
+}
+.q-powers .power:hover { background: #4a3a10; }
+.q-powers + .timer-ring, .q-badge + .timer-ring { margin-left: 0; }
+.question-card.lightning { box-shadow: 0 0 0 .3cqw #7fdcff, 0 0 3cqw #7fdcff88, 0 2cqw 6cqw #000a; }
+.answer.gone { visibility: hidden; }
+.feedback-extras { display: block; font-weight: 800; color: #ffe08a; margin-top: .3cqh; }
+.rebound-bar { animation: none; }
+.race-wrap .q-top { gap: 1cqw; }
+
+/* ---------- 3-faza: g'alaba marosimi, jonlar, kunlik sarguzasht ---------- */
+.board-layer { position: absolute; inset: 0; transition: transform 1.5s cubic-bezier(.5, 0, .2, 1); }
+.board-layer.zoom { transform: scale(1.7); }
+
+.ceremony { z-index: 40; overflow: hidden; }
+.ceremony-card {
+  position: relative;
+  z-index: 3;
+  width: min(92%, 78cqw);
+  max-height: 94%;
+  overflow: auto;
+  padding: 2cqh 2.4cqw 2.4cqh;
+  border-radius: 2cqw;
+  background: linear-gradient(160deg, #10304a, #0a1d30);
+  border: .25cqw solid var(--gold);
+  box-shadow: 0 2cqw 6cqw #000a;
+  text-align: center;
+  color: #fff;
+  animation: card-in .6s cubic-bezier(.2, 1.3, .35, 1);
+}
+.ceremony-card h1 { margin: 0 0 1cqh; font-size: 3.4cqw; }
+.ceremony-podium { display: flex; justify-content: center; align-items: flex-end; gap: 1.2cqw; }
+.cp-col { display: flex; flex-direction: column; align-items: center; width: 15cqw; }
+.cp-hero {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 6cqw;
+  height: 6cqw;
+  border-radius: 50%;
+  background: var(--team);
+  border: .3cqw solid #fff;
+  font-size: 3.6cqw;
+  box-shadow: 0 .5cqw 1cqw #0008;
+  animation: cp-drop .7s var(--d) cubic-bezier(.3, 1.5, .5, 1) both;
+}
+.cp-crown { position: absolute; top: -2.4cqw; font-size: 2.6cqw; font-style: normal; animation: cp-crown .6s calc(var(--d) + .5s) cubic-bezier(.3, 1.8, .5, 1) both; }
+.cp-name { margin-top: .6cqh; font-size: 1.6cqw; animation: rise-in .4s var(--d) both; }
+.cp-stats { color: #b9d3e6; font-size: 1.1cqw; animation: rise-in .4s var(--d) both; }
+.cp-block {
+  width: 100%;
+  margin-top: .8cqh;
+  display: grid;
+  place-items: center;
+  font-size: 3cqw;
+  font-weight: 900;
+  color: #fff;
+  border-radius: 1cqw 1cqw 0 0;
+  background: linear-gradient(180deg, var(--team), color-mix(in srgb, var(--team) 60%, #000));
+  text-shadow: 0 .3cqw 0 #0004;
+  transform-origin: bottom;
+  animation: cp-grow .5s calc(var(--d) - .25s) ease-out both;
+}
+.cp-col.place-1 .cp-block { height: 13cqh; }
+.cp-col.place-2 .cp-block { height: 9cqh; }
+.cp-col.place-3 .cp-block { height: 6cqh; }
+.cp-rest { margin: 1cqh 0 0; color: #b9d3e6; font-size: 1.3cqw; }
+.cp-awards { display: flex; flex-wrap: wrap; justify-content: center; gap: .8cqw; margin: 1.6cqh 0; }
+.cp-award {
+  display: flex;
+  align-items: center;
+  gap: .7cqw;
+  padding: .6cqh 1.2cqw .6cqh .8cqw;
+  border-radius: 1.2cqw;
+  background: #ffffff10;
+  border: .18cqw solid var(--team);
+  text-align: left;
+  animation: cp-award .5s var(--d) cubic-bezier(.2, 1.5, .4, 1) both;
+}
+.cp-award > span { font-size: 2.4cqw; }
+.cp-award b { display: block; font-size: 1.3cqw; }
+.cp-award small { color: #c8dcec; font-size: 1.1cqw; }
+.ceremony .cp-done { font-size: 1.8cqw; animation: rise-in .4s var(--d) both; }
+@keyframes cp-drop { from { transform: translateY(-40cqh) scale(.6); opacity: 0; } 60% { opacity: 1; } }
+@keyframes cp-crown { from { transform: translateY(-3cqw) scale(0) rotate(-40deg); opacity: 0; } }
+@keyframes cp-grow { from { transform: scaleY(0); } }
+@keyframes cp-award { from { transform: scale(.4); opacity: 0; } }
+
+.lost-overlay { background: radial-gradient(ellipse at 50% 40%, #0b3a55dd, #020b14f2); }
+.lost-card { border-color: #7fb6d6; }
+.win-hero.sink { animation: rb-sink 2.4s ease-in both; }
+@keyframes rb-sink { 0% { transform: rotate(0); } 40% { transform: rotate(-12deg); } 100% { transform: translateY(1.5cqw) rotate(-24deg); opacity: .75; } }
+.lost-tip { opacity: .8; }
+.daily-note { display: inline-block; margin: .4cqh 0 1cqh; padding: .5cqh 1.2cqw; border-radius: 99px; background: #ffffff14; font-weight: 800; }
+.daily-note.record { background: linear-gradient(90deg, #ffd36b, #ffb347); color: #352511; animation: num-pop .6s cubic-bezier(.2, 1.6, .4, 1); }
+.score-chips .chip-hearts { background: #ff5c7a22; letter-spacing: -.1em; }
+
+:root.reduce-motion .board-layer { transition: none; }
+@media (prefers-reduced-motion: reduce) {
+  .board-layer { transition: none; }
+  .cp-hero, .cp-crown, .cp-block, .cp-award, .cp-name, .cp-stats, .ceremony .cp-done, .win-hero.sink { animation: none; }
+}
+@media (max-height: 500px) and (orientation: landscape) {
+  .ceremony-card { width: 96%; padding: 1.4cqh 1.6cqw; }
+  .cp-col.place-1 .cp-block { height: 9cqh; }
+  .cp-col.place-2 .cp-block { height: 6cqh; }
+  .cp-col.place-3 .cp-block { height: 4cqh; }
+}

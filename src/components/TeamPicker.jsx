@@ -1,4 +1,5 @@
 import RaceHero from './RaceHero.jsx';
+import { uniqueTeamNames } from '../lib/teams.js';
 
 export const TEAM_PRESETS = [
   { name: 'Qizillar', color: '#ff5c7a', hero: '🦊' },
@@ -11,8 +12,11 @@ const HEROES = ['🦊', '🧑‍🚀', '🐢', '🦁', '🥷', '🧙', '🤖', '
 export const freshTeams = () => TEAM_PRESETS.map((t) => ({ ...t }));
 
 // O'yinga tayyor jamoalar ro'yxati: bo'sh nom standart nom bilan almashtiriladi.
-export const pickTeams = (teams, count) =>
-  teams.slice(0, count).map((t, i) => ({ ...t, id: i, name: t.name.trim() || TEAM_PRESETS[i].name }));
+export const pickTeams = (teams, count) => {
+  const list = teams.slice(0, count);
+  const names = uniqueTeamNames(list.map((t) => t.name), TEAM_PRESETS.map((t) => t.name));
+  return list.map((t, i) => ({ ...t, id: i, name: names[i] }));
+};
 
 // allowSolo — "Yakka" (bitta o'yinchi) tanlovi ham ko'rsatiladi (Xazina poygasi).
 export default function TeamPicker({ count, setCount, teams, setTeams, allowSolo = false }) {
@@ -39,6 +43,9 @@ export default function TeamPicker({ count, setCount, teams, setTeams, allowSolo
         ))}
       </div>
       <p className="note small">{count === 1 ? 'Ismingizni yozing va qahramoningizni tanlang (ustiga bosing).' : 'Qahramonni almashtirish uchun uning ustiga bosing.'}</p>
+      {count > 1 && new Set(teams.slice(0, count).map((t) => t.name.trim().toLowerCase())).size < count && (
+        <p className="note small">ℹ Bir xil nomlar o‘yinda avtomatik farqlanadi (masalan, “A” va “A 2”).</p>
+      )}
     </>
   );
 }

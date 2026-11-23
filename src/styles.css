@@ -808,3 +808,38 @@ button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-
 }
 .solo-result h2 { margin: 4px 0 8px; }
 :root.reduce-motion .win-stars span, :root.reduce-motion .solo-result { animation: none; }
+
+/* ---------- Tayyorgarlik ekranlari: telefonda "O'yinni boshlash" doim ko'rinadi (ekran pastida) ---------- */
+@media (max-width: 700px), (max-height: 500px) {
+  .setup-start {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 20;
+    padding: 10px 14px calc(10px + env(safe-area-inset-bottom));
+    background: linear-gradient(180deg, transparent, rgb(4 12 24 / 0.92) 35%);
+  }
+  .setup-start .btn { min-height: 52px; font-size: 1.05rem; }
+  .admin-main.setup { padding-bottom: 96px; }
+}
+
+/* ---------- Sozlamalar: barmoq bilan bosishga qulay kalitlar (hamma ekranda) ---------- */
+label.check { min-height: 48px; }
+label.check input[type='checkbox'] {
+  appearance: none; -webkit-appearance: none; flex: none; margin: 0;
+  width: 52px; height: 30px; border-radius: 99px; cursor: pointer; position: relative;
+  background: #2a3a58; border: 1px solid var(--line); transition: background .2s;
+}
+label.check input[type='checkbox']::after {
+  content: ''; position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 50%;
+  background: #cbd5e1; box-shadow: 0 1px 3px #0006; transition: transform .2s, background .2s;
+}
+label.check input[type='checkbox']:checked { background: var(--accent); border-color: var(--accent); }
+label.check input[type='checkbox']:checked::after { transform: translateX(22px); background: #fff; }
+label.check input[type='checkbox']:focus-visible { outline: 3px solid #479bd0; outline-offset: 3px; }
+:root.reduce-motion label.check input[type='checkbox'], :root.reduce-motion label.check input[type='checkbox']::after { transition: none; }
+
+/* Telefon: bo'lim tugmalari — butun kenglikdagi katta segment */
+@media (max-width: 700px) {
+  .admin .topbar .tabs { order: 3; width: 100%; margin: 6px 0 0; display: flex; flex-wrap: nowrap; gap: 4px; padding: 4px; border-radius: 14px; background: var(--panel); border: 1px solid var(--line); }
+  .admin .topbar .tab { flex: 1; padding: 12px 8px; font-size: 16px; min-height: 48px; border-radius: 10px; }
+  .admin .row-buttons .btn, .admin .panel .btn { min-height: 48px; }
+  .admin .panel select { min-height: 48px; font-size: 16px; }
+}

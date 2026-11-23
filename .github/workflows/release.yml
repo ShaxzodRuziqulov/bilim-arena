@@ -16,12 +16,13 @@ jobs:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       TAG: ${{ github.ref_name }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: npm
       - run: npm ci
+      - run: npm test
 
       # Release'ni oldindan qoralama sifatida yaratamiz. Aks holda electron-builder fayllarni
       # parallel yuklayotganda bir teg uchun ikkita Release yaratib qo'yadi.
@@ -31,6 +32,32 @@ jobs:
 
       - run: npm run release
 
-      - name: Release'ni e'lon qilish
+      - name: Veb yig‘ilmani qo‘shish
+        shell: pwsh
+        run: |
+          Compress-Archive -Path dist/* -DestinationPath release/Bilim-Arena-Web.zip
+          gh release upload $env:TAG release/Bilim-Arena-Web.zip
+
+  android:
+    needs: windows
+    uses: ./.github/workflows/android.yml
+    with:
+      tag: ${{ github.ref_name }}
+    secrets: inherit
+
+  publish:
+    needs: [windows, android]
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GH_REPO: ${{ github.repository }}
+      TAG: ${{ github.ref_name }}
+    steps:
+      - name: Fayllarni tekshirish va relizni e’lon qilish
         shell: bash
-        run: gh release edit "$TAG" --draft=false --latest
+        run: |
+          assets=$(gh release view "$TAG" --json assets --jq '.assets[].name')
+          for asset in Bilim-Arena-Setup.exe Bilim-Arena.apk Bilim-Arena-Web.zip latest.yml; do
+            grep -Fxq "$asset" <<< "$assets" || { echo "Relizda $asset yo‘q"; exit 1; }
+          done
+          gh release edit "$TAG" --draft=false --latest

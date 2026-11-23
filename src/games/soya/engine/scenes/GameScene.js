@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { COLS, LEVELS, ROWS, TILE, mergeCells, parseLevel, starsFor } from '../levels.js';
-import { FONT, GAME_H, GAME_W, HUD_TOP, INV, MAP_H, MAP_W, TEX } from '../layout.js';
+import { FONT, GAME_H, GAME_W, HUD_TOP, INV, MAP_H, MAP_W, SIDE, TEX, WIDE } from '../layout.js';
 import { backdrop, bake, button, go, keycap, roundedTexture, setupCamera } from '../ui.js';
 import { getSave, recordResult, setMusic } from '../save.js';
 import { sfx } from '../audio.js';
@@ -57,8 +57,8 @@ export default class GameScene extends Phaser.Scene {
     this.facing = 1;
     this.grounded = true;
 
-    // Xarita HUD ostida: kamera yuqoriga suriladi, HUD ekranga mahkamlanadi.
-    this.cameras.main.setScroll(0, -HUD_TOP);
+    // Xarita HUD ostida (keng rejimda — ikki yon ustun orasida): kamera suriladi, HUD ekranga mahkamlanadi.
+    this.cameras.main.setScroll(-SIDE, -HUD_TOP);
     setupCamera(this);
     playMusic(this.level.worldIndex); // har dunyoning o'z kuyi
     setMusicMuffled(false);
@@ -201,7 +201,7 @@ export default class GameScene extends Phaser.Scene {
     // Yozish rejimi: ekran chetlari qizaradi, burchakda REC; qayta boshlashda "orqaga o'rash".
     this.vignette = this.add.image(GAME_W / 2, GAME_H / 2, 'vignette').setScrollFactor(0).setDepth(19).setAlpha(0);
     this.rewindVeil = this.add.rectangle(GAME_W / 2, GAME_H / 2, GAME_W, GAME_H, C.rewind, 0).setScrollFactor(0).setDepth(18);
-    this.recBadge = this.add.text(14, HUD_TOP + 10, '● REC', { fontFamily: FONT, fontSize: 16, color: '#f87171', fontStyle: 'bold' })
+    this.recBadge = this.add.text(SIDE + 14, HUD_TOP + 10, '● REC', { fontFamily: FONT, fontSize: 16, color: '#f87171', fontStyle: 'bold' })
       .setScrollFactor(0).setDepth(19).setVisible(false);
     this.tweens.add({ targets: this.recBadge, alpha: { from: 1, to: 0.25 }, duration: 500, yoyo: true, repeat: -1 });
 
@@ -311,7 +311,9 @@ export default class GameScene extends Phaser.Scene {
   // --- HUD va boshqaruv ---
 
   createHud() {
+    if (WIDE) return this.createSideHud();
     const s = (o) => o.setScrollFactor(0).setDepth(20);
+    this.recBarW = 240;
     s(this.add.rectangle(0, 0, GAME_W, HUD_TOP, UI.bar).setOrigin(0));
     button(this, 30, 24, 40, 36, '☰', () => go(this, 'select'), { fixed: true, depth: 21, fontSize: 18 });
     button(this, 76, 24, 40, 36, '↻', () => this.restartLevel(), { fixed: true, depth: 21, fontSize: 18 });
@@ -347,6 +349,32 @@ export default class GameScene extends Phaser.Scene {
     this.flashText = s(this.add.text(GAME_W / 2, HUD_TOP + 40, '', { fontFamily: FONT, fontSize: 18, color: '#fef3c7', backgroundColor: '#78350f', padding: { x: 12, y: 6 } }).setOrigin(0.5).setAlpha(0));
   }
 
+  /** Keng rejim (telefon yon tomonda): HUD ikki yon ustunda, maydon ekran balandligini to'liq egallaydi. */
+  createSideHud() {
+    const s = (o) => o.setScrollFactor(0).setDepth(20);
+    const right = GAME_W - SIDE;
+    s(this.add.rectangle(0, 0, SIDE, GAME_H, UI.bar).setOrigin(0));
+    s(this.add.rectangle(right, 0, SIDE, GAME_H, UI.bar).setOrigin(0));
+    // Chap ustun: menyu, qayta boshlash, daraja nomi, holat va yo'riqnoma.
+    button(this, 34, 30, 48, 44, '☰', () => go(this, 'select'), { fixed: true, depth: 21, fontSize: 20 });
+    button(this, 94, 30, 48, 44, '↻', () => this.restartLevel(), { fixed: true, depth: 21, fontSize: 20 });
+    s(this.add.text(12, 64, this.level.id, { fontFamily: FONT, fontSize: 20, color: css(this.theme.accent), fontStyle: 'bold' }));
+    s(this.add.text(12, 88, this.level.name, { fontFamily: FONT, fontSize: 17, color: UI.text, fontStyle: 'bold', wordWrap: { width: SIDE - 20 } }));
+    this.statText = s(this.add.text(12, 136, '', { fontFamily: FONT, fontSize: 16, color: '#c4b5fd', lineSpacing: 2 }));
+    this.hintText = s(this.add.text(12, 190, this.level.hint, { fontFamily: FONT, fontSize: 14, color: UI.textSoft, wordWrap: { width: SIDE - 16 }, lineSpacing: 0 }));
+    // O'ng ustun: yozish holati va yulduz shartlari.
+    this.recText = s(this.add.text(right + SIDE / 2, 14, '', { fontFamily: FONT, fontSize: 15, color: '#fca5a5', fontStyle: 'bold', align: 'center', wordWrap: { width: SIDE - 12 } }).setOrigin(0.5, 0));
+    this.recBarW = SIDE - 24;
+    this.recBarBg = s(this.add.rectangle(right + 12, 66, this.recBarW, 4, 0x374151).setOrigin(0, 0.5));
+    this.recBar = s(this.add.rectangle(right + 12, 66, this.recBarW, 4, C.record).setOrigin(0, 0.5));
+    const p = this.level.par;
+    this.starGoals = [`★ o‘tish`, `★ ≤ ${p.shadows} soya`, `★ ≤ ${p.seconds} s`].map((label, i) =>
+      s(this.add.text(right + 12, 92 + i * 26, label, { fontFamily: FONT, fontSize: 16, color: UI.ok, fontStyle: 'bold' }).setOrigin(0, 0.5)),
+    );
+    this.keycapParts = []; // keng rejim faqat sensorli qurilmada
+    this.flashText = s(this.add.text(GAME_W / 2, 40, '', { fontFamily: FONT, fontSize: 18, color: '#fef3c7', backgroundColor: '#78350f', padding: { x: 12, y: 6 } }).setOrigin(0.5).setAlpha(0));
+  }
+
   createInput() {
     this.cursors = this.input.keyboard.createCursorKeys();
     this.keys = this.input.keyboard.addKeys('W,A,D,Q,Z,R,M,ENTER,N,ESC');
@@ -370,7 +398,7 @@ export default class GameScene extends Phaser.Scene {
     this.touchMode = on;
     for (const o of this.touchParts) o.setVisible(on);
     for (const o of this.keycapParts) o.setVisible(!on);
-    this.hintText.y = HUD_TOP + MAP_H + (on ? 26 : 8);
+    if (!WIDE) this.hintText.y = HUD_TOP + MAP_H + (on ? 26 : 8);
     this.hintText.setText(on ? (this.level.touchHint ?? this.level.hint) : this.level.hint);
     if (!on) Object.assign(this.touch, { left: false, right: false, jump: false });
   }
@@ -381,9 +409,9 @@ export default class GameScene extends Phaser.Scene {
     this.touchParts = [];
     // Tugmalar pastki pol devori ustida — o'yin maydonini deyarli to'smaydi.
     const y = HUD_TOP + MAP_H - 22;
-    const pad = (x, label, key, r = 44) => {
-      const c = this.add.circle(x, y, r, 0xffffff, 0.1).setStrokeStyle(2, 0xffffff, 0.3).setScrollFactor(0).setDepth(30).setInteractive();
-      const t = this.add.text(x, y, label, { fontFamily: FONT, fontSize: 30, color: '#ffffff' }).setOrigin(0.5).setScrollFactor(0).setDepth(31).setAlpha(0.8);
+    const pad = (x, label, key, r = 44, py = y) => {
+      const c = this.add.circle(x, py, r, 0xffffff, 0.1).setStrokeStyle(2, 0xffffff, 0.3).setScrollFactor(0).setDepth(30).setInteractive();
+      const t = this.add.text(x, py, label, { fontFamily: FONT, fontSize: 30, color: '#ffffff' }).setOrigin(0.5).setScrollFactor(0).setDepth(31).setAlpha(0.8);
       this.touchParts.push(c, t);
       const set = (v) => {
         this.touch[key] = v;
@@ -393,17 +421,27 @@ export default class GameScene extends Phaser.Scene {
       c.on('pointerup', () => set(false));
       c.on('pointerout', () => set(false));
     };
-    const tap = (x, label, fn, radius, color = 0xffffff) => {
-      const c = this.add.circle(x, y, radius, color, 0.14).setStrokeStyle(2, color, 0.45).setScrollFactor(0).setDepth(30).setInteractive();
-      const t = this.add.text(x, y, label, { fontFamily: FONT, fontSize: 28, color: '#ffffff' }).setOrigin(0.5).setScrollFactor(0).setDepth(31).setAlpha(0.85);
+    const tap = (x, label, fn, color = 0xffffff, py = y) => {
+      const c = this.add.circle(x, py, 44, color, 0.14).setStrokeStyle(2, color, 0.45).setScrollFactor(0).setDepth(30).setInteractive();
+      const t = this.add.text(x, py, label, { fontFamily: FONT, fontSize: 28, color: '#ffffff' }).setOrigin(0.5).setScrollFactor(0).setDepth(31).setAlpha(0.85);
       this.touchParts.push(c, t);
       c.on('pointerdown', fn);
     };
+    if (WIDE) {
+      // Keng rejim: chap bosh barmoq — ◀ ▶ (chap ustun pastida), o'ng bosh barmoq — ▲ ● ↶ (o'ng ustun pastida).
+      const by = GAME_H - 58;
+      pad(56, '◀', 'left', 44, by);
+      pad(152, '▶', 'right', 44, by);
+      pad(GAME_W - 56, '▲', 'jump', 44, by);
+      tap(GAME_W - 56, '●', () => this.toggleRecording(), C.record, by - 112);
+      tap(GAME_W - 56, '↶', () => this.removeLastShadow(), 0xffffff, by - 208);
+      return;
+    }
     pad(72, '◀', 'left');
     pad(190, '▶', 'right');
     pad(GAME_W - 72, '▲', 'jump');
-    tap(GAME_W - 188, '●', () => this.toggleRecording(), 44, C.record);
-    tap(GAME_W - 284, '↶', () => this.removeLastShadow(), 44);
+    tap(GAME_W - 188, '●', () => this.toggleRecording(), C.record);
+    tap(GAME_W - 284, '↶', () => this.removeLastShadow());
   }
 
   // --- Soya mexanikasi ---
@@ -790,7 +828,7 @@ export default class GameScene extends Phaser.Scene {
 
   updateHud() {
     const seconds = (this.t / STEPS_PER_SEC).toFixed(1);
-    this.statText.setText(`Soya ${this.shadows.length}/${this.level.maxShadows}    ⏱ ${seconds} s`);
+    this.statText.setText(`Soya ${this.shadows.length}/${this.level.maxShadows}${WIDE ? '\n' : '    '}⏱ ${seconds} s`);
     this.recBadge.setVisible(!!this.rec);
     const p = this.level.par;
     const goal = (t, ok) => paint(t, ok ? UI.ok : UI.textMuted).setAlpha(ok ? 1 : 0.5);
@@ -799,7 +837,7 @@ export default class GameScene extends Phaser.Scene {
     if (this.rec) {
       const left = Math.max(0, (MAX_RECORD - this.rec.frames.length) / STEPS_PER_SEC);
       paint(this.recText.setText(`● YOZILMOQDA  ${left.toFixed(1)} s`), '#fca5a5');
-      this.recBar.setVisible(true).width = 240 * (1 - this.rec.frames.length / MAX_RECORD);
+      this.recBar.setVisible(true).width = this.recBarW * (1 - this.rec.frames.length / MAX_RECORD);
       this.recBarBg.setVisible(true);
     } else {
       const canRecord = this.shadows.length < this.level.maxShadows;

@@ -33,13 +33,15 @@ const race = {
   renderPlay: ({ config, askPin, onExit, onFinish, exitLabel }) => (
     <Race config={config} askPin={askPin} onExit={onExit} onFinish={onFinish} exitLabel={exitLabel} />
   ),
-  ranking: ['pos', 'correct'],
+  // Tangalar (2-faza) faqat qadamlar va to'g'ri javoblar teng bo'lganda hal qiladi; eski natijalarda yo'q.
+  ranking: ['pos', 'correct', 'coins'],
   stats: (t, result) => [
     { value: t.pos, suffix: `/${result.trackLength}`, label: 'qadam' },
     { value: t.correct, label: 'to‘g‘ri' },
     { value: percent(t.correct, t.correct + t.wrong), suffix: '%', label: 'aniqlik' },
+    ...(t.coins ? [{ value: t.coins, prefix: '🪙 ', label: 'tanga' }] : []),
   ],
-  historyLine: (t, h) => `${t.pos}/${h.trackLength} qadam · ✓${t.correct} ✗${t.wrong}`,
+  historyLine: (t, h) => `${t.pos}/${h.trackLength} qadam · ✓${t.correct} ✗${t.wrong}${t.coins ? ` · 🪙${t.coins}` : ''}`,
 };
 
 // Robot dasturlash — bitta zinapoya: Robo Kod (bloklar) darajalari, keyin Java Robot darslari.

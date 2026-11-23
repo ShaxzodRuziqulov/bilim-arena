@@ -1,7 +1,7 @@
 {
   "name": "bilim-arena",
   "productName": "Bilim Arena",
-  "version": "0.7.0",
+  "version": "0.10.0",
   "description": "Sensorli elektron doska uchun jamoaviy ta'limiy o'yinlar",
   "author": "Bilim Arena",
   "private": true,
@@ -16,7 +16,9 @@
     "release": "vite build && electron-builder --win --publish always",
     "postinstall": "node node_modules/electron/install.js",
     "test": "node --test tests/*.test.js",
-    "smoke:electron": "node scripts/electron-smoke.mjs"
+    "smoke:electron": "node scripts/electron-smoke.mjs",
+    "video": "vite build && electron scripts/promo-video/record.cjs",
+    "store-assets": "vite build && electron scripts/store-assets/capture.cjs"
   },
   "dependencies": {
     "@fontsource/nunito": "^5.3.0",
@@ -24,6 +26,13 @@
     "phaser": "^3.88.2"
   },
   "devDependencies": {
+    "@capacitor/android": "8.6.0",
+    "@capacitor/app": "8.1.2",
+    "@capacitor/cli": "8.6.0",
+    "@capacitor/core": "8.6.0",
+    "@capacitor/filesystem": "8.1.5",
+    "@capacitor/screen-orientation": "8.0.2",
+    "@capacitor/share": "8.0.3",
     "@fontsource-variable/nunito": "^5.3.0",
     "@vitejs/plugin-react": "^6.1.2",
     "concurrently": "^9.1.0",

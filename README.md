@@ -8,6 +8,8 @@ Ta'limiy o'yinlar platformasi: sensorli elektron doskada jamoaviy o'yinlar va ya
 
 Windows “Windows protected your PC” deb ogohlantirsa: **More info → Run anyway** (dastur hali raqamli imzolanmagan). Keyingi versiyalar o‘zi yangilanadi.
 
+📱 **Android:** [Bilim-Arena.apk](https://github.com/ShaxzodRuziqulov/bilim-arena/releases/latest/download/Bilim-Arena.apk) — telefonda oching va o‘rnating (“noma’lum manbalar”ga ruxsat so‘rasa, bering). Soya va Xazina poygasi telefonda yon tomonga burib o‘ynaladi.
+
 Dastur bepul; rasmiy faylni o‘zgartirmasdan ulashish mumkin, sotish mumkin emas — [LICENSE.md](LICENSE.md). Kutubxonalar: [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md).
 
 ## Hozir nimalar bor
@@ -29,8 +31,18 @@ Dastur bepul; rasmiy faylni o‘zgartirmasdan ulashish mumkin, sotish mumkin ema
   To‘plamni Excel’ga eksport ham qilish mumkin (rasmlar faqat JSON eksportda saqlanadi).
 - **Avtomatik yangilanish** — o‘rnatilgan dastur GitHub Releases’dan yangi versiyani fonda yuklab oladi
   va dastur yopilganda o‘rnatadi (Sozlamalar → Yangilanishlar).
-- **Xazina poygasi** — 2–4 jamoa navbat bilan doskaga chiqib javob beradi. To‘g‘ri javob — 1 qadam oldinga,
-  ⭐ bonus katak (+1), 🌀 girdob (−1). Bir jamoa xazinaga yetgach, davra oxirigacha navbatlar tenglashtiriladi. Qadamlar, keyin to‘g‘ri javoblar soni solishtiriladi; teng natija — durang.
+- **Xazina poygasi** — yakka yoki 2–4 jamoa. Jamoalar navbat bilan doskaga chiqib javob beradi. O‘yin chizilgan orol xaritasida o‘tadi: qahramonlar yo‘l bo‘ylab yuradi, fonda kod ichida yaratilgan musiqa chaladi (🎵 tugmasi bilan o‘chadi).
+  To‘g‘ri javob — 1 qadam oldinga. Bir jamoa xazinaga yetgach, davra oxirigacha navbatlar tenglashtiriladi.
+  G‘olib qadamlar, keyin to‘g‘ri javoblar, keyin tangalar soni bo‘yicha aniqlanadi; hammasi teng bo‘lsa — durang.
+  Tayyorgarlikdagi qo‘shimcha qoidalar (hammasi yoqilgan, istaganini o‘chirish mumkin; hammasi o‘chirilsa — klassik poyga):
+  - *Yangi kataklar:* ⭐ bonus (+1), 🌀 girdob (−1), 🎁 sandiq (🛡 qalqon), ⚡ chaqmoq savol (vaqt yarmi, +2 qadam), 🌉 ko‘prik (3 katak oldinga). Kataklar har o‘yinda aralashadi, lekin hamma jamoa uchun bir joyda turadi;
+  - *Seriya 🔥:* ketma-ket 3 ta to‘g‘ri javob — +1 qadam;
+  - *Kuchaytirgichlar:* har jamoaga bir martadan 50/50 va +15 soniya;
+  - *Ilib olish va tangalar:* xato javobni keyingi jamoa topsa 🪙 oladi, tez javob ham 🪙 beradi;
+  - *Jonlar ❤️ (yakka):* 3 ta jon, jon tugasa “Kema cho‘kdi”.
+
+  Jamoaviy o‘yin oxirida shohsupa va nominatsiyalar bo‘ladi (🎯 🔥 🪙 🦅 💪, har jamoa kamida bitta oladi).
+  Yakka o‘yinda 🗓 **Kunlik sarguzasht** bor: bugungi xarita hamma uchun bir xil, rekord shu qurilmada saqlanadi.
 - **Robot dasturlash** — bitta zinapoya, 16 daraja, savol to‘plami kerak emas:
   - *1–10: Bloklar* (5–7-sinf) — tugmalar bilan buyruqlar, P funksiyasi va rekursiya; kam buyruq bilan yechilsa ko‘proq yulduz;
   - *11–16: Java* (8–11-sinf) — haqiqiy Java kodi (metod, int, for, while, if), xatolar o‘zbekcha va qator raqami bilan;
@@ -49,7 +61,7 @@ Dastur bepul; rasmiy faylni o‘zgartirmasdan ulashish mumkin, sotish mumkin ema
 
 ## Ishga tushirish
 
-Kerak: [Node.js](https://nodejs.org) 20 yoki undan yangi.
+Kerak: [Node.js](https://nodejs.org) 22.12 yoki undan yangi. Reliz yig‘ilishi Node.js 22 ning so‘nggi yamog‘idan foydalanadi.
 
 ```bash
 npm install
@@ -84,7 +96,7 @@ git push --follow-tags
 ```
 
 `npm version patch` versiyani oshiradi (0.1.0 → 0.1.1) va `v0.1.1` tegini yaratadi. Teg GitHub’ga
-yetib borgach, GitHub Actions (`.github/workflows/release.yml`) o‘rnatuvchini yig‘ib Release’ga joylaydi.
+yetib borgach, GitHub Actions (`.github/workflows/release.yml`) testlarni bajaradi va Windows o‘rnatuvchisi, Android APK hamda veb arxivini tayyorlaydi. Shu fayllar va Windows yangilanish fayli tayyor bo‘lgach reliz e’lon qilinadi.
 Maktabdagi dasturlar keyingi ishga tushishida (yoki 4 soatda bir) yangilanishni o‘zi yuklab oladi.
 
 Eslatma: dastur raqamli imzolanmagan, shuning uchun birinchi o‘rnatishda Windows “Noma’lum nashriyotchi”

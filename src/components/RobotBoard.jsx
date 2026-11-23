@@ -28,6 +28,15 @@ export default function RobotBoard({ map, snap, bump, win, speed, instant }) {
     return () => ro.disconnect();
   }, [map.cols, map.rows]);
 
+  // Telefonda maydon va tugmalar ustma-ust turadi: robot yura boshlaganda maydon ekrandan chiqib qolgan bo'lsa,
+  // uni ko'rinadigan joyga suramiz (katta ekranda maydon doim ko'rinadi, hech narsa qilinmaydi).
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el || window.innerWidth > 900) return;
+    const r = el.getBoundingClientRect();
+    if (r.top < 0 || r.bottom > window.innerHeight) el.scrollIntoView({ block: 'center', behavior: 'smooth' });
+  }, [snap.x, snap.y, snap.rot]);
+
   const trail = new Set(snap.trail);
 
   return (

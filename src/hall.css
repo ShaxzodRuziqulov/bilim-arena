@@ -104,6 +104,10 @@
 @media (max-width: 560px) {
   .hall { padding-top: 18px; gap: 22px; }
   .hall-brand h1 { font-size: 1.3rem; }
+  .hall-brand h1 { white-space: nowrap; }
+  .hall-brand p { display: none; }
+  .hall-brand img { width: 44px; height: 44px; }
+  .hall-top { gap: 10px; }
   .poster-title { font-size: 1.45rem; }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -116,3 +120,45 @@
 
 /* Sozlamalar: o'yin ichidagi sahifadan (savollar, natijalar) O'yinlar bo'limiga qaytish. */
 .admin .sub-back { margin-bottom: 18px; }
+
+/* ---------- Telefon: ixcham o'yinlar ro'yxati — to'rtala "Boshlash" tugmasi birinchi ekranda ---------- */
+@media (max-width: 700px), (max-height: 500px) {
+  .hall { padding-top: 14px; gap: 14px; }
+  .hall-top { gap: 8px; }
+  .hall-brand p { display: none; }
+  .hall-brand img { width: 40px; height: 40px; border-radius: 11px; }
+  .hall-brand h1 { font-size: 1.25rem; white-space: nowrap; }
+  .hall-icon { width: 42px; height: 42px; }
+  .hall-stars { padding: 6px 10px; font-size: 1rem; }
+  .hall-continue { padding: 10px 12px; gap: 12px; border-radius: 14px; }
+  .hall-continue b { font-size: 1rem; }
+  .hall-continue small { display: none; }
+  .hall-section h2 { display: none; }
+  .posters { grid-template-columns: 1fr; gap: 10px; }
+  /* Karta — gorizontal qator: chapda kichik rasm, o'ngda nom va katta tugma. Butun kartani bosish ham boshlaydi. */
+  .poster { flex-direction: row; align-items: stretch; border-radius: 16px; cursor: pointer; }
+  .poster:hover { transform: none; }
+  .poster-art-btn { flex: 0 0 30%; display: grid; place-items: center; }
+  .poster-art { height: 100%; width: 100%; object-fit: cover; }
+  .poster-body { padding: 10px 12px; gap: 3px; min-width: 0; }
+  .poster-mode, .poster-about { display: none; }
+  .poster-title { font-size: 1.2rem; }
+  .poster-tag { font-size: .85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .poster-foot { flex-direction: row; align-items: center; gap: 8px; padding-top: 6px; flex-wrap: wrap; }
+  .poster-progress { flex: 1 1 5em; min-width: 0; font-size: .85rem; gap: 6px; min-height: 0; }
+  .poster-note { display: none; }
+  .poster-actions { flex: 1 1 auto; min-width: 0; max-width: 100%; }
+  .poster-actions > * { min-width: 0; }
+  .poster-play, .poster-alt { padding: 11px 8px; min-height: 44px; font-size: .9rem; overflow: hidden; text-overflow: ellipsis; }
+}
+/* Telefon yon tomonda: ikki ustun — to'rtala o'yin bitta ekranda. */
+@media (max-height: 500px) and (orientation: landscape) {
+  .posters { grid-template-columns: 1fr 1fr; }
+  .hall-continue { display: none; }
+  .hall { gap: 10px; padding-top: 10px; }
+  .poster-art-btn { flex-basis: 22%; }
+  .poster-tag { display: none; }
+  .poster-body { padding: 8px 10px; }
+  .poster-foot { padding-top: 4px; gap: 6px; }
+  .poster-play, .poster-alt { padding: 10px 6px; font-size: .85rem; }
+}

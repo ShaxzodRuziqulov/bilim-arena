@@ -239,3 +239,28 @@
 @media (prefers-reduced-motion: reduce) {
   .turn-banner, .sparkles, .land-ring, .win-rays, .confetti, .floaters, .stage::after { display: none; }
 }
+
+/* ---------- Telefon tik turganda: yon tomonga burish eslatmasi ---------- */
+.race-rotate {
+  display: none; position: fixed; inset: 0; z-index: 50;
+  flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 24px; text-align: center;
+  background: radial-gradient(ellipse at 50% 30%, #0e5266 0, #072230 60%, #051a26 100%); color: #fff4d6;
+}
+.race-rotate b { font-size: 20px; }
+.race-rotate small { color: #9be3f0; font-size: 15px; }
+.race-rotate .btn { margin-top: 10px; font-size: 16px; padding: 12px 20px; min-height: 44px; border-radius: 12px; }
+.race-rotate .phone { width: 44px; height: 76px; border: 3px solid #ffcf4a; border-radius: 10px; animation: race-turn 1.8s ease-in-out infinite; }
+@keyframes race-turn { 0%, 30% { transform: rotate(0); } 60%, 100% { transform: rotate(-90deg); } }
+@media (orientation: portrait) and (max-width: 700px) { .race-rotate { display: flex; } }
+:root.reduce-motion .race-rotate .phone { animation: none; transform: rotate(-90deg); }
+
+/* ---------- Telefon (yon tomonda, past ekran): sahna butun ekranni egallaydi, savol — to'liq ekranda ---------- */
+@media (max-height: 500px) and (orientation: landscape) {
+  .race-wrap .stage { width: 100vw; height: 100vh; font-size: 2.6cqh; }
+  .question-overlay { top: 0; }
+  .question-overlay .question-card { width: 97%; height: 95%; padding: 2.2cqh 2cqw; }
+}
+
+/* Natijalar: Xazina poygasi nominatsiyalari */
+.podium-awards { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-top: 10px; }
+.podium-awards span { padding: 3px 10px; border-radius: 99px; font-size: .82rem; font-weight: 800; background: color-mix(in srgb, var(--team) 22%, transparent); border: 1px solid var(--team); }

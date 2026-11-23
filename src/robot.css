@@ -387,3 +387,33 @@
 @media (min-width: 600px) and (max-width: 1024px) and (max-height: 520px) {
   .robo-practice .robo-main { grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); }
 }
+/* ---------- Telefon va tor ekran (≤ 900px): sahifa pastga suriladi, daraja tugmalari bitta suriladigan qator ---------- */
+@media (max-width: 900px) {
+  .robo-wrap { overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  .robo-hud { flex-wrap: wrap; gap: .5em .8em; padding: .5em .8em; position: sticky; top: 0; z-index: 5; }
+  .robo-title { min-width: 0; }
+  .robo-levels, .robo-scores {
+    order: 3; flex: 1 0 100%; flex-wrap: nowrap; justify-content: flex-start;
+    overflow-x: auto; overscroll-behavior-x: contain; padding: .55em .2em .3em; scrollbar-width: none;
+  }
+  .robo-levels::-webkit-scrollbar, .robo-scores::-webkit-scrollbar { display: none; }
+  .robo-lv { flex-shrink: 0; }
+  .robo-main { flex: none; min-height: auto; grid-template-columns: minmax(0, 1fr); padding: .7em; gap: .7em; }
+  .robo-left, .robo-right { min-height: auto; }
+  .robo-right { overflow: visible; }
+  /* Maydon balandligi aniq: RobotBoard katak o'lchamini shu konteynerdan oladi. */
+  .rb-wrap { flex: none; height: clamp(14em, 62vw, 26em); min-height: 0; }
+  .robo-info h2 { font-size: 1.2em; }
+  .kod-palette { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .robo-actions .btn.big { padding: .7em .9em; }
+  .robo-speed { margin-left: 0; }
+}
+/* Telefon yon tomonga burilganda (past ekran): maydon va dastur yonma-yon */
+@media (max-width: 900px) and (orientation: landscape) and (max-height: 500px) {
+  .robo-main { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; }
+  .rb-wrap { height: clamp(10em, 58vh, 20em); }
+}
+
+@media (max-width: 700px) {
+  .robo-intro [data-first-level="true"] .rb-wrap { height: 96px; }
+}

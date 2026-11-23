@@ -86,6 +86,13 @@ Maktabdagi 5–11-sinf o‘quvchilarini darsga qiziqtirish, jamoaviy ishtirok va
 - 62/62 avtomatik test o‘tdi. O‘rnatuvchisiz paket nusxasi vaqtinchalik profil bilan ochildi. Unda versiya, zal, Kodbuzar mantiq sinovi, Robot ish maydoni, Soya va Xazina poygasidagi portretlar tasdiqlandi. Oltita tekshiruv o‘tdi.
 - O‘rnatuvchi SHA-256 qiymati `7DED37FE0229C70D4B84B25FA8E80C39B32E5910110A3A3B178BF589F13C96C5`. Raqamli imzo mavjud emas. Joriy qurilmaga o‘rnatish, eski versiyadan yangilash va GitHub’ga e’lon qilish bu yig‘ish ishining tarkibiga kirmadi.
 
+## 2026-11-23 — 0.10.0 uchun reliz tayyorlash
+
+- GitHub’dagi 0.9.2 kodi bilan mahalliy o‘zgarishlar birlashtirildi. Android loyihasi, Xazina poygasining yangi orol xaritasi, maxsus kataklari va kunlik o‘yini saqlandi. Ularning ustiga yangi portretlar, kichik ekran maketlari, Robot mashqlari va Kodbuzar Mantiq sinovi qo‘shildi.
+- Reliz jarayoni testlardan so‘ng Windows o‘rnatuvchisi, Android APK, veb ZIP va Windows yangilanish metama’lumotlari mavjudligini tekshiradi. Shundan keyin reliz ommaga ochiladi.
+- Veb ZIP statik serverga joylashtirish uchun. Android APK GitHub orqali yuklanadi. Google Play yoki Apple App Store’da e’lon qilish alohida jarayon.
+- Birlashtirilgan kodda mahalliy 89/89 avtomatik test, Vite build va vaqtinchalik profil bilan Electron’da 6/6 tekshiruv o‘tdi. To‘rtta o‘yin joriy yig‘ilmadan ochildi.
+
 ## Xazina poygasi qoidalari
 1. 2–4 jamoa qatnashadi. Bir davra — har jamoaga bittadan navbat.
 2. To‘g‘ri javob +1 qadam. Xato yoki vaqt tugashi — qadam berilmaydi.
@@ -425,3 +432,186 @@ Solishtiruv: Kodbuzar va Soyada o‘z kirish ekrani bor edi; Robot dasturlash to
 - Release sahifasi matni `.github/release-notes.md` dan (yuklab olish, SmartScreen ogohlantirishi, ulashish shartlari, zaxira).
 - README boshida “Yuklab olish” bo‘limi.
 - Tekshiruv: `npm run dist` mahalliy yig‘ildi — `release/Bilim-Arena-Setup.exe`, `latest.yml` shu nomni ko‘rsatadi, `resources/` da ikkala litsenziya fayli bor.
+
+## 2026-11-19 — Telefon uchun joylashuv va Android ilova (APK)
+### Telefonda tekshiruv (375×812 va 812×375)
+- Kodbuzar — to‘liq mos. Soya — tik holatda “yon tomonga burang”, yon tomonda sensorli boshqaruv bilan ishlaydi.
+- Robot dasturlash — buzilgan edi (daraja tugmalari ustun bo‘lib ekranni egallardi, maydon dastur paneli ustiga chiqardi). Xazina poygasi — tik holatda juda mayda.
+### Bajarilgan ishlar
+- Robot (≤ 900px): daraja tugmalari bitta suriladigan qator, HUD yuqorida yopishib turadi, maydon va dastur ustma-ust (yon tomonda yonma-yon), Java kodi sahifani kengaytirmaydi; robot yura boshlaganda maydon ekrandan chiqib qolgan bo‘lsa, avtomatik ko‘rinadigan joyga suriladi (`RobotBoard.jsx`).
+- Xazina poygasi: telefon tik turganda “Telefonni yon tomonga burang” va zalga qaytish tugmasi. Zal sarlavhasi telefonda ixcham.
+- **Android ilova (Capacitor 8.6.0):** `capacitor.config.json`, `android/` loyiha; ilova belgisi `build/icon.png` dan (`npx electron scripts/android-icons.cjs`), ochilish ekrani o‘z belgisi bilan. Capacitor paketlari `devDependencies` da (Electron o‘rnatuvchisiga kirmaydi).
+- `src/lib/platform.js`: Android’da zaxira va Excel eksport “Ulashish” oynasi orqali (brauzer yuklab olishi WebView’da ishlamaydi); Android “Orqaga” tugmasi — zalda saqlab chiqish, o‘yin ichida e’tiborsiz, boshqa ekranlarda zalga.
+- Versiya `package.json` dan (`versionCode = major·100000 + minor·100 + patch`).
+- **APK yig‘ish GitHub Actions’da** (`.github/workflows/android.yml`) — kompyuterda Android SDK kerak emas. `android-*` branchga push yoki qo‘lda — sinov APK “Artifacts”da; `v*` teg — `release.yml` Windows’dan keyin APK’ni Release’ga `Bilim-Arena.apk` nomi bilan qo‘shadi.
+- Imzolash: `BILIM_KEYSTORE_BASE64`, `BILIM_KEYSTORE_PASSWORD`, `BILIM_KEY_ALIAS` maxfiy sozlamalari bo‘lsa — release APK; bo‘lmasa — debug APK (har yig‘ishda boshqa kalit, ustidan yangilab bo‘lmaydi).
+### Tekshiruv
+- `npm test` — 61/61, `npm run build` — muvaffaqiyatli, Electron smoke — 12/12.
+- Brauzerda telefon o‘lchamida: Robot (Bloklar va Java, tik va yon), Robot bosh ekrani, Xazina eslatmasi, zal — gorizontal toshish yo‘q.
+- GitHub Actions: debug APK yig‘ildi (5,2 MB, `assets/public` ichida o‘yin fayllari). Haqiqiy telefonda hali sinalmagan.
+
+## 2026-11-19 — Telefonda sinovdan keyingi tuzatishlar
+Foydalanuvchi telefonda sinadi: yon tomonga buriladigan o‘yinlar kichik, boshlash tugmalari va sozlamalar noqulay. O‘lchov (752×336 — tizim panellarisiz telefon): Soya ekran kengligining 64%, Xazina 79% (savol kartasi 517×258); zal va tayyorgarlikda “Boshlash”gacha 2 ekran surish; sozlamalarda tugmalar 12px.
+- **To‘liq ekran (APK):** `MainActivity.java` — holat va navigatsiya panellari yashirinadi (chetdan surilsa vaqtincha chiqadi).
+- **Avtomatik burilish:** `@capacitor/screen-orientation@8.0.2`, `useLandscape()` (`src/lib/platform.js`) — Soya va Xazina o‘yini ochilganda ekran yon tomonga qulflanadi, chiqqanda bo‘shatiladi.
+- **Xazina poygasi:** past ekranda (≤ 500px, yon tomon) 16:9 qulfi yo‘q — taxta butun ekranni egallaydi, savol to‘liq ekranda (729×319). Barcha savol turlari sig‘ishi tekshirildi.
+- **Soya — keng rejim** (`layout.js` WIDE: sensorli va nisbat ≥ 1,8): HUD ikki yon ustunda (chap: ☰ ↻, daraja, holat, yo‘riqnoma, ◀ ▶; o‘ng: yozish, yulduz shartlari, ↶ ● ▲), maydon ekran balandligini to‘liq egallaydi (taxminan 24% kattaroq); menyu va darajalar oynasi `fitDesign()` bilan kamera orqali sig‘diriladi. Kompyuter va planshetda o‘zgarish yo‘q.
+- **Zal (telefon):** ixcham ro‘yxat — kichik rasm, nom, natija, katta tugmalar; kartaning istalgan joyini bosish asosiy amalni boshlaydi; tik holatda 1 ustun, yon tomonda 2 ustun — to‘rtala o‘yin birinchi ekranda.
+- **Tayyorgarlik (Xazina, Robot jamoa):** telefonda “O‘yinni boshlash” ekran pastiga mahkamlangan; Xazina sarlavhasi ixcham.
+- **Sozlamalar:** kataklar o‘rniga yoqish/o‘chirish kalitlari (52×30); telefonda bo‘lim tugmalari butun kenglikda 48px; tugma va tanlovlar ≥ 48px.
+- Tekshiruv: `npm test` 61/61, build, Electron smoke 12/12; brauzerda 375×812 va 752×336 (sensorli) — zal, Xazina (tayyorgarlik, taxta, 10 ta savol), Soya (menyu, 1-1 va eng uzun yo‘riqnomali 2-5), Sozlamalar. Kompyuter ko‘rinishi o‘zgarmagan. To‘liq ekran va avtomatik burilish faqat APK’da — telefonda sinash kerak.
+
+## 2026-11-19 — 0.8.0: Android APK doimiy kalit bilan
+- Doimiy imzolash kaliti yaratildi (PKCS12, RSA 4096, 30 yil). Zaxira nusxa va parol: `C:\Users\Shaxsiy\shaxsiy\_zaxira\bilim-arena-android-kalit\` — repoda yo‘q. GitHub maxfiy sozlamalari: `BILIM_KEYSTORE_BASE64`, `BILIM_KEYSTORE_PASSWORD`, `BILIM_KEY_ALIAS`.
+- Imzolangan release APK sinov yig‘ishida tekshirildi: APK ichida aynan shu sertifikat va v2 imzo bloki bor.
+- Bundan keyin har `v*` tegida Release’ga `Bilim-Arena-Setup.exe` va `Bilim-Arena.apk` qo‘shiladi; APK yangi versiyasi eski ustidan o‘rnatiladi (sinov debug APK’lari bundan mustasno — ularni o‘chirib o‘rnatish kerak).
+
+## 2026-11-20 — Xazina poygasi: 1-faza, yangi ko‘rinish (qoidalar o‘zgarmadi)
+Reja 5 fazali: 0) maket (foydalanuvchi o‘tkazib yuborishni so‘radi), 1) ko‘rinish, 2) yangi mexanikalar, 3) final va yakka rejim, 4) tekshiruv. Bu yozuv — faqat 1-faza.
+- **Orol xaritasi** (`src/components/RaceScenery.jsx`): dengizdagi to‘lqinlar suzib turadi, notekis qirg‘oqli orolning atrofida ko‘pik va sayozlik bor. Ustida qumli yo‘l, soyasi va izlari bilan. Bezaklar SVG’da chizilgan: palma barglari tebranadi, tog‘ qorli, vulqon tutaydi, toshlar va kema to‘lqinda chayqaladi. Emoji bezaklar olib tashlandi. Telefonda sahna cho‘zilganda bezaklar cho‘zilmaydi.
+- **Silliq yo‘l** (`src/lib/race-track.js`): kataklar endi to‘g‘ri chiziqli “ilon”da emas, silliq egri yo‘lda teng oraliqda joylashgan. Burilishlar yumaloq.
+- **Qahramon yo‘l bo‘ylab yuradi**: endi katakdan katakka to‘g‘ri chiziq bilan o‘tmaydi, yo‘l egrisi bo‘ylab sakrab boradi. Ostida soyasi bor, qo‘nganda chang ko‘tariladi. Girdobda aylanib orqaga qaytadi. Animatsiyalar o‘chirilganda bularning o‘rniga avvalgi tempdagi oddiy qadam qo‘yiladi.
+- **Kataklar**: qumdagi tosh plitalar; ⭐ yorqin tus olib, porlab turadi; 🌀 belgisi aylanadi. Maxsus katak ishga tushganda halqa “portlaydi”. Oxirida 💰 o‘rniga chizilgan sandiq turadi: birinchi jamoa yetib kelganda qopqog‘i ochilib, tangalar chiqadi.
+- **Hisob paneli**: har jamoada o‘rin belgisi (1/2/3 — oltin, kumush, bronza), o‘rin o‘zgarganda u “sakraydi”. Peshqadam qahramon boshida 👑, durang bo‘lsa toj ko‘rsatilmaydi. O‘rin poyga qoidasi bo‘yicha hisoblanadi: avval qadamlar, keyin to‘g‘ri javoblar.
+- **Fon musiqasi** (`src/lib/race-music.js`): quvnoq orol kuyi kod ichida sintez qilinadi, fayl yoki litsenziya kerak emas. Savol paytida ovozi pasayadi, pauzada jim bo‘ladi, g‘alabada to‘xtaydi. HUD’dagi 🎵 tugmasi musiqani yoqib-o‘chiradi, tanlov brauzerda eslab qolinadi. Platformadagi “Ovoz va musiqa” sozlamasi o‘chirilsa, musiqa ham chalinmaydi.
+- **Ovozlar**: qadamda ikki xil balandlikdagi tovush, girdobda pasayuvchi “vizillash”, g‘alabada tangalar jarangi.
+- “Bilim maydoni” mavzusi avvalgidek sokin ko‘rinishda qoldi: bezaklar yashirilgan, xarita xira ranglarda. Xato savollarni takrorlash ekrani o‘zgarmadi.
+
+### Tekshiruv
+- `npm test` — 65/65 o‘tdi, shulardan 4 tasi `tests/race-track.test.js` dagi yangi testlar: kataklar soni, sahna ichida joylashishi, oraliqlar, yo‘l chetidagi nuqtalar.
+- `npm run build` — muvaffaqiyatli.
+- Brauzerda tekshirildi: 3 jamoa bilan 12 qadamli xarita, to‘g‘ri javobdan keyin yo‘l bo‘ylab yurish, toj va o‘rin belgilari, sandiq qopqog‘ining ochilishi. 752×336 telefon o‘lchamida bezaklar cho‘zilmagan. Konsolda xato yo‘q.
+- Tekshirilmagan: Electron smoke, haqiqiy telefon/doska, musiqani quloq bilan eshitib ko‘rish, girdob va bonus kataklari, oxirigacha o‘ynalgan to‘liq o‘yin.
+
+## 2026-11-20 — Xazina poygasi: 2-faza, yangi mexanikalar
+Foydalanuvchi to‘rtala mexanikani tanladi, standart holatda hammasi yoqilgan. Tayyorgarlik ekranidagi “Qo‘shimcha qoidalar” bo‘limida har birini o‘chirish mumkin. Hammasi o‘chirilsa, o‘yin avvalgi klassik poyga bo‘lib qoladi: ⭐ 30%, 🌀 55%, ⭐ 80%.
+
+### Yangi qoidalar (`src/lib/race-rules.js`)
+1. **Yangi kataklar.**
+   - 🎁 sandiq — 🛡 qalqon beradi: keyingi 🌀 girdob ta’sir qilmaydi.
+   - ⚡ chaqmoq — jamoaning keyingi savoli chaqmoq bo‘ladi: vaqti yarmi (kamida 10 soniya), to‘g‘ri javob +2 qadam.
+   - 🌉 ko‘prik — burilishda 3 katak oldinga sakratadi.
+   - Kataklar har o‘yinda aralashadi, lekin bir o‘yinda hamma jamoa uchun bir joyda turadi. Ikki maxsus katak yonma-yon tushmaydi, ko‘prik qo‘nadigan katak oddiy bo‘ladi.
+   - 8 qadamli qisqa yo‘lda ko‘prik bo‘lmaydi.
+   - Avvalgidek: har maxsus katak jamoaga bir marta ta’sir qiladi, katak keltirgan harakat yana katakni ishga tushirmaydi.
+   - “Yana o‘ynash” bosilganda kataklar qaytadan aralashadi.
+2. **Seriya 🔥.** Ketma-ket 3 ta to‘g‘ri javob +1 bonus qadam beradi, keyin hisob noldan boshlanadi. Xato yoki vaqt tugashi seriyani uzadi.
+3. **Kuchaytirgichlar.** Har jamoada bir martadan 50/50 (variantli savolda to‘g‘ri javob va bitta xato qoladi) va +15 soniya bor. Vaqt cheklanmagan o‘yinda +15 soniya chiqmaydi.
+4. **Ilib olish va tangalar.**
+   - Variantli savolda (kamida 2 variant qolsa) jamoa xato qilsa yoki vaqti tugasa, keyingi jamoa javob berib ko‘radi. To‘g‘ri topsa +1 🪙 oladi, ✓/✗ statistikasi o‘zgarmaydi. “O‘tkazib yuborish” tugmasi bor.
+   - Vaqtning birinchi uchdan birida berilgan to‘g‘ri javob ham +1 🪙 beradi.
+   - Yakka o‘yinda ilib olish yo‘q.
+5. **G‘olibni aniqlash.** Avval qadamlar, keyin to‘g‘ri javoblar, keyin tangalar solishtiriladi. Uchalasi ham teng bo‘lsa — durang. Eski natijalarda tanga yo‘q va 0 deb olinadi.
+
+### Ekranlar
+- **Taxta:** yangi kataklar o‘z rangida, ko‘prik chizilgan arqonli yo‘lak. Har katakninng o‘z xabari va halqa animatsiyasi bor.
+- **Hisob paneli:** har jamoada 🪙, 🔥, 🛡, ⚡ belgilari. Kuchaytirgich ishlatilgach, uning belgisi xira bo‘lib qoladi.
+- **Savol kartasi:** 50/50 va +15 s tugmalari, chaqmoq savol belgisi va moviy ramka, ilib olish bosqichi (ramka ilib olayotgan jamoa rangida). Fikr-mulohazada tanga, seriya va ilib olish natijasi yoziladi.
+- **Natijalar:** tanga saqlanadi va shohsupada ko‘rinadi. O‘rin barcha tartib maydonlari bo‘yicha hisoblanadi.
+
+### Tekshiruv
+- `npm test` — 74/74 o‘tdi. Yangi `tests/race-mechanics.test.js` dagi testlar: klassik joylashuv, 5 xil uzunlikda 40 tadan aralash joylashuv, bir xil urug‘, ko‘prik joyi, chaqmoq vaqti, tez javob, ilib olish shartlari, 50/50, tangalar bilan g‘olib.
+- `npm run build` — muvaffaqiyatli. `npm run smoke:electron` — 12/12.
+- Brauzerda tekshirildi:
+  - tayyorgarlikda 4 ta o‘chirgich (hammasi yoqilgan);
+  - xarita yangi kataklar va ko‘prik bilan;
+  - +15 s (taymer 26 → 41), 50/50 (4 variantdan 2 tasi qoldi);
+  - ⚡ katakdan keyin 15 soniyali chaqmoq savol;
+  - ilib olish bosqichi va uning natijasi, seriya belgisi;
+  - muddatidan oldin yakunlashda natijalar ekrani, teng natijada durang.
+- Tekshirilmagan: ko‘prik sakrashi va sandiq qalqonining girdobdan saqlashi brauzerda ko‘rilmadi (faqat kod va qoidalar testi bor); oxirigacha o‘ynalgan to‘liq o‘yin; haqiqiy doska va telefon.
+- Ishlab chiqish paytida bitta muammo bo‘ldi: Vite dev-server Results.jsx ga `sed` orqali kiritilgan o‘zgarishni sezmadi va eski nusxani berib turdi. Fayl qayta saqlangach tuzaldi. Build va diskdagi kodda xato yo‘q edi.
+
+## 2026-11-20 — Xazina poygasi: 3-faza, final marosimi va yakka rejim
+Foydalanuvchi rejani tasdiqladi. Jonlar haqida javob bermagani uchun ular standart holatda yoqilgan, o‘chirish mumkin.
+
+### Jamoaviy o‘yin: g‘alaba marosimi
+- O‘yin tugaganda “kamera” xazinaga yaqinlashadi (taxta 1,7 baravar kattalashadi) va sandiq ochiladi.
+- Keyin shohsupa chiqadi: qahramonlar 3 → 2 → 1 tartibida pog‘onaga sakrab chiqadi, g‘olibga 👑 tushadi. Teng natijali jamoalar bir xil o‘rinda turadi. 4-jamoa shohsupa ostida ko‘rsatiladi.
+- **Nominatsiyalar** (`teamAwards`): 🎯 Eng aniq, 🔥 Eng uzun seriya (kamida 2 ta), 🪙 Eng ko‘p tanga, 🦅 Eng ko‘p ilib olgan, 💪 Eng katta qaytish (girdobdan keyingi qadamlar).
+  - Teng natijada nominatsiyani hamma teng jamoalar oladi.
+  - Ko‘rsatkich hamma jamoada bir xil bo‘lsa, bu nominatsiya berilmaydi.
+  - Hech narsa olmagan jamoaga 🤝 Jamoa ruhi beriladi.
+  - Nominatsiyalar faqat oxirigacha o‘ynalgan o‘yinda beriladi, muddatidan oldin yakunlansa — yo‘q.
+- Nominatsiyalar natijaga yoziladi va natijalar ekranida shohsupa kartalarida ko‘rinadi. Eski natijalar avvalgidek o‘qiladi.
+
+### Yakka rejim
+- **❤️ Jonlar** (tayyorgarlikda o‘chirsa bo‘ladi): 3 ta jon, har xato yoki vaqt tugashi bitta jonni oladi. 🎁 sandiq qalqon o‘rniga +1 ❤️ beradi (ko‘pi bilan 3 ta). Jon tugasa “🚢 Kema cho‘kdi!” chiqadi, natija saqlanadi va yulduz berilmaydi.
+- **🗓 Kunlik sarguzasht:** kataklar joyi va savollar tartibi sana + to‘plamga bog‘liq, shu kuni hamma uchun bir xil. “Yana o‘ynash” bugungi xaritani saqlaydi.
+  - Rekord (yulduz, keyin qadam, keyin kam xato) shu qurilmada saqlanadi (`src/lib/race-daily.js`, oxirgi 90 ta yozuv). Ketma-ket o‘ynalgan kunlar ham hisoblanadi.
+  - Tayyorgarlikda bugungi rekord, g‘alaba yoki cho‘kish oynasida “Bugungi rekord!” ko‘rsatiladi.
+
+### Savollar o‘zgarsa nima bo‘ladi (foydalanuvchi savoli)
+- **Yangi fan yoki to‘plam:** poyga hech qaysi fanga bog‘lanmagan, istalgan to‘plam bilan ishlaydi.
+- **O‘yin paytida savollar tahrirlansa:** o‘yin boshlanganda savollar nusxasi olinadi, ketayotgan o‘yinga ta’sir qilmaydi.
+- **Savollar qadamlardan kam bo‘lsa:** to‘plam tugagach qayta aralashtirilib takrorlanadi (tayyorgarlikda ogohlantirish bor).
+- **Kunlik rekord** sana, to‘plam, to‘plam tarkibining izi (`questionsFingerprint`) va yo‘l uzunligiga bog‘langan. Savol qo‘shilsa, o‘chirilsa, tahrirlansa yoki qadamlar soni o‘zgarsa, shu kun uchun yangi rekord boshlanadi. Eskisi o‘chmaydi, faqat boshqa savollar bilan qo‘yilgan natija bilan solishtirilmaydi. Savollar tartibi o‘zgarsa, iz o‘zgarmaydi.
+- **Uzun savol, kod yoki rasm:** savol kartasi ko‘taradi. Chaqmoq savolda kamida 10 soniya qoladi, asosiy vaqtni o‘qituvchi oshirishi mumkin.
+
+### Tekshiruv
+- `npm test` — 83/83. Yangi `tests/race-phase3.test.js` dagi testlar:
+  - nominatsiyalar: teng natija, bir xil ko‘rsatkich, yakka o‘yin;
+  - kunlik urug‘ va savollar tartibining takrorlanishi;
+  - to‘plam izi: savol qo‘shish, o‘chirish, tahrirlash, tartib almashtirish;
+  - kunlik rekord: birinchi, yaxshiroq va yomonroq natija, to‘plam o‘zgarishi;
+  - ketma-ket kunlar va buzilgan xotira;
+  - natija formatida tanga va nominatsiyalar, eski natijalar.
+- `npm run build` — muvaffaqiyatli. `npm run smoke:electron` — 12/12.
+- Brauzerda avtomatik o‘yinchi bilan tekshirildi:
+  - 3 jamoa, 8 qadam — oxirigacha o‘ynalgan o‘yin, xazinaga yaqinlashish, shohsupa va 5 ta nominatsiya. Natijalar ekranida nominatsiyalar saqlangan.
+  - Yakka kunlik sarguzasht: 3 ta xato → ❤️ 3 → 0 → “Kema cho‘kdi”. “Yana o‘ynash” — kataklar xuddi o‘sha joyda. Xatosiz o‘yin → ★★★, “Bugungi rekord!”. Tayyorgarlikda rekord ko‘rindi.
+- Tekshirilmagan: marosimning telefon ekranidagi ko‘rinishi (CSS’da past ekran uchun moslama bor, lekin ko‘rilmagan), haqiqiy doska, kunlik sarguzashtda kun almashishi (yarim tun).
+- Kuzatuv: yaqqol g‘olib bitta jamoa ko‘p nominatsiyani (masalan, 3 tasini) olishi mumkin, qolganlar “Jamoa ruhi” oladi. Darsda bu qanday qabul qilinishini ko‘rish kerak.
+
+## 2026-11-20 — Xazina poygasi: 4-faza, yakuniy tekshiruv va tuzatishlar
+### Tekshiruv (kod o‘zgartirilmasdan)
+- Kod ko‘rib chiqildi: o‘yin ekrani, qoidalar, natijalar va saqlash formati.
+- Brauzerda avtomatik o‘yinchi bilan sinaldi:
+  - 4 jamoa, vaqt cheklanmagan, “Bilim maydoni” mavzusi, 8 qadam — oxirigacha o‘ynalgan o‘yin, marosim va 4-o‘rin;
+  - ilib olish paytida pauza;
+  - xato savollarni takrorlash rejimi;
+  - telefon o‘lchamida (752×336) savol kartasi, ilib olish va marosim;
+  - animatsiyalar o‘chirilgan rejim.
+
+  Konsolda yangi xato chiqmadi.
+- Foydalanuvchi to‘rtta tuzatishni tasdiqladi.
+
+### Tuzatishlar
+1. “Kema cho‘kdi”da fon musiqasi endi to‘xtaydi (avval faqat g‘alabada to‘xtardi).
+2. **Nominatsiyalar adolatli:** bitta jamoa ko‘pi bilan 2 ta nominatsiya oladi (`MAX_AWARDS_PER_TEAM`), ortiqchasi shu ko‘rsatkich bo‘yicha keyingi eng yaxshi jamoaga o‘tadi. Avval 2 jamoali o‘yinda g‘olib 5 tadan 4 tasini olgan edi.
+3. **Girdob dastlabki 3 katakda turmaydi** (`TRAP_FROM = 4`). Sinovda girdob 1-katakda chiqib, birinchi to‘g‘ri javob jamoani startga qaytargan edi. Barcha uzunlikdagi yo‘llarda hamma kataklar sig‘ishi qayta tekshirildi (500 ta urug‘).
+4. **Javob va ilib olish faqat bir marta qabul qilinadi:** tugma juda tez ikki marta bosilsa, ikkinchisi e’tiborsiz qoldiriladi. Brauzerda ilib olishda tekshirildi — ikki marta bosilganda bitta tanga berildi.
+
+### Tekshiruv dalillari
+- `npm test` — 84/84. Yangi testlar: nominatsiya limiti va girdobning boshida turmasligi.
+- `npm run build` — muvaffaqiyatli. `npm run smoke:electron` — 12/12.
+- Tekshirilmagan: musiqaning to‘xtashi quloq bilan eshitib ko‘rilmadi (faqat kodda), haqiqiy doska va telefon, yarim tunda kunlik xaritaning almashishi.
+
+## 2026-11-20 — 0.9.0: Xazina poygasining yangi versiyasi
+- Xazina poygasi yangilandi: orol xaritasi, yangi kataklar va mexanikalar, g‘alaba marosimi, nominatsiyalar, yakka rejimda jonlar va kunlik sarguzasht. Batafsil — yuqoridagi 1–4-faza yozuvlarida.
+- Versiya 0.8.0 → 0.9.0. Bu “minor” versiya, chunki yangi imkoniyatlar qo‘shildi.
+- `v0.9.0` tegi push qilinsa, GitHub Actions Windows o‘rnatuvchisini va imzolangan APK’ni Release’ga joylaydi. O‘rnatilgan dasturlar yangilanishni o‘zi yuklab oladi.
+- Eski natijalar va savollar yangi versiyada o‘qiladi: tanga va nominatsiyalar ixtiyoriy maydon, eski natijalarda yo‘q bo‘lsa 0 deb olinadi (test bilan tekshirilgan).
+
+## 2026-11-20 — GitHub Actions: Node 24 versiyalari
+- Muammo: 0.9.0 relizida GitHub Node 20 eskirgani haqida ogohlantirdi (`checkout@v4`, `setup-node@v4`, `setup-java@v4`, `upload-artifact@v4`). Keyinroq bu reliz chiqarishni to‘xtatib qo‘yishi mumkin edi.
+- Yangilandi: `checkout@v7`, `setup-node@v7`, `setup-java@v6`, `upload-artifact@v7`. Yig‘ish qadamlari, imzolash va Release’ga yuklash o‘zgarmadi.
+- Reliz eslatmalari ko‘rib chiqildi: biz uchun mos kelmaydigan o‘zgarish yo‘q. `setup-node` v5 dan boshlab keshni o‘zi yoqadi, lekin bizda `cache: npm` aniq yozilgan.
+- Sinov: `android-actions-yangilash` branch’ida Android workflow’i o‘tdi (APK yig‘ildi va artefakt sifatida joylandi, Release’ga hech narsa yuborilmadi). Node 20 ogohlantirishi chiqmadi.
+- Windows o‘rnatuvchisi faqat `v*` tegida yig‘iladi, u keyingi relizda tekshiriladi. U ham xuddi shu `checkout@v7` va `setup-node@v7` dan foydalanadi.
+
+## 2026-11-20 — Xatolar ro‘yxati
+Foydalanuvchi tayyorgarlik ekranidagi buzilgan logotipni topdi. Uni hozir tuzatmasdan yozib qo‘yish va boshqa xatolarni ham qidirish so‘raldi. Topilgan barcha muammolar alohida faylda: [XATOLAR.md](XATOLAR.md) (X-1 … X-10, muhimlik darajasi va tuzatish rejasi bilan). Kodga tegilmadi.
+
+## 2026-11-20 — 0.9.1: X-1, X-2 tuzatildi; Google Play’ga tayyorgarlik
+- **X-1, X-2** tuzatildi (batafsil — XATOLAR.md).
+- **AAB:** `android.yml` imzolangan yig‘ishda `bundleRelease` ham bajaradi; `Bilim-Arena.aab` faqat Actions “Artifacts”da (`Bilim-Arena-aab-play-market`), Release sahifasida emas.
+- **Maxfiylik siyosati:** `PRIVACY.md` (uz/en/ru) — hech qanday ma’lumot yig‘ilmaydi; Play uchun havola: github.com/ShaxzodRuziqulov/bilim-arena/blob/main/PRIVACY.md.
+- **Do‘kon rasmlari:** `npm run store-assets` (`scripts/store-assets/capture.cjs`) → `store/play/`: belgi 512, sarlavha 1024×500, 8 telefon (1080×1920 va 2160×1080, sensorli taqlid — Soya keng rejimda) va 3 planshet (1920×1200) skrinshoti.
+- **Qo‘llanma:** `store/PLAY_MARKET.md` — hisob, AAB, tavsiflar (uz/ru/en), Data safety, kontent reytingi, Families ro‘yxati, yopiq sinov (12 sinovchi, 14 kun).
+- Hisob ochish (~$25, shaxsni tasdiqlash) va yopiq sinov — foydalanuvchi qiladi.
+
+## 2026-11-20 — 0.9.2: qolgan xatolar (X-3 … X-10) yopildi
+Foydalanuvchi qolgan xatolarni tavsiya bo‘yicha tuzatishni so‘radi (X-5 — o‘zgartirilmaydi, X-7 — kamida 3 ta javob). Batafsil — XATOLAR.md.
+- X-3 bir xil jamoa nomlari, X-4 yashirilganda ovoz, X-6 kunlik “Yana o‘ynash” yarim tundan keyin, X-7 “Eng aniq” chegarasi, X-8 ko‘prik va “qaytish”, X-9 Arena sandig‘i, X-10 Electron sinovi barqarorligi.
+- Tekshiruv: `npm test` — 88/88 (yangi: teams, X-6, X-7), build, Electron smoke 5+3 marta ketma-ket 12/12; brauzerda X-4 (ovoz konteksti holatlari) va X-9 (Arena sandig‘i).

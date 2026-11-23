@@ -146,7 +146,11 @@ try {
   await shot('3-soya-menyu');
   // Yangi ochilgan oyna OS fokusini darhol olmasligi mumkin — oldinga chiqarib, Enter'ni daraja boshlanguncha (3 martagacha) bosamiz.
   await cdp('Page.bringToFront').catch(() => {});
-  let started = false;
+  // X-10: avval sichqoncha bilan menyudagi "Boshlash" tugmasi bosiladi — bu klaviatura fokusiga bog'liq emas
+  // (tasodifiy yiqilishlar aynan shu qadamda bo'lgan). Bo'lmasa — Enter (3 martagacha).
+  const btn = await js(`const r=document.querySelector('.soya-canvas canvas').getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height * (330 / 672) }`);
+  for (const type of ['mousePressed', 'mouseReleased']) await cdp('Input.dispatchMouseEvent', { type, x: btn.x, y: btn.y, button: 'left', clickCount: 1 });
+  let started = await until(`!document.querySelector('.soya-exit')`, 3000);
   for (let i = 0; i < 3 && !started; i++) {
     await cdp('Input.dispatchKeyEvent', { type: 'keyDown', key: 'Enter', code: 'Enter', windowsVirtualKeyCode: 13, text: '\r' });
     await cdp('Input.dispatchKeyEvent', { type: 'keyUp', key: 'Enter', code: 'Enter', windowsVirtualKeyCode: 13 });
@@ -158,13 +162,13 @@ try {
   await sleep(1500);
   await shot('4-soya-daraja');
   // Daraja -> darajalar ekrani -> bosh menyu (har bir sahna almashishini kutamiz)
-  await cdp('Input.dispatchKeyEvent', { type: 'keyDown', key: 'Escape', code: 'Escape', windowsVirtualKeyCode: 27 });
-  await cdp('Input.dispatchKeyEvent', { type: 'keyUp', key: 'Escape', code: 'Escape', windowsVirtualKeyCode: 27 });
-  await sleep(1500); // daraja -> darajalar ekrani
-  await sleep(600);
-  await cdp('Input.dispatchKeyEvent', { type: 'keyDown', key: 'Escape', code: 'Escape', windowsVirtualKeyCode: 27 });
-  await cdp('Input.dispatchKeyEvent', { type: 'keyUp', key: 'Escape', code: 'Escape', windowsVirtualKeyCode: 27 });
-  await until(`document.querySelector('.soya-exit')`, 8000);
+  // Esc: daraja -> darajalar ekrani -> bosh menyu. Zal tugmasi ko'ringuncha (5 martagacha) bosiladi.
+  for (let i = 0; i < 5; i++) {
+    if (await until(`document.querySelector('.soya-exit')`, i ? 1500 : 200)) break;
+    await cdp('Input.dispatchKeyEvent', { type: 'keyDown', key: 'Escape', code: 'Escape', windowsVirtualKeyCode: 27 });
+    await cdp('Input.dispatchKeyEvent', { type: 'keyUp', key: 'Escape', code: 'Escape', windowsVirtualKeyCode: 27 });
+  }
+  await until(`document.querySelector('.soya-exit')`, 4000);
   const back = await js(`const b=document.querySelector('.soya-exit'); if(!b) return {menu:false}; b.click(); await new Promise(r=>setTimeout(r,1000)); return { menu:true, hall: !!document.querySelector('.hall'), canvases: document.querySelectorAll('canvas').length }`);
   check('Soya menyusidan zalga qaytildi, canvas tozalandi', back.menu && back.hall && back.canvases === 0, JSON.stringify(back));
 

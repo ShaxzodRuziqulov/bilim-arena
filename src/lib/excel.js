@@ -1,3 +1,4 @@
+import { saveBlob } from './platform.js';
 import { readSheet } from 'read-excel-file/browser';
 import writeExcelFile from 'write-excel-file/browser';
 import { filledItems, filledPairs, newQuestion, newSet } from './util.js';
@@ -136,12 +137,7 @@ const INSTRUCTIONS = [
 
 async function save(sheets, fileName) {
   const blob = await writeExcelFile(sheets).toBlob();
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = fileName;
-  a.click();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  await saveBlob(fileName, blob);
 }
 
 const instructionsSheet = () => ({
